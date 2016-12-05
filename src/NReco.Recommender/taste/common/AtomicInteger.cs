@@ -28,30 +28,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+namespace NReco.CF.Taste.Common
+{
+    public class AtomicInteger
+    {
+        int Value;
 
-namespace NReco.CF.Taste.Common {
-	
-	public class AtomicInteger {
-		int Value;
+        public AtomicInteger()
+        {
+            Value = 0;
+        }
 
-		public AtomicInteger() {
-			Value = 0;
-		}
+        public AtomicInteger(int val)
+        {
+            Value = val;
+        }
 
-		public AtomicInteger(int val) {
-			Value = val;
-		}
+        public int get()
+        {
+            return Value;
+        }
 
-		public int get() {
-			return Value;
-		}
-
-		public int incrementAndGet() {
-			lock (this) {
-				return ++Value;
-			}
-		}
-	}
-
-
+        public int incrementAndGet()
+        {
+            lock (this)
+            {
+                return ++Value;
+            }
+        }
+    }
 }

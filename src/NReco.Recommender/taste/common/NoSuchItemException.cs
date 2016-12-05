@@ -22,20 +22,21 @@
  *  OF ANY KIND, either express or implied.
  */
 
-namespace NReco.CF.Taste.Common {
+namespace NReco.CF.Taste.Common
+{
+    public sealed class NoSuchItemException : TasteException
+    {
+        public NoSuchItemException() { }
 
-public sealed class NoSuchItemException : TasteException {
-  
-  public NoSuchItemException() { }
+        public NoSuchItemException(long itemID)
+            : this(itemID.ToString())
+        {
 
-  public NoSuchItemException(long itemID)
-	  : this(itemID.ToString()) {
-   
-  }
-  
-  public NoSuchItemException(string message) : base(message) {
-  }
-  
-}
+        }
 
+        public NoSuchItemException(string message)
+            : base(message)
+        {
+        }
+    }
 }

@@ -28,33 +28,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NReco.CF.Taste.Common {
-	
-	public static class LoggerFactory {
-		public static Logger GetLogger(Type t) {
-			return new Logger(t);
-		}
-	}
+namespace NReco.CF.Taste.Common
+{
+    public static class LoggerFactory
+    {
+        public static Logger GetLogger(Type t)
+        {
+            return new Logger(t);
+        }
+    }
 
-	public class Logger {
-		Type LogType;
+    public class Logger
+    {
+        Type LogType;
 
-		public Logger(Type t) {
-			LogType = t;
-		}
+        public Logger(Type t)
+        {
+            LogType = t;
+        }
 
-		public void Info(string format, params object[] args) {
+        public void Info(string format, params object[] args)
+        {
 
-		}
+        }
 
-		public void Warn(string format, params object[] args) {
+        public void Warn(string format, params object[] args)
+        {
 
-		}
+        }
 
-		public void Debug(string format, params object[] args) {
+        public void Debug(string format, params object[] args)
+        {
 
-		}
-	}
-
-
+        }
+    }
 }

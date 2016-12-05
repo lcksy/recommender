@@ -30,63 +30,74 @@ using System.IO;
 using NReco.CF.Taste.Impl;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Common {
+namespace NReco.CF.Taste.Impl.Common
+{
 
-public sealed class BitSetTest : TasteTestCase {
+    public sealed class BitSetTest : TasteTestCase
+    {
 
-  private static int NUM_BITS = 100;
+        private static int NUM_BITS = 100;
 
-  [Test]
-  public void testGetSet() {
-    BitSet bitSet = new BitSet(NUM_BITS);
-    for (int i = 0; i < NUM_BITS; i++) {
-      Assert.False(bitSet.Get(i));
+        [Test]
+        public void testGetSet()
+        {
+            BitSet bitSet = new BitSet(NUM_BITS);
+            for (int i = 0; i < NUM_BITS; i++)
+            {
+                Assert.False(bitSet.Get(i));
+
+            }
+            bitSet.Set(0);
+            bitSet.Set(NUM_BITS - 1);
+            Assert.True(bitSet.Get(0));
+            Assert.True(bitSet.Get(NUM_BITS - 1));
+        }
+
+        //[Test](expected = ArrayIndexOutOfBoundsException.class)
+        [Test]
+        //[ExpectedException]
+        public void testBounds1()
+        {
+            BitSet bitSet = new BitSet(NUM_BITS);
+            bitSet.Set(1000);
+        }
+
+        //[Test](expected = ArrayIndexOutOfBoundsException.class)\
+        [Test]
+        //[ExpectedException]
+        public void testBounds2()
+        {
+            BitSet bitSet = new BitSet(NUM_BITS);
+            bitSet.Set(-1);
+        }
+
+        [Test]
+        public void testClear()
+        {
+            BitSet bitSet = new BitSet(NUM_BITS);
+            for (int i = 0; i < NUM_BITS; i++)
+            {
+                bitSet.Set(i);
+            }
+            for (int i = 0; i < NUM_BITS; i++)
+            {
+                Assert.True(bitSet.Get(i));
+            }
+            bitSet.Clear();
+            for (int i = 0; i < NUM_BITS; i++)
+            {
+                Assert.False(bitSet.Get(i));
+            }
+        }
+
+        [Test]
+        public void testClone()
+        {
+            BitSet bitSet = new BitSet(NUM_BITS);
+            bitSet.Set(NUM_BITS - 1);
+            bitSet = (BitSet)bitSet.Clone();
+            Assert.True(bitSet.Get(NUM_BITS - 1));
+        }
 
     }
-    bitSet.Set(0);
-    bitSet.Set(NUM_BITS-1);
-    Assert.True(bitSet.Get(0));
-    Assert.True(bitSet.Get(NUM_BITS-1));
-  }
-
-  //[Test](expected = ArrayIndexOutOfBoundsException.class)
-	[Test]
-	[ExpectedException]
-  public void testBounds1() {
-    BitSet bitSet = new BitSet(NUM_BITS);
-    bitSet.Set(1000);
-  }
-
-  //[Test](expected = ArrayIndexOutOfBoundsException.class)\
-	[Test]
-	[ExpectedException]
-  public void testBounds2() {
-    BitSet bitSet = new BitSet(NUM_BITS);
-    bitSet.Set(-1);
-  }
-
-	  [Test]
-  public void testClear() {
-    BitSet bitSet = new BitSet(NUM_BITS);
-    for (int i = 0; i < NUM_BITS; i++) {
-      bitSet.Set(i);
-    }
-    for (int i = 0; i < NUM_BITS; i++) {
-      Assert.True(bitSet.Get(i));
-    }
-    bitSet.Clear();
-    for (int i = 0; i < NUM_BITS; i++) {
-      Assert.False(bitSet.Get(i));
-    }
-  }
-
-  [Test]
-  public void testClone() {
-    BitSet bitSet = new BitSet(NUM_BITS);
-    bitSet.Set(NUM_BITS-1);
-    bitSet = (BitSet)bitSet.Clone();
-    Assert.True(bitSet.Get(NUM_BITS-1));
-  }
-
-}
 }

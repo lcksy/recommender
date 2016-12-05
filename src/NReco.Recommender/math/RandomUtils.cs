@@ -30,76 +30,85 @@ using System.IO;
 
 using NReco.Math3.Primes;
 
-namespace NReco.CF {
+namespace NReco.CF
+{
+    /// <summary>
+    /// The source of random stuff for the whole project. This lets us make all randomness in the project
+    /// predictable, if desired, for when we run unit tests, which should be repeatable.
+    /// </summary>
+    public sealed class RandomUtils
+    {
+        /// The largest prime less than 2<sup>31</sup>-1 that is the smaller of a twin prime pair. 
+        public const int MAX_INT_SMALLER_TWIN_PRIME = 2147482949;
 
-/// <summary>
-/// The source of random stuff for the whole project. This lets us make all randomness in the project
-/// predictable, if desired, for when we run unit tests, which should be repeatable.
-/// </summary>
-public sealed class RandomUtils {
+        private static IDictionary<RandomWrapper, Boolean> INSTANCES = new ConcurrentDictionary<RandomWrapper, Boolean>();
 
-  /// The largest prime less than 2<sup>31</sup>-1 that is the smaller of a twin prime pair. 
-  public const int MAX_INT_SMALLER_TWIN_PRIME = 2147482949;
+        private static bool testSeed = false;
 
-  private static IDictionary<RandomWrapper,Boolean> INSTANCES =
-      new ConcurrentDictionary<RandomWrapper,Boolean>();
+        private RandomUtils() { }
 
-  private static bool testSeed = false;
+        public static void useTestSeed()
+        {
+            testSeed = true;
+            lock (INSTANCES)
+            {
+                foreach (RandomWrapper rng in INSTANCES.Keys)
+                {
+                    rng.resetToTestSeed();
+                }
+            }
+        }
 
-  private RandomUtils() { }
-  
-  public static void useTestSeed() {
-    testSeed = true;
-    lock (INSTANCES) {
-      foreach (RandomWrapper rng in INSTANCES.Keys) {
-        rng.resetToTestSeed();
-      }
+        public static RandomWrapper getRandom()
+        {
+            RandomWrapper random = new RandomWrapper();
+            if (testSeed)
+            {
+                random.resetToTestSeed();
+            }
+            INSTANCES[random] = true;
+            return random;
+        }
+
+        public static RandomWrapper getRandom(long seed)
+        {
+            RandomWrapper random = new RandomWrapper(seed);
+            INSTANCES[random] = true;
+            return random;
+        }
+
+        /// @return what {@link Double#hashCode()} would return for the same value 
+        public static int hashDouble(double value)
+        {
+            return BitConverter.DoubleToInt64Bits(value).GetHashCode();
+        }
+
+        /// @return what {@link Float#hashCode()} would return for the same value 
+        public static int hashFloat(float value)
+        {
+            return BitConverter.ToInt32(BitConverter.GetBytes(value), 0); // float.floatToIntBits(value);
+        }
+
+        /// <p>
+        /// Finds next-largest "twin primes": numbers p and p+2 such that both are prime. Finds the smallest such p
+        /// such that the smaller twin, p, is greater than or equal to n. Returns p+2, the larger of the two twins.
+        /// </p>
+        public static int nextTwinPrime(int n)
+        {
+            if (n > MAX_INT_SMALLER_TWIN_PRIME)
+            {
+                throw new ArgumentException();
+            }
+            if (n <= 3)
+            {
+                return 5;
+            }
+            int next = Primes.nextPrime(n);
+            while (!Primes.isPrime(next + 2))
+            {
+                next = Primes.nextPrime(next + 4);
+            }
+            return next + 2;
+        }
     }
-  }
-  
-  public static RandomWrapper getRandom() {
-    RandomWrapper random = new RandomWrapper();
-    if (testSeed) {
-      random.resetToTestSeed();
-    }
-    INSTANCES[random ] = true;
-    return random;
-  }
-  
-  public static RandomWrapper getRandom(long seed) {
-    RandomWrapper random = new RandomWrapper(seed);
-    INSTANCES[random] = true;
-    return random;
-  }
-  
-  /// @return what {@link Double#hashCode()} would return for the same value 
-  public static int hashDouble(double value) {
-    return BitConverter.DoubleToInt64Bits(value).GetHashCode();
-  }
-
-  /// @return what {@link Float#hashCode()} would return for the same value 
-  public static int hashFloat(float value) {
-    return BitConverter.ToInt32( BitConverter.GetBytes(value), 0); // float.floatToIntBits(value);
-  }
-  
-   /// <p>
-   /// Finds next-largest "twin primes": numbers p and p+2 such that both are prime. Finds the smallest such p
-   /// such that the smaller twin, p, is greater than or equal to n. Returns p+2, the larger of the two twins.
-   /// </p>
-  public static int nextTwinPrime(int n) {
-    if (n > MAX_INT_SMALLER_TWIN_PRIME) {
-      throw new ArgumentException();
-    }
-    if (n <= 3) {
-      return 5;
-    }
-    int next = Primes.nextPrime(n);
-    while (!Primes.isPrime(next + 2)) {
-      next = Primes.nextPrime(next + 4);
-    }
-    return next + 2;
-  }
-  
-}
-
 }

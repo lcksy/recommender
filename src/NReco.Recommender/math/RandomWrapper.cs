@@ -28,79 +28,91 @@ using System.Collections.Generic;
 using System.IO;
 using NReco.Math3.Random;
 
-namespace NReco.CF {
+namespace NReco.CF
+{
+    public sealed class RandomWrapper
+    {
+        private static long STANDARD_SEED = unchecked((long)0xCAFEDEADBEEFBABEL);
 
+        private IRandomGenerator random;
 
-public sealed class RandomWrapper {
+        public RandomWrapper()
+        {
+            random = new MersenneTwister();
+            random.setSeed(Environment.TickCount + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this));
+        }
 
-  private static long STANDARD_SEED = unchecked( (long) 0xCAFEDEADBEEFBABEL );
+        public RandomWrapper(long seed)
+        {
+            random = new MersenneTwister(seed);
+        }
 
-  private IRandomGenerator random;
+        public void setSeed(long seed)
+        {
+            // Since this will be called by the java.util.Random() constructor before we construct
+            // the delegate... and because we don't actually care about the result of this for our
+            // purpose:
+            if (random != null)
+            {
+                random.setSeed(seed);
+            }
+        }
 
-  public RandomWrapper() {
-    random = new MersenneTwister();
-	random.setSeed( Environment.TickCount + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this));
-  }
+        public void resetToTestSeed()
+        {
+            setSeed(STANDARD_SEED);
+        }
 
-  public RandomWrapper(long seed) {
-    random = new MersenneTwister(seed);
-  }
+        public IRandomGenerator getRandomGenerator()
+        {
+            return random;
+        }
 
-  public void setSeed(long seed) {
-    // Since this will be called by the java.util.Random() constructor before we construct
-    // the delegate... and because we don't actually care about the result of this for our
-    // purpose:
-    if (random != null) {
-      random.setSeed(seed);
+        protected int next(int bits)
+        {
+            // Ugh, can't delegate this method -- it's protected
+            // Callers can't use it and other methods are delegated, so shouldn't matter
+            throw new NotSupportedException();
+        }
+
+        public void nextBytes(byte[] bytes)
+        {
+            random.nextBytes(bytes);
+        }
+
+        public int nextInt()
+        {
+            return random.nextInt();
+        }
+
+        public int nextInt(int n)
+        {
+            return random.nextInt(n);
+        }
+
+        public long nextlong()
+        {
+            return random.nextlong();
+        }
+
+        public bool nextBoolean()
+        {
+            return random.nextBoolean();
+        }
+
+        public float nextFloat()
+        {
+            return random.nextFloat();
+        }
+
+        public double nextDouble()
+        {
+            return random.nextDouble();
+        }
+
+        public double nextGaussian()
+        {
+            return random.nextGaussian();
+        }
     }
-  }
-
-  public void resetToTestSeed() {
-    setSeed(STANDARD_SEED);
-  }
-
-  public IRandomGenerator getRandomGenerator() {
-    return random;
-  }
-
-  protected int next(int bits) {
-    // Ugh, can't delegate this method -- it's protected
-    // Callers can't use it and other methods are delegated, so shouldn't matter
-    throw new NotSupportedException();
-  }
-
-  public void nextBytes(byte[] bytes) {
-    random.nextBytes(bytes);
-  }
-
-  public int nextInt() {
-    return random.nextInt();
-  }
-
-  public int nextInt(int n) {
-    return random.nextInt(n);
-  }
-
-  public long nextlong() {
-    return random.nextlong();
-  }
-
-  public bool nextBoolean() {
-    return random.nextBoolean();
-  }
-
-  public float nextFloat() {
-    return random.nextFloat();
-  }
-
-  public double nextDouble() {
-    return random.nextDouble();
-  }
-
-  public double nextGaussian() {
-    return random.nextGaussian();
-  }
-
-}
-
 }

@@ -31,73 +31,81 @@ using NReco.CF.Taste.Impl;
 using NReco.CF.Taste.Model;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Model {
+namespace NReco.CF.Taste.Impl.Model
+{
 
-public sealed class BooleanUserPreferenceArrayTest : TasteTestCase {
+    public sealed class BooleanUserPreferenceArrayTest : TasteTestCase
+    {
 
-  [Test]
-  public void testUserID() {
-    IPreferenceArray prefs = new BooleanUserPreferenceArray(3);
-    Assert.AreEqual(3, prefs.Length());
-    prefs.SetUserID(0, 1L);
-    Assert.AreEqual(1L, prefs.GetUserID(0));
-    Assert.AreEqual(1L, prefs.GetUserID(1));
-    Assert.AreEqual(1L, prefs.GetUserID(2));
-  }
+        [Test]
+        public void testUserID()
+        {
+            IPreferenceArray prefs = new BooleanUserPreferenceArray(3);
+            Assert.AreEqual(3, prefs.Length());
+            prefs.SetUserID(0, 1L);
+            Assert.AreEqual(1L, prefs.GetUserID(0));
+            Assert.AreEqual(1L, prefs.GetUserID(1));
+            Assert.AreEqual(1L, prefs.GetUserID(2));
+        }
 
-  [Test]
-  public void testItemID() {
-    IPreferenceArray prefs = new BooleanUserPreferenceArray(3);
-    Assert.AreEqual(3, prefs.Length());
-    prefs.SetItemID(0, 1L);
-    prefs.SetItemID(1, 2L);
-    prefs.SetItemID(2, 3L);
-    Assert.AreEqual(1L, prefs.GetItemID(0));
-    Assert.AreEqual(2L, prefs.GetItemID(1));
-    Assert.AreEqual(3L, prefs.GetItemID(2));
-  }
+        [Test]
+        public void testItemID()
+        {
+            IPreferenceArray prefs = new BooleanUserPreferenceArray(3);
+            Assert.AreEqual(3, prefs.Length());
+            prefs.SetItemID(0, 1L);
+            prefs.SetItemID(1, 2L);
+            prefs.SetItemID(2, 3L);
+            Assert.AreEqual(1L, prefs.GetItemID(0));
+            Assert.AreEqual(2L, prefs.GetItemID(1));
+            Assert.AreEqual(3L, prefs.GetItemID(2));
+        }
 
-  [Test] //(expected = NotSupportedException.class)
-	  [ExpectedException(typeof(NotSupportedException))]
-  public void testSetValue() {
-    IPreferenceArray prefs = new BooleanUserPreferenceArray(3);
-    Assert.AreEqual(1.0f, prefs.GetValue(2), EPSILON);
-    Assert.AreEqual(3, prefs.Length());
-    prefs.SetValue(0, 1.0f);
-  }
+        [Test] //(expected = NotSupportedException.class)
+        //[ExpectedException(typeof(NotSupportedException))]
+        public void testSetValue()
+        {
+            IPreferenceArray prefs = new BooleanUserPreferenceArray(3);
+            Assert.AreEqual(1.0f, prefs.GetValue(2), EPSILON);
+            Assert.AreEqual(3, prefs.Length());
+            prefs.SetValue(0, 1.0f);
+        }
 
-  [Test]
-  public void testHasPref() {
-    IPreferenceArray prefs = new BooleanUserPreferenceArray(3);
-    prefs.Set(0, new GenericPreference(1L, 3L, 5.0f));
-    Assert.True(prefs.HasPrefWithItemID(3L));
-    Assert.True(prefs.HasPrefWithUserID(1L));
-    Assert.False(prefs.HasPrefWithItemID(2L));
-    Assert.False(prefs.HasPrefWithUserID(2L));
-  }
+        [Test]
+        public void testHasPref()
+        {
+            IPreferenceArray prefs = new BooleanUserPreferenceArray(3);
+            prefs.Set(0, new GenericPreference(1L, 3L, 5.0f));
+            Assert.True(prefs.HasPrefWithItemID(3L));
+            Assert.True(prefs.HasPrefWithUserID(1L));
+            Assert.False(prefs.HasPrefWithItemID(2L));
+            Assert.False(prefs.HasPrefWithUserID(2L));
+        }
 
-  [Test]
-  public void testSort() {
-    IPreferenceArray prefs = new BooleanUserPreferenceArray(3);
-    prefs.Set(0, new BooleanPreference(1L, 3L));
-    prefs.Set(1, new BooleanPreference(1L, 1L));
-    prefs.Set(2, new BooleanPreference(1L, 2L));
-    prefs.SortByItem();
-    Assert.AreEqual(1L, prefs.GetItemID(0));
-    Assert.AreEqual(2L, prefs.GetItemID(1));
-    Assert.AreEqual(3L, prefs.GetItemID(2));
-  }
+        [Test]
+        public void testSort()
+        {
+            IPreferenceArray prefs = new BooleanUserPreferenceArray(3);
+            prefs.Set(0, new BooleanPreference(1L, 3L));
+            prefs.Set(1, new BooleanPreference(1L, 1L));
+            prefs.Set(2, new BooleanPreference(1L, 2L));
+            prefs.SortByItem();
+            Assert.AreEqual(1L, prefs.GetItemID(0));
+            Assert.AreEqual(2L, prefs.GetItemID(1));
+            Assert.AreEqual(3L, prefs.GetItemID(2));
+        }
 
-  [Test]  
-  public void testClone() {
-    BooleanUserPreferenceArray prefs = new BooleanUserPreferenceArray(3);
-    prefs.Set(0, new BooleanPreference(1L, 3L));
-    prefs.Set(1, new BooleanPreference(1L, 1L));
-    prefs.Set(2, new BooleanPreference(1L, 2L));
-    prefs = (BooleanUserPreferenceArray)prefs.Clone();
-    Assert.AreEqual(3L, prefs.GetItemID(0));
-    Assert.AreEqual(1L, prefs.GetUserID(1));
-  }
+        [Test]
+        public void testClone()
+        {
+            BooleanUserPreferenceArray prefs = new BooleanUserPreferenceArray(3);
+            prefs.Set(0, new BooleanPreference(1L, 3L));
+            prefs.Set(1, new BooleanPreference(1L, 1L));
+            prefs.Set(2, new BooleanPreference(1L, 2L));
+            prefs = (BooleanUserPreferenceArray)prefs.Clone();
+            Assert.AreEqual(3L, prefs.GetItemID(0));
+            Assert.AreEqual(1L, prefs.GetUserID(1));
+        }
 
-}
+    }
 }

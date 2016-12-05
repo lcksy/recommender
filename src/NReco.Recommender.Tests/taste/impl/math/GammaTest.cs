@@ -32,116 +32,134 @@ using NReco.Math3.Exception;
 using NReco.Math3.Util;
 using NUnit.Framework;
 
-namespace NReco.Math3.Special {
+namespace NReco.Math3.Special
+{
 
- /// @version $Id: GammaTest.java 1414531 2012-11-28 05:39:39Z celestin $
-public class GammaTest {
+    /// @version $Id: GammaTest.java 1414531 2012-11-28 05:39:39Z celestin $
+    public class GammaTest
+    {
+        private void testRegularizedGamma(double expected, double a, double x)
+        {
+            double actualP = Gamma.regularizedGammaP(a, x);
+            double actualQ = Gamma.regularizedGammaQ(a, x);
+            Assert.AreEqual(expected, actualP, 10e-15D);
+            Assert.AreEqual(actualP, 1.0 - actualQ, 10e-15D);
+        }
 
-    private void testRegularizedGamma(double expected, double a, double x) {
-        double actualP = Gamma.regularizedGammaP(a, x);
-        double actualQ = Gamma.regularizedGammaQ(a, x);
-        Assert.AreEqual(expected, actualP, 10e-15D);
-        Assert.AreEqual(actualP, 1.0 - actualQ, 10e-15D);
-    }
+        private void testLogGamma(double expected, double x)
+        {
+            double actual = Gamma.logGamma(x);
+            Assert.AreEqual(expected, actual, 10e-15D);
+        }
 
-    private void testLogGamma(double expected, double x) {
-        double actual = Gamma.logGamma(x);
-        Assert.AreEqual(expected, actual, 10e-15D);
-    }
+        [Test]
+        public void testRegularizedGammaNanPositive()
+        {
+            testRegularizedGamma(Double.NaN, Double.NaN, 1.0);
+        }
 
-    [Test]
-    public void testRegularizedGammaNanPositive() {
-        testRegularizedGamma(Double.NaN, Double.NaN, 1.0);
-    }
+        [Test]
+        public void testRegularizedGammaPositiveNan()
+        {
+            testRegularizedGamma(Double.NaN, 1.0, Double.NaN);
+        }
 
-    [Test]
-    public void testRegularizedGammaPositiveNan() {
-        testRegularizedGamma(Double.NaN, 1.0, Double.NaN);
-    }
+        [Test]
+        public void testRegularizedGammaNegativePositive()
+        {
+            testRegularizedGamma(Double.NaN, -1.5, 1.0);
+        }
 
-    [Test]
-    public void testRegularizedGammaNegativePositive() {
-        testRegularizedGamma(Double.NaN, -1.5, 1.0);
-    }
+        [Test]
+        public void testRegularizedGammaPositiveNegative()
+        {
+            testRegularizedGamma(Double.NaN, 1.0, -1.0);
+        }
 
-    [Test]
-    public void testRegularizedGammaPositiveNegative() {
-        testRegularizedGamma(Double.NaN, 1.0, -1.0);
-    }
+        [Test]
+        public void testRegularizedGammaZeroPositive()
+        {
+            testRegularizedGamma(Double.NaN, 0.0, 1.0);
+        }
 
-    [Test]
-    public void testRegularizedGammaZeroPositive() {
-        testRegularizedGamma(Double.NaN, 0.0, 1.0);
-    }
+        [Test]
+        public void testRegularizedGammaPositiveZero()
+        {
+            testRegularizedGamma(0.0, 1.0, 0.0);
+        }
 
-    [Test]
-    public void testRegularizedGammaPositiveZero() {
-        testRegularizedGamma(0.0, 1.0, 0.0);
-    }
+        [Test]
+        public void testRegularizedGammaPositivePositive()
+        {
+            testRegularizedGamma(0.632120558828558, 1.0, 1.0);
+        }
 
-    [Test]
-    public void testRegularizedGammaPositivePositive() {
-        testRegularizedGamma(0.632120558828558, 1.0, 1.0);
-    }
+        [Test]
+        public void testLogGammaNan()
+        {
+            testLogGamma(Double.NaN, Double.NaN);
+        }
 
-    [Test]
-    public void testLogGammaNan() {
-        testLogGamma(Double.NaN, Double.NaN);
-    }
+        [Test]
+        public void testLogGammaNegative()
+        {
+            testLogGamma(Double.NaN, -1.0);
+        }
 
-    [Test]
-    public void testLogGammaNegative() {
-        testLogGamma(Double.NaN, -1.0);
-    }
+        [Test]
+        public void testLogGammaZero()
+        {
+            testLogGamma(Double.NaN, 0.0);
+        }
 
-    [Test]
-    public void testLogGammaZero() {
-        testLogGamma(Double.NaN, 0.0);
-    }
+        [Test]
+        public void testLogGammaPositive()
+        {
+            testLogGamma(0.6931471805599457, 3.0);
+        }
 
-    [Test]
-    public void testLogGammaPositive() {
-        testLogGamma(0.6931471805599457, 3.0);
-    }
+        [Test]
+        public void testDigammaLargeArgs()
+        {
+            double eps = 1e-8;
+            Assert.AreEqual(4.6001618527380874002, Gamma.digamma(100), eps);
+            Assert.AreEqual(3.9019896734278921970, Gamma.digamma(50), eps);
+            Assert.AreEqual(2.9705239922421490509, Gamma.digamma(20), eps);
+            Assert.AreEqual(2.9958363947076465821, Gamma.digamma(20.5), eps);
+            Assert.AreEqual(2.2622143570941481605, Gamma.digamma(10.1), eps);
+            Assert.AreEqual(2.1168588189004379233, Gamma.digamma(8.8), eps);
+            Assert.AreEqual(1.8727843350984671394, Gamma.digamma(7), eps);
+            Assert.AreEqual(0.42278433509846713939, Gamma.digamma(2), eps);
+            Assert.AreEqual(-100.56088545786867450, Gamma.digamma(0.01), eps);
+            Assert.AreEqual(-4.0390398965921882955, Gamma.digamma(-0.8), eps);
+            Assert.AreEqual(4.2003210041401844726, Gamma.digamma(-6.3), eps);
+        }
 
-    [Test]
-    public void testDigammaLargeArgs() {
-        double eps = 1e-8;
-        Assert.AreEqual(4.6001618527380874002, Gamma.digamma(100), eps);
-        Assert.AreEqual(3.9019896734278921970, Gamma.digamma(50), eps);
-        Assert.AreEqual(2.9705239922421490509, Gamma.digamma(20), eps);
-        Assert.AreEqual(2.9958363947076465821, Gamma.digamma(20.5), eps);
-        Assert.AreEqual(2.2622143570941481605, Gamma.digamma(10.1), eps);
-        Assert.AreEqual(2.1168588189004379233, Gamma.digamma(8.8), eps);
-        Assert.AreEqual(1.8727843350984671394, Gamma.digamma(7), eps);
-        Assert.AreEqual(0.42278433509846713939, Gamma.digamma(2), eps);
-        Assert.AreEqual(-100.56088545786867450, Gamma.digamma(0.01), eps);
-        Assert.AreEqual(-4.0390398965921882955, Gamma.digamma(-0.8), eps);
-        Assert.AreEqual(4.2003210041401844726, Gamma.digamma(-6.3), eps);
-    }
-
-    [Test]
-    public void testDigammaSmallArgs() {
-        // values for negative powers of 10 from 1 to 30 as computed by webMathematica with 20 digits
-        // see functions.wolfram.com
-        double[] expected = {-10.423754940411076795, -100.56088545786867450, -1000.5755719318103005,
+        [Test]
+        public void testDigammaSmallArgs()
+        {
+            // values for negative powers of 10 from 1 to 30 as computed by webMathematica with 20 digits
+            // see functions.wolfram.com
+            double[] expected = {-10.423754940411076795, -100.56088545786867450, -1000.5755719318103005,
                 -10000.577051183514335, -100000.57719921568107, -1.0000005772140199687e6, -1.0000000577215500408e7,
                 -1.0000000057721564845e8, -1.0000000005772156633e9, -1.0000000000577215665e10, -1.0000000000057721566e11,
                 -1.0000000000005772157e12, -1.0000000000000577216e13, -1.0000000000000057722e14, -1.0000000000000005772e15, -1e+16,
                 -1e+17, -1e+18, -1e+19, -1e+20, -1e+21, -1e+22, -1e+23, -1e+24, -1e+25, -1e+26,
                 -1e+27, -1e+28, -1e+29, -1e+30};
-        for (double n = 1; n < 30; n++) {
-            checkRelativeError(String.Format("Test {0}: ", n), expected[(int) (n - 1)], Gamma.digamma(Math.Pow(10.0, -n)), 1e-8);
+            for (double n = 1; n < 30; n++)
+            {
+                checkRelativeError(String.Format("Test {0}: ", n), expected[(int)(n - 1)], Gamma.digamma(Math.Pow(10.0, -n)), 1e-8);
+            }
         }
-    }
 
-    [Test]
-    public void testTrigamma() {
-        double eps = 1e-8;
-        // computed using webMathematica.  For example, to compute trigamma($i) = Polygamma(1, $i), use
-        //
-        // http://functions.wolfram.com/webMathematica/Evaluated.jsp?name=PolyGamma2&plottype=0&vars={%221%22,%22$i%22}&digits=20
-        double[] data = {
+        [Test]
+        public void testTrigamma()
+        {
+            double eps = 1e-8;
+            // computed using webMathematica.  For example, to compute trigamma($i) = Polygamma(1, $i), use
+            //
+            // http://functions.wolfram.com/webMathematica/Evaluated.jsp?name=PolyGamma2&plottype=0&vars={%221%22,%22$i%22}&digits=20
+            double[] data = {
                 1e-4, 1.0000000164469368793e8,
                 1e-3, 1.0000016425331958690e6,
                 1e-2, 10001.621213528313220,
@@ -156,27 +174,28 @@ public class GammaTest {
                 50, 0.020201333226697125806,
                 100, 0.010050166663333571395
         };
-        for (int i = data.Length - 2; i >= 0; i -= 2) {
-            Assert.AreEqual(data[i + 1], Gamma.trigamma(data[i]), eps, String.Format("trigamma {0}", data[i]));
+            for (int i = data.Length - 2; i >= 0; i -= 2)
+            {
+                Assert.AreEqual(data[i + 1], Gamma.trigamma(data[i]), eps, String.Format("trigamma {0}", data[i]));
+            }
         }
-    }
 
-     /// Reference data for the {@link Gamma#logGamma(double)} function. This data
-     /// was generated with the following <a
-     /// href="http://maxima.sourceforge.net/">Maxima</a> script.
-     ///
-     /// <pre>
-     /// kill(all);
-     ///
-     /// fpprec : 64;
-     /// gamln(x) := log(gamma(x));
-     /// x : append(makelist(bfloat(i / 8), i, 1, 80),
-     ///     [0.8b0, 1b2, 1b3, 1b4, 1b5, 1b6, 1b7, 1b8, 1b9, 1b10]);
-     ///
-     /// for i : 1 while i <= length(x) do
-     ///     print("{", float(x[i]), ",", float(gamln(x[i])), "},");
-     /// </pre>
-    private static double[,] LOG_GAMMA_REF = new double[,] {
+        /// Reference data for the {@link Gamma#logGamma(double)} function. This data
+        /// was generated with the following <a
+        /// href="http://maxima.sourceforge.net/">Maxima</a> script.
+        ///
+        /// <pre>
+        /// kill(all);
+        ///
+        /// fpprec : 64;
+        /// gamln(x) := log(gamma(x));
+        /// x : append(makelist(bfloat(i / 8), i, 1, 80),
+        ///     [0.8b0, 1b2, 1b3, 1b4, 1b5, 1b6, 1b7, 1b8, 1b9, 1b10]);
+        ///
+        /// for i : 1 while i <= length(x) do
+        ///     print("{", float(x[i]), ",", float(gamln(x[i])), "},");
+        /// </pre>
+        private static double[,] LOG_GAMMA_REF = new double[,] {
         { 0.125 , 2.019418357553796 },
         { 0.25 , 1.288022524698077 },
         { 0.375 , .8630739822706475 },
@@ -311,53 +330,60 @@ public class GammaTest {
         { 1.0e+10 , 2.202585092888106e+11 },
     };
 
-    [Test]
-    public void testLogGamma() {
-        int ulps = 3;
-        for (int i = 0; i < LOG_GAMMA_REF.GetLength(0); i++) {
-			double x = LOG_GAMMA_REF[i,0];
-			double expected = LOG_GAMMA_REF[i,1];
-            double actual = Gamma.logGamma(x);
-            double tol;
-            if (expected == 0.0) {
-                tol = 1E-15;
-            } else {
-				tol = ulps * BetaTest.ulp(expected);
+        [Test]
+        public void testLogGamma()
+        {
+            int ulps = 3;
+            for (int i = 0; i < LOG_GAMMA_REF.GetLength(0); i++)
+            {
+                double x = LOG_GAMMA_REF[i, 0];
+                double expected = LOG_GAMMA_REF[i, 1];
+                double actual = Gamma.logGamma(x);
+                double tol;
+                if (expected == 0.0)
+                {
+                    tol = 1E-15;
+                }
+                else
+                {
+                    tol = ulps * BetaTest.ulp(expected);
+                }
+                Assert.AreEqual(expected, actual, tol, x.ToString());
             }
-			Assert.AreEqual(expected, actual, tol, x.ToString() );
         }
-    }
 
-    [Test]
-    public void testLogGammaPrecondition1() {
-        Assert.True(Double.IsNaN(Gamma.logGamma(0.0)));
-    }
+        [Test]
+        public void testLogGammaPrecondition1()
+        {
+            Assert.True(Double.IsNaN(Gamma.logGamma(0.0)));
+        }
 
-    [Test]
-    public void testLogGammaPrecondition2() {
-        Assert.True(Double.IsNaN(Gamma.logGamma(-1.0)));
-    }
+        [Test]
+        public void testLogGammaPrecondition2()
+        {
+            Assert.True(Double.IsNaN(Gamma.logGamma(-1.0)));
+        }
 
-     /// <p>
-     /// Reference values for the {@link Gamma#invGamma1pm1(double)} method.
-     /// These values were generated with the following <a
-     /// href="http://maxima.sourceforge.net/">Maxima</a> script
-     /// </p>
-     ///
-     /// <pre>
-     /// kill(all);
-     ///
-     /// fpprec : 64;
-     /// gam1(x) := 1 / gamma(1 + x) - 1;
-     /// x : makelist(bfloat(i / 8), i, -4, 12);
-     ///
-     /// for i : 1 while i <= length(x) do print("{",
-     ///                                         float(x[i]),
-     ///                                         ",",
-     ///                                         float(gam1(x[i])),
-     ///                                         "},");
-     /// </pre>
-    private static double[,] INV_GAMMA1P_M1_REF = new double [,] {
+        /// <p>
+        /// Reference values for the {@link Gamma#invGamma1pm1(double)} method.
+        /// These values were generated with the following <a
+        /// href="http://maxima.sourceforge.net/">Maxima</a> script
+        /// </p>
+        ///
+        /// <pre>
+        /// kill(all);
+        ///
+        /// fpprec : 64;
+        /// gam1(x) := 1 / gamma(1 + x) - 1;
+        /// x : makelist(bfloat(i / 8), i, -4, 12);
+        ///
+        /// for i : 1 while i <= length(x) do print("{",
+        ///                                         float(x[i]),
+        ///                                         ",",
+        ///                                         float(gam1(x[i])),
+        ///                                         "},");
+        /// </pre>
+        private static double[,] INV_GAMMA1P_M1_REF = new double[,] {
         { -0.5 , -.4358104164522437 },
         { -0.375 , -.3029021533379859 },
         { -0.25 , -0.183951060901737 },
@@ -377,34 +403,38 @@ public class GammaTest {
         { 1.5 , -0.247747221936325 },
     };
 
-    [Test]
-    public void testInvGamma1pm1() {
+        [Test]
+        public void testInvGamma1pm1()
+        {
 
-        int ulps = 3;
-        for (int i = 0; i < INV_GAMMA1P_M1_REF.GetLength(0); i++) {
-			double x = INV_GAMMA1P_M1_REF[i,0];
-			double expected = INV_GAMMA1P_M1_REF[i,1];
-            double actual = Gamma.invGamma1pm1(x);
-            double tol = ulps * BetaTest.ulp(expected);
-			Assert.AreEqual(expected, actual, tol, Convert.ToString(x));
+            int ulps = 3;
+            for (int i = 0; i < INV_GAMMA1P_M1_REF.GetLength(0); i++)
+            {
+                double x = INV_GAMMA1P_M1_REF[i, 0];
+                double expected = INV_GAMMA1P_M1_REF[i, 1];
+                double actual = Gamma.invGamma1pm1(x);
+                double tol = ulps * BetaTest.ulp(expected);
+                Assert.AreEqual(expected, actual, tol, Convert.ToString(x));
+            }
         }
-    }
 
-    [Test]
-	[ExpectedException(typeof(ArgumentException))]
-    public void testInvGamma1pm1Precondition1() {
+        [Test]
+        //[ExpectedException(typeof(ArgumentException))]
+        public void testInvGamma1pm1Precondition1()
+        {
 
-        Gamma.invGamma1pm1(-0.51);
-    }
+            Gamma.invGamma1pm1(-0.51);
+        }
 
-    [Test]
-	[ExpectedException(typeof(ArgumentException))]
-    public void testInvGamma1pm1Precondition2() {
+        [Test]
+        //[ExpectedException(typeof(ArgumentException))]
+        public void testInvGamma1pm1Precondition2()
+        {
 
-        Gamma.invGamma1pm1(1.51);
-    }
+            Gamma.invGamma1pm1(1.51);
+        }
 
-    private static double[,] LOG_GAMMA1P_REF = new double[,] {
+        private static double[,] LOG_GAMMA1P_REF = new double[,] {
         { - 0.5 , .5723649429247001 },
         { - 0.375 , .3608294954889402 },
         { - 0.25 , .2032809514312954 },
@@ -424,52 +454,56 @@ public class GammaTest {
         { 1.5 , .2846828704729192 },
     };
 
-    [Test]
-    public void testLogGamma1p() {
+        [Test]
+        public void testLogGamma1p()
+        {
 
-        int ulps = 3;
-        for (int i = 0; i < LOG_GAMMA1P_REF.GetLength(0); i++) {
-			double x = LOG_GAMMA1P_REF[i,0];
-			double expected = LOG_GAMMA1P_REF[i,1];
-            double actual = Gamma.logGamma1p(x);
-			double tol = ulps * BetaTest.ulp(expected);
-            Assert.AreEqual(expected, actual, tol, Convert.ToString(x));
+            int ulps = 3;
+            for (int i = 0; i < LOG_GAMMA1P_REF.GetLength(0); i++)
+            {
+                double x = LOG_GAMMA1P_REF[i, 0];
+                double expected = LOG_GAMMA1P_REF[i, 1];
+                double actual = Gamma.logGamma1p(x);
+                double tol = ulps * BetaTest.ulp(expected);
+                Assert.AreEqual(expected, actual, tol, Convert.ToString(x));
+            }
         }
-    }
 
-    [Test]
-	[ExpectedException(typeof(ArgumentException))]
-    public void testLogGamma1pPrecondition1() {
+        [Test]
+        //[ExpectedException(typeof(ArgumentException))]
+        public void testLogGamma1pPrecondition1()
+        {
 
-        Gamma.logGamma1p(-0.51);
-    }
+            Gamma.logGamma1p(-0.51);
+        }
 
-    [Test]
-	[ExpectedException(typeof(ArgumentException))]
-    public void testLogGamma1pPrecondition2() {
+        [Test]
+        //[ExpectedException(typeof(ArgumentException))]
+        public void testLogGamma1pPrecondition2()
+        {
 
-        Gamma.logGamma1p(1.51);
-    }
+            Gamma.logGamma1p(1.51);
+        }
 
-     /// Reference data for the {@link Gamma#gamma(double)} function. This
-     /// data was generated with the following <a
-     /// href="http://maxima.sourceforge.net/">Maxima</a> script.
-     ///
-     /// <pre>
-     /// kill(all);
-     ///
-     /// fpprec : 64;
-     ///
-     /// EPSILON : 10**(-fpprec + 1);
-     /// isInteger(x) := abs(x - floor(x)) <= EPSILON * abs(x);
-     ///
-     /// x : makelist(bfloat(i / 8), i, -160, 160);
-     /// x : append(x, makelist(bfloat(i / 2), i, 41, 200));
-     ///
-     /// for i : 1 while i <= length(x) do if not(isInteger(x[i])) then
-     ///     print("{", float(x[i]), ",", float(gamma(x[i])), "},");
-     /// </pre>
-    private static double[,] GAMMA_REF = new double[,] {
+        /// Reference data for the {@link Gamma#gamma(double)} function. This
+        /// data was generated with the following <a
+        /// href="http://maxima.sourceforge.net/">Maxima</a> script.
+        ///
+        /// <pre>
+        /// kill(all);
+        ///
+        /// fpprec : 64;
+        ///
+        /// EPSILON : 10**(-fpprec + 1);
+        /// isInteger(x) := abs(x - floor(x)) <= EPSILON * abs(x);
+        ///
+        /// x : makelist(bfloat(i / 8), i, -160, 160);
+        /// x : append(x, makelist(bfloat(i / 2), i, 41, 200));
+        ///
+        /// for i : 1 while i <= length(x) do if not(isInteger(x[i])) then
+        ///     print("{", float(x[i]), ",", float(gamma(x[i])), "},");
+        /// </pre>
+        private static double[,] GAMMA_REF = new double[,] {
         { - 19.875 , 4.920331854832504e-18 },
         { - 19.75 , 3.879938752480031e-18 },
         { - 19.625 , 4.323498423815027e-18 },
@@ -932,45 +966,53 @@ public class GammaTest {
         { 100.0 , 9.33262154439441e+155 },
     };
 
-    [Test]
-    public void testGamma() {
-
-        for (int i = 0; i < GAMMA_REF.GetLength(0); i++) {
-			double x = GAMMA_REF[i,0];
-			double expected = GAMMA_REF[i,1];
-            double actual = Gamma.gamma(x);
-            double absX = Math.Abs(x);
-            int ulps;
-            if (absX <= 8.0) {
-                ulps = 3;
-            } else if (absX <= 20.0) {
-                ulps = 5;
-            } else if (absX <= 30.0) {
-                ulps = 50;
-            } else if (absX <= 50.0) {
-                ulps = 180;
-            } else {
-                ulps = 500;
+        [Test]
+        public void testGamma()
+        {
+            for (int i = 0; i < GAMMA_REF.GetLength(0); i++)
+            {
+                double x = GAMMA_REF[i, 0];
+                double expected = GAMMA_REF[i, 1];
+                double actual = Gamma.gamma(x);
+                double absX = Math.Abs(x);
+                int ulps;
+                if (absX <= 8.0)
+                {
+                    ulps = 3;
+                }
+                else if (absX <= 20.0)
+                {
+                    ulps = 5;
+                }
+                else if (absX <= 30.0)
+                {
+                    ulps = 50;
+                }
+                else if (absX <= 50.0)
+                {
+                    ulps = 180;
+                }
+                else
+                {
+                    ulps = 500;
+                }
+                double tol = ulps * BetaTest.ulp(expected);
+                Assert.AreEqual(expected, actual, tol, Convert.ToString(x));
             }
-            double tol = ulps * BetaTest.ulp(expected);
-            Assert.AreEqual(expected, actual, tol, Convert.ToString(x));
+        }
+
+        [Test]
+        public void testGammaNegativeInteger()
+        {
+            for (int i = -100; i <= 0; i++)
+            {
+                Assert.True(Double.IsNaN(Gamma.gamma(i)));
+            }
+        }
+
+        private void checkRelativeError(string msg, double expected, double actual, double tolerance)
+        {
+            Assert.AreEqual(expected, actual, Math.Abs(tolerance * actual), msg);
         }
     }
-
-    [Test]
-    public void testGammaNegativeInteger() {
-
-        for (int i = -100; i <= 0; i++) {
-            Assert.True( Double.IsNaN(Gamma.gamma(i)));
-        }
-    }
-
-    private void checkRelativeError(string msg, double expected, double actual,
-                                    double tolerance) {
-
-        Assert.AreEqual( expected, actual, Math.Abs(tolerance * actual),  msg);
-    }
-}
-
-
 }
