@@ -21,36 +21,31 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 
-namespace NReco.CF.Taste.Impl.Recommender {
-
-/// <summary>
-/// Returns all items that have not been rated by the user and that were preferred by another user
-/// that has preferred at least one item that the current user has preferred too.
-/// </summary>
-public sealed class PreferredItemsNeighborhoodCandidateItemsStrategy : AbstractCandidateItemsStrategy {
-
-  protected override FastIDSet doGetCandidateItems(long[] preferredItemIDs, IDataModel dataModel) {
-    FastIDSet possibleItemsIDs = new FastIDSet();
-    foreach (long itemID in preferredItemIDs) {
-      IPreferenceArray itemPreferences = dataModel.GetPreferencesForItem(itemID);
-      int numUsersPreferringItem = itemPreferences.Length();
-      for (int index = 0; index < numUsersPreferringItem; index++) {
-        possibleItemsIDs.AddAll(dataModel.GetItemIDsFromUser(itemPreferences.GetUserID(index)));
-      }
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// <summary>
+    /// Returns all items that have not been rated by the user and that were preferred by another user
+    /// that has preferred at least one item that the current user has preferred too.
+    /// </summary>
+    public sealed class PreferredItemsNeighborhoodCandidateItemsStrategy : AbstractCandidateItemsStrategy
+    {
+        protected override FastIDSet doGetCandidateItems(long[] preferredItemIDs, IDataModel dataModel)
+        {
+            FastIDSet possibleItemsIDs = new FastIDSet();
+            foreach (long itemID in preferredItemIDs)
+            {
+                IPreferenceArray itemPreferences = dataModel.GetPreferencesForItem(itemID);
+                int numUsersPreferringItem = itemPreferences.Length();
+                for (int index = 0; index < numUsersPreferringItem; index++)
+                {
+                    possibleItemsIDs.AddAll(dataModel.GetItemIDsFromUser(itemPreferences.GetUserID(index)));
+                }
+            }
+            possibleItemsIDs.RemoveAll(preferredItemIDs);
+            return possibleItemsIDs;
+        }
     }
-    possibleItemsIDs.RemoveAll(preferredItemIDs);
-    return possibleItemsIDs;
-  }
-
-}
-
 }

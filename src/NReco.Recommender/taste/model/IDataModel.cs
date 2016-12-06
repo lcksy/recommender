@@ -22,22 +22,20 @@
  */
 
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 
-namespace NReco.CF.Taste.Model {
-
+namespace NReco.CF.Taste.Model 
+{
 	/// <summary>
 	/// Implementations represent a repository of information about users and their associated <see cref="IPreference"/>s
 	/// for items.
 	/// </summary>
-	public interface IDataModel : IRefreshable {
-  
+	public interface IDataModel : IRefreshable 
+    {
 		/// <summary>
 		/// All user IDs in the model, in order
 		/// </summary>
@@ -51,7 +49,6 @@ namespace NReco.CF.Taste.Model {
 		/// <remarks>Throws NReco.CF.Taste.Common.NoSuchUserException if the user does not exist</remarks>
 		IPreferenceArray GetPreferencesFromUser(long userID);
 
-
 		/// <summary>
 		/// Get list of item IDs for specified user ID
 		/// </summary>
@@ -64,7 +61,6 @@ namespace NReco.CF.Taste.Model {
 		/// </summary>
 		/// <returns><see cref="IEnumerator"/> of all item IDs in the model, in order</returns>
 		IEnumerator<long> GetItemIDs();
-
 
 		/// <summary>
 		/// Get all existing preferences by specified item ID
@@ -127,7 +123,6 @@ namespace NReco.CF.Taste.Model {
 		/// throws NReco.CF.Taste.Common.NoSuchUserException if the user does not exist.
 		/// </remarks>
 		void SetPreference(long userID, long itemID, float value);
-
   
 		/// <summary>
 		/// Removes a particular preference for a user.
@@ -163,7 +158,5 @@ namespace NReco.CF.Taste.Model {
 		/// Get minimum preference value that is possible in the current problem domain being evaluated.
 		/// </summary>
 		float GetMinPreference();
-  
 	}
-
 }

@@ -21,19 +21,16 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
-namespace NReco.CF.Taste.Model {
+namespace NReco.CF.Taste.Model 
+{
 	/// <summary>
 	/// An alternate representation of an array of {@link Preference}.
 	/// Implementations, in theory, can produce a more memory-efficient representation.
 	/// </summary>
-	public interface IPreferenceArray : IEnumerable<IPreference> {
-
+	public interface IPreferenceArray : IEnumerable<IPreference> 
+    {
 		/// <summary>
 		/// Size of length of the "array"
 		/// </summary>
@@ -141,7 +138,5 @@ namespace NReco.CF.Taste.Model {
 		/// <param name="itemID">item ID</param>
 		/// <returns>true if array contains a preference with given item ID</returns>
 		bool HasPrefWithItemID(long itemID);
-  
 	}
-
 }

@@ -22,11 +22,7 @@
  *  OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 namespace NReco.CF.Taste.Common
 {

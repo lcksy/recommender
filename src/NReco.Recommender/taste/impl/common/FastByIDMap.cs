@@ -29,13 +29,12 @@ using System.IO;
 
 using NReco.CF;
 
-
 namespace NReco.CF.Taste.Impl.Common
 {
     /// @see FastMap
     /// @see FastIDSet
     [Serializable]
-    public sealed class FastByIDMap<V> /*: ICloneable*/ 
+    public sealed class FastByIDMap<T> /*: ICloneable*/ 
     {
         public const int NO_MAX_SIZE = Int32.MaxValue;
         private static float DEFAULT_LOAD_FACTOR = 1.5f;
@@ -45,7 +44,7 @@ namespace NReco.CF.Taste.Impl.Common
         private static long NULL = Int64.MinValue;
 
         private long[] keys;
-        private V[] values;
+        private T[] values;
         private float loadFactor;
         private int numEntries;
         private int numSlotsUsed;
@@ -95,7 +94,7 @@ namespace NReco.CF.Taste.Impl.Common
             keys = new long[hashSize];
 
             ArrayFill(keys, NULL);
-            values = new V[hashSize];
+            values = new T[hashSize];
             this.maxSize = maxSize;
             this.countingAccesses = maxSize != Int32.MaxValue;
             this.recentlyAccessed = countingAccesses ? new BitSet((uint)hashSize) : null;
@@ -150,11 +149,11 @@ namespace NReco.CF.Taste.Impl.Common
             return key == currentKey ? index : addIndex;
         }
 
-        public V Get(long key)
+        public T Get(long key)
         {
             if (key == NULL)
             {
-                return default(V);
+                return default(T);
             }
             int index = find(key);
             if (countingAccesses)
@@ -195,7 +194,7 @@ namespace NReco.CF.Taste.Impl.Common
             return false;
         }
 
-        public V Put(long key, V value)
+        public T Put(long key, T value)
         {
             //Preconditions.checkArgument(key != NULL && key != REMOVED);
             //Preconditions.checkNotNull(value);
@@ -218,7 +217,7 @@ namespace NReco.CF.Taste.Impl.Common
             long keyIndex = keys[index];
             if (keyIndex == key)
             {
-                V oldValue = values[index];
+                T oldValue = values[index];
                 values[index] = value;
                 return oldValue;
             }
@@ -235,7 +234,7 @@ namespace NReco.CF.Taste.Impl.Common
             {
                 numSlotsUsed++;
             }
-            return default(V);
+            return default(T);
         }
 
         private void clearStaleEntry(int index)
@@ -267,26 +266,26 @@ namespace NReco.CF.Taste.Impl.Common
             // Delete the entry
             keys[index] = REMOVED;
             numEntries--;
-            values[index] = default(V);
+            values[index] = default(T);
         }
 
-        public V Remove(long key)
+        public T Remove(long key)
         {
             if (key == NULL || key == REMOVED)
             {
-                return default(V);
+                return default(T);
             }
             int index = find(key);
             if (keys[index] == NULL)
             {
-                return default(V);
+                return default(T);
             }
             else
             {
                 keys[index] = REMOVED;
                 numEntries--;
-                V oldValue = values[index];
-                values[index] = default(V);
+                T oldValue = values[index];
+                values[index] = default(T);
                 // don't decrement numSlotsUsed
                 return oldValue;
             }
@@ -298,18 +297,18 @@ namespace NReco.CF.Taste.Impl.Common
             numEntries = 0;
             numSlotsUsed = 0;
             ArrayFill(keys, NULL);
-            ArrayFill(values, default(V));
+            ArrayFill(values, default(T));
             if (countingAccesses)
             {
                 recentlyAccessed.Clear();
             }
         }
 
-        public IEnumerable<KeyValuePair<long, V>> EntrySet()
+        public IEnumerable<KeyValuePair<long, T>> EntrySet()
         {
             for (int i = 0; i < keys.Length && i < values.Length; i++)
                 if (values[i] != null)
-                    yield return new KeyValuePair<long, V>(keys[i], values[i]);
+                    yield return new KeyValuePair<long, T>(keys[i], values[i]);
         }
 
         public IEnumerable<long> Keys
@@ -322,7 +321,7 @@ namespace NReco.CF.Taste.Impl.Common
             }
         }
 
-        public IEnumerable<V> Values
+        public IEnumerable<T> Values
         {
             get
             {
@@ -358,7 +357,7 @@ namespace NReco.CF.Taste.Impl.Common
         private void rehash(int newHashSize)
         {
             long[] oldKeys = keys;
-            V[] oldValues = values;
+            T[] oldValues = values;
             numEntries = 0;
             numSlotsUsed = 0;
             if (countingAccesses)
@@ -367,7 +366,7 @@ namespace NReco.CF.Taste.Impl.Common
             }
             keys = new long[newHashSize];
             ArrayFill(keys, NULL);
-            values = new V[newHashSize];
+            values = new T[newHashSize];
             int length = oldKeys.Length;
             for (int i = 0; i < length; i++)
             {
@@ -389,7 +388,7 @@ namespace NReco.CF.Taste.Impl.Common
             {
                 throw new InvalidOperationException();
             }
-            values[lastNext] = default(V);
+            values[lastNext] = default(T);
             keys[lastNext] = REMOVED;
             numEntries--;
         }
@@ -446,13 +445,13 @@ namespace NReco.CF.Taste.Impl.Common
 
         public override bool Equals(object other)
         {
-            if (!(other is FastByIDMap<V>))
+            if (!(other is FastByIDMap<T>))
             {
                 return false;
             }
-            FastByIDMap<V> otherMap = (FastByIDMap<V>)other;
+            FastByIDMap<T> otherMap = (FastByIDMap<T>)other;
             long[] otherKeys = otherMap.keys;
-            V[] otherValues = otherMap.values;
+            T[] otherValues = otherMap.values;
             int length = keys.Length;
             int otherLength = otherKeys.Length;
             int max = Math.Min(length, otherLength);

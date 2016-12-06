@@ -21,37 +21,35 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 using NReco.CF.Taste.Recommender;
 
-namespace NReco.CF.Taste.Impl.Recommender {
-
-/// <summary>
-/// Abstract base implementation for retrieving candidate items to recommend
-/// </summary>
-public abstract class AbstractCandidateItemsStrategy : ICandidateItemsStrategy,
-    IMostSimilarItemsCandidateItemsStrategy {
-
-  public FastIDSet GetCandidateItems(long userID, IPreferenceArray preferencesFromUser, IDataModel dataModel)
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// <summary>
+    /// Abstract base implementation for retrieving candidate items to recommend
+    /// </summary>
+    public abstract class AbstractCandidateItemsStrategy : ICandidateItemsStrategy,
+        IMostSimilarItemsCandidateItemsStrategy
     {
-    return doGetCandidateItems(preferencesFromUser.GetIDs(), dataModel);
-  }
+        public FastIDSet GetCandidateItems(long userID, IPreferenceArray preferencesFromUser, IDataModel dataModel)
+        {
+            return doGetCandidateItems(preferencesFromUser.GetIDs(), dataModel);
+        }
 
-  public FastIDSet GetCandidateItems(long[] itemIDs, IDataModel dataModel) {
-    return doGetCandidateItems(itemIDs, dataModel);
-  }
+        public FastIDSet GetCandidateItems(long[] itemIDs, IDataModel dataModel)
+        {
+            return doGetCandidateItems(itemIDs, dataModel);
+        }
 
-  protected abstract FastIDSet doGetCandidateItems(long[] preferredItemIDs, IDataModel dataModel) ;
+        protected abstract FastIDSet doGetCandidateItems(long[] preferredItemIDs, IDataModel dataModel);
 
-  public virtual void Refresh(IList<IRefreshable> alreadyRefreshed) {
-  }
-}
-
+        public virtual void Refresh(IList<IRefreshable> alreadyRefreshed)
+        {
+        }
+    }
 }

@@ -21,11 +21,7 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
@@ -33,49 +29,51 @@ using NReco.CF.Taste.Model;
 using NReco.CF.Taste.Neighborhood;
 using NReco.CF.Taste.Similarity;
 
+namespace NReco.CF.Taste.Impl.Neighborhood
+{
+    /// <summary>
+    /// Contains methods and resources useful to all classes in this package.
+    /// </summary>
+    public abstract class AbstractUserNeighborhood : IUserNeighborhood
+    {
+        private IUserSimilarity userSimilarity;
+        private IDataModel dataModel;
+        private double samplingRate;
+        private RefreshHelper refreshHelper;
 
-namespace NReco.CF.Taste.Impl.Neighborhood {
+        public AbstractUserNeighborhood(IUserSimilarity userSimilarity, IDataModel dataModel, double samplingRate)
+        {
+            //Preconditions.checkArgument(userSimilarity != null, "userSimilarity is null");
+            //Preconditions.checkArgument(dataModel != null, "dataModel is null");
+            //Preconditions.checkArgument(samplingRate > 0.0 && samplingRate <= 1.0, "samplingRate must be in (0,1]");
+            this.userSimilarity = userSimilarity;
+            this.dataModel = dataModel;
+            this.samplingRate = samplingRate;
+            this.refreshHelper = new RefreshHelper(null);
+            this.refreshHelper.AddDependency(this.dataModel);
+            this.refreshHelper.AddDependency(this.userSimilarity);
+        }
 
-/// <summary>
-/// Contains methods and resources useful to all classes in this package.
-/// </summary>
-public abstract class AbstractUserNeighborhood : IUserNeighborhood {
-  
-  private IUserSimilarity userSimilarity;
-  private IDataModel dataModel;
-  private double samplingRate;
-  private RefreshHelper refreshHelper;
-  
-  public AbstractUserNeighborhood(IUserSimilarity userSimilarity, IDataModel dataModel, double samplingRate) {
-    //Preconditions.checkArgument(userSimilarity != null, "userSimilarity is null");
-    //Preconditions.checkArgument(dataModel != null, "dataModel is null");
-    //Preconditions.checkArgument(samplingRate > 0.0 && samplingRate <= 1.0, "samplingRate must be in (0,1]");
-    this.userSimilarity = userSimilarity;
-    this.dataModel = dataModel;
-    this.samplingRate = samplingRate;
-    this.refreshHelper = new RefreshHelper(null);
-    this.refreshHelper.AddDependency(this.dataModel);
-    this.refreshHelper.AddDependency(this.userSimilarity);
-  }
+        public abstract long[] GetUserNeighborhood(long userID);
 
-  public abstract long[] GetUserNeighborhood(long userID);
-  
-  public virtual IUserSimilarity getUserSimilarity() {
-    return userSimilarity;
-  }
-  
-  public virtual IDataModel getDataModel() {
-    return dataModel;
-  }
-  
-  public virtual double getSamplingRate() {
-    return samplingRate;
-  }
-  
-  public virtual void Refresh(IList<IRefreshable> alreadyRefreshed) {
-    refreshHelper.Refresh(alreadyRefreshed);
-  }
-  
-}
+        public virtual IUserSimilarity getUserSimilarity()
+        {
+            return userSimilarity;
+        }
 
+        public virtual IDataModel getDataModel()
+        {
+            return dataModel;
+        }
+
+        public virtual double getSamplingRate()
+        {
+            return samplingRate;
+        }
+
+        public virtual void Refresh(IList<IRefreshable> alreadyRefreshed)
+        {
+            refreshHelper.Refresh(alreadyRefreshed);
+        }
+    }
 }

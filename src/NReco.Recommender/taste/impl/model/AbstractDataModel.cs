@@ -22,76 +22,77 @@
  */
 
 using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using NReco.CF.Taste.Model;
+
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
+using NReco.CF.Taste.Model;
 
-namespace NReco.CF.Taste.Impl.Model {
+namespace NReco.CF.Taste.Impl.Model
+{
+    /// <summary>
+    /// Contains some features common to all implementations.
+    /// </summary>
+    [Serializable]
+    public abstract class AbstractDataModel : IDataModel
+    {
+        private float maxPreference;
+        private float minPreference;
 
-/// <summary>
-/// Contains some features common to all implementations.
-/// </summary>
-[Serializable]
-public abstract class AbstractDataModel : IDataModel {
+        protected AbstractDataModel()
+        {
+            maxPreference = float.NaN;
+            minPreference = float.NaN;
+        }
 
-  private float maxPreference;
-  private float minPreference;
+        public abstract IEnumerator<long> GetUserIDs();
 
-  protected AbstractDataModel() {
-    maxPreference = float.NaN;
-    minPreference = float.NaN;
-  }
+        public abstract IPreferenceArray GetPreferencesFromUser(long userID);
 
-  public abstract IEnumerator<long> GetUserIDs();
+        public abstract FastIDSet GetItemIDsFromUser(long userID);
 
-  public abstract IPreferenceArray GetPreferencesFromUser(long userID);
+        public abstract IEnumerator<long> GetItemIDs();
 
-  public abstract FastIDSet GetItemIDsFromUser(long userID);
+        public abstract void Refresh(IList<IRefreshable> alreadyRefreshed);
 
-  public abstract IEnumerator<long> GetItemIDs();
+        public abstract IPreferenceArray GetPreferencesForItem(long itemID);
 
-  public abstract void Refresh(IList<IRefreshable> alreadyRefreshed);
+        public abstract int GetNumItems();
 
-  public abstract IPreferenceArray GetPreferencesForItem(long itemID);
+        public abstract int GetNumUsers();
 
-  public abstract int GetNumItems();
+        public abstract int GetNumUsersWithPreferenceFor(long itemID);
 
-  public abstract int GetNumUsers();
+        public abstract int GetNumUsersWithPreferenceFor(long itemID1, long itemID2);
 
-  public abstract int GetNumUsersWithPreferenceFor(long itemID);
+        public abstract float? GetPreferenceValue(long userID, long itemID);
 
-  public abstract int GetNumUsersWithPreferenceFor(long itemID1, long itemID2);
+        public abstract DateTime? GetPreferenceTime(long userID, long itemID);
 
-  public abstract float? GetPreferenceValue(long userID, long itemID);
+        public abstract bool HasPreferenceValues();
 
-  public abstract DateTime? GetPreferenceTime(long userID, long itemID);
+        public abstract void SetPreference(long userID, long itemID, float value);
 
-  public abstract bool HasPreferenceValues();
+        public abstract void RemovePreference(long userID, long itemID);
 
-  public abstract void SetPreference(long userID, long itemID, float value);
+        public virtual float GetMaxPreference()
+        {
+            return maxPreference;
+        }
 
-  public abstract void RemovePreference(long userID, long itemID);
+        protected virtual void setMaxPreference(float maxPreference)
+        {
+            this.maxPreference = maxPreference;
+        }
 
-  public virtual float GetMaxPreference() {
-    return maxPreference;
-  }
+        public virtual float GetMinPreference()
+        {
+            return minPreference;
+        }
 
-  protected virtual void setMaxPreference(float maxPreference) {
-    this.maxPreference = maxPreference;
-  }
-
-  public virtual float GetMinPreference() {
-    return minPreference;
-  }
-
-  protected virtual void setMinPreference(float minPreference) {
-    this.minPreference = minPreference;
-  }
-
-}
-
+        protected virtual void setMinPreference(float minPreference)
+        {
+            this.minPreference = minPreference;
+        }
+    }
 }

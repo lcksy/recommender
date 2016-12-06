@@ -30,14 +30,14 @@ using System.IO;
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Model;
 
-namespace NReco.CF.Taste.Recommender {
-
+namespace NReco.CF.Taste.Recommender 
+{
 	/// <summary>
 	/// Implementations of this interface can recommend items for a user. Implementations will likely take
 	/// advantage of several classes in other packages here to compute this.
 	/// </summary>
-	public interface IRecommender : IRefreshable {
-  
+	public interface IRecommender : IRefreshable 
+    {
 		/// <summary>
 		/// Recommend desired number of items for given user ID
 		/// </summary>
@@ -88,7 +88,5 @@ namespace NReco.CF.Taste.Recommender {
 		/// </summary>
 		/// <returns>underlying <see cref="IDataModel"/> used by this <see cref="IRecommender"/> implementation</returns>
 		IDataModel GetDataModel();
-
 	}
-
 }

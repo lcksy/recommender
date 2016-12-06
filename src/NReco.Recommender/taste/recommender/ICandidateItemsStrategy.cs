@@ -21,25 +21,18 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 
-namespace NReco.CF.Taste.Recommender {
-
-/// <summary>Used to retrieve all items that could possibly be recommended to the user</summary>
-public interface ICandidateItemsStrategy : IRefreshable {
-
-	/// <summary>
-	/// Get IDs of all items that could be recommended to the user
-	/// </summary>
-	FastIDSet GetCandidateItems(long userID, IPreferenceArray preferencesFromUser, IDataModel dataModel);
-  
-}
-
+namespace NReco.CF.Taste.Recommender
+{
+    /// <summary>Used to retrieve all items that could possibly be recommended to the user</summary>
+    public interface ICandidateItemsStrategy : IRefreshable
+    {
+        /// <summary>
+        /// Get IDs of all items that could be recommended to the user
+        /// </summary>
+        FastIDSet GetCandidateItems(long userID, IPreferenceArray preferencesFromUser, IDataModel dataModel);
+    }
 }

@@ -21,23 +21,17 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 
-namespace NReco.CF.Taste.Recommender {
-
-	/// <summary>
-	/// Used to retrieve all items that could possibly be similar
-	/// </summary>
-	public interface IMostSimilarItemsCandidateItemsStrategy : IRefreshable {
-
-		FastIDSet GetCandidateItems(long[] itemIDs, IDataModel dataModel) ;
-	}
-
+namespace NReco.CF.Taste.Recommender
+{
+    /// <summary>
+    /// Used to retrieve all items that could possibly be similar
+    /// </summary>
+    public interface IMostSimilarItemsCandidateItemsStrategy : IRefreshable
+    {
+        FastIDSet GetCandidateItems(long[] itemIDs, IDataModel dataModel);
+    }
 }

@@ -21,14 +21,14 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-namespace NReco.CF.Taste.Model {
-
+namespace NReco.CF.Taste.Model 
+{
 	/// <summary>
 	/// A <see cref="IPreference"/> encapsulates an item and a preference value, which indicates the strength of the
 	/// preference for it. <see cref="IPreference"/>s are associated to users.
 	/// </summary>
-	public interface IPreference {
-  
+	public interface IPreference 
+    {
 		/// <summary>
 		/// ID of user who prefers the item 
 		/// </summary>
@@ -50,7 +50,5 @@ namespace NReco.CF.Taste.Model {
 		/// </summary>
 		/// <param name="value">new preference</param>
 		void SetValue(float value);
-  
 	}
-
 }
