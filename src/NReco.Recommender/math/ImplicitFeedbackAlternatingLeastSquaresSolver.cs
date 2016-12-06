@@ -31,12 +31,10 @@ using NReco.Math3;
 
 namespace NReco.Math3.Als
 {
-
     /// see <a href="http://research.yahoo.com/pub/2433">Collaborative Filtering for Implicit Feedback Datasets</a> 
     // warining: no unit tests for this class
     public class ImplicitFeedbackAlternatingLeastSquaresSolver
     {
-
         private int numFeatures;
         private double alpha;
         private double lambda;
@@ -44,8 +42,7 @@ namespace NReco.Math3.Als
         private IDictionary<int, double[]> Y;
         private double[,] YtransposeY;
 
-        public ImplicitFeedbackAlternatingLeastSquaresSolver(int numFeatures, double lambda, double alpha,
-            IDictionary<int, double[]> Y)
+        public ImplicitFeedbackAlternatingLeastSquaresSolver(int numFeatures, double lambda, double alpha, IDictionary<int, double[]> Y)
         {
             this.numFeatures = numFeatures;
             this.lambda = lambda;

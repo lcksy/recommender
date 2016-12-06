@@ -30,7 +30,6 @@ using NReco.Math3.Exception;
 
 namespace NReco.Math3.Util
 {
-
     /// Provides a generic means to evaluate continued fractions.  Subclasses simply
     /// provided the a and b coefficients to evaluate the continued fraction.
     ///
@@ -162,14 +161,12 @@ namespace NReco.Math3.Util
                 if (Double.IsInfinity(hN))
                 {
                     throw new OverflowException(String.Format("CONTINUED_FRACTION_INFINITY_DIVERGENCE {0}", x));
-                    /*throw new ConvergenceException(LocalizedFormats.CONTINUED_FRACTION_INFINITY_DIVERGENCE,
-                                                   x);*/
+                    /*throw new ConvergenceException(LocalizedFormats.CONTINUED_FRACTION_INFINITY_DIVERGENCE, x);*/
                 }
                 if (Double.IsNaN(hN))
                 {
                     throw new OverflowException(String.Format("CONTINUED_FRACTION_NAN_DIVERGENCE {0}", x));
-                    /*throw new ConvergenceException(LocalizedFormats.CONTINUED_FRACTION_NAN_DIVERGENCE,
-                                                   x);*/
+                    /*throw new ConvergenceException(LocalizedFormats.CONTINUED_FRACTION_NAN_DIVERGENCE, x);*/
                 }
 
                 if (Math.Abs(deltaN - 1.0) < epsilon)
@@ -186,8 +183,7 @@ namespace NReco.Math3.Util
             if (n >= maxIterations)
             {
                 throw new System.Exception(String.Format("NON_CONVERGENT_CONTINUED_FRACTION iter={0} x={1}", maxIterations, x));
-                /*throw new MaxCountExceededException(LocalizedFormats.NON_CONVERGENT_CONTINUED_FRACTION,
-                                                    maxIterations, x);*/
+                /*throw new MaxCountExceededException(LocalizedFormats.NON_CONVERGENT_CONTINUED_FRACTION, maxIterations, x);*/
             }
 
             return hN;

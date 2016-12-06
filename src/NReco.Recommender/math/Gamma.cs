@@ -33,7 +33,6 @@ using NReco.CF.Taste;
 
 namespace NReco.Math3.Special
 {
-
     /// <p>
     /// This is a utility class that provides computation methods related to the
     /// &Gamma; (Gamma) family of functions.
@@ -402,10 +401,7 @@ namespace NReco.Math3.Special
         /// @param maxIterations Maximum number of "iterations" to complete.
         /// @return the regularized gamma function P(a, x)
         /// @throws MaxCountExceededException if the algorithm fails to converge.
-        public static double regularizedGammaQ(double a,
-                                               double x,
-                                               double epsilon,
-                                               int maxIterations)
+        public static double regularizedGammaQ(double a, double x, double epsilon, int maxIterations)
         {
             double ret;
 
@@ -453,8 +449,6 @@ namespace NReco.Math3.Special
                 return n * (a - n);
             }
         };
-
-
 
         /// <p>Computes the digamma function of x.</p>
         ///
@@ -565,7 +559,6 @@ namespace NReco.Math3.Special
         /// @since 3.1
         public static double invGamma1pm1(double x)
         {
-
             if (x < -0.5)
             {
                 throw new ArgumentException(); // NumberIsTooSmallException(x, -0.5, true);
@@ -668,7 +661,6 @@ namespace NReco.Math3.Special
         /// @since 3.1
         public static double logGamma1p(double x)
         {
-
             if (x < -0.5)
             {
                 throw new ArgumentException(); // NumberIsTooSmallException(x, -0.5, true);
@@ -768,9 +760,7 @@ namespace NReco.Math3.Special
             else
             {
                 double y = absX + LANCZOS_G + 0.5;
-                double gammaAbs = SQRT_TWO_PI / x *
-                                        Math.Pow(y, absX + 0.5) *
-                                        Math.Exp(-y) * lanczos(absX);
+                double gammaAbs = SQRT_TWO_PI / x * Math.Pow(y, absX + 0.5) * Math.Exp(-y) * lanczos(absX);
                 if (x > 0.0)
                 {
                     ret = gammaAbs;
@@ -784,8 +774,7 @@ namespace NReco.Math3.Special
                     /// Gamma(1 - x) = -x * Gamma(-x),
                     /// it is found
                     /// Gamma(x) = -pi / [x * sin(pi * x) * Gamma(-x)].
-                    ret = -Math.PI /
-                          (x * Math.Sin(Math.PI * x) * gammaAbs);
+                    ret = -Math.PI / (x * Math.Sin(Math.PI * x) * gammaAbs);
                 }
             }
             return ret;
