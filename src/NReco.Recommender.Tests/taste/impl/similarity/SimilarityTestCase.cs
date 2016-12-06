@@ -31,21 +31,23 @@ using NReco.CF.Taste.Impl;
 
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Similarity {
-
-public abstract class SimilarityTestCase : TasteTestCase {
-
-  public static void assertCorrelationEquals(double expected, double actual) {
-    if (Double.IsNaN(expected)) {
-		Assert.True(Double.IsNaN(actual), "Correlation is not NaN");
-    } else {
-		Assert.True(!Double.IsNaN(actual), "Correlation is NaN");
-		Assert.True(actual <= 1.0, "Correlation > 1.0");
-		Assert.True(actual >= -1.0, "Correlation < -1.0");
-      Assert.AreEqual(expected, actual, EPSILON);
+namespace NReco.CF.Taste.Impl.Similarity
+{
+    public abstract class SimilarityTestCase : TasteTestCase
+    {
+        public static void assertCorrelationEquals(double expected, double actual)
+        {
+            if (Double.IsNaN(expected))
+            {
+                Assert.True(Double.IsNaN(actual), "Correlation is not NaN");
+            }
+            else
+            {
+                Assert.True(!Double.IsNaN(actual), "Correlation is NaN");
+                Assert.True(actual <= 1.0, "Correlation > 1.0");
+                Assert.True(actual >= -1.0, "Correlation < -1.0");
+                Assert.AreEqual(expected, actual, EPSILON);
+            }
+        }
     }
-  }
-
-}
-
 }

@@ -33,19 +33,18 @@ using NReco.CF.Taste.Model;
 using NReco.CF.Taste.Similarity;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Similarity {
-
-/// <p>Tests {@link AveragingPreferenceInferrer}.</p> 
-public sealed class AveragingPreferenceInferrerTest : TasteTestCase {
-
-  [Test]
-  public void testInferrer() {
-    IDataModel model = getDataModel(new long[] {1}, new Double?[][] { new double?[] {3.0,-2.0,5.0} });
-    IPreferenceInferrer inferrer = new AveragingPreferenceInferrer(model);
-    double inferred = inferrer.InferPreference(1, 3);
-    Assert.AreEqual(2.0, inferred, EPSILON);
-  }
-
-}
-
+namespace NReco.CF.Taste.Impl.Similarity
+{
+    /// <p>Tests {@link AveragingPreferenceInferrer}.</p> 
+    public sealed class AveragingPreferenceInferrerTest : TasteTestCase
+    {
+        [Test]
+        public void testInferrer()
+        {
+            IDataModel model = getDataModel(new long[] { 1 }, new Double?[][] { new double?[] { 3.0, -2.0, 5.0 } });
+            IPreferenceInferrer inferrer = new AveragingPreferenceInferrer(model);
+            double inferred = inferrer.InferPreference(1, 3);
+            Assert.AreEqual(2.0, inferred, EPSILON);
+        }
+    }
 }

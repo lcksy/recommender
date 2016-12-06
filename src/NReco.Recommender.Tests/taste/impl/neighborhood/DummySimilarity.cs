@@ -32,44 +32,48 @@ using NReco.CF.Taste.Impl.Similarity;
 using NReco.CF.Taste.Model;
 using NReco.CF.Taste.Similarity;
 
-namespace NReco.CF.Taste.Impl.Neighborhood {
+namespace NReco.CF.Taste.Impl.Neighborhood
+{
+    sealed class DummySimilarity : AbstractItemSimilarity, IUserSimilarity
+    {
+        public DummySimilarity(IDataModel dataModel)
+            : base(dataModel)
+        {
 
+        }
 
-sealed class DummySimilarity : AbstractItemSimilarity, IUserSimilarity {
+        public double UserSimilarity(long userID1, long userID2)
+        {
+            IDataModel dataModel = getDataModel();
+            return 1.0 / (1.0 + Math.Abs(dataModel.GetPreferencesFromUser(userID1).Get(0).GetValue()
+                                         - dataModel.GetPreferencesFromUser(userID2).Get(0).GetValue()));
+        }
 
-	public DummySimilarity(IDataModel dataModel)
-		: base(dataModel) {
-    
-  }
-  
-  public double UserSimilarity(long userID1, long userID2) {
-    IDataModel dataModel = getDataModel();
-    return 1.0 / (1.0 + Math.Abs(dataModel.GetPreferencesFromUser(userID1).Get(0).GetValue()
-                                 - dataModel.GetPreferencesFromUser(userID2).Get(0).GetValue()));
-  }
-  
-  public override double ItemSimilarity(long itemID1, long itemID2) {
-    // Make up something wacky
-    return 1.0 / (1.0 + Math.Abs(itemID1 - itemID2));
-  }
+        public override double ItemSimilarity(long itemID1, long itemID2)
+        {
+            // Make up something wacky
+            return 1.0 / (1.0 + Math.Abs(itemID1 - itemID2));
+        }
 
-  public override double[] ItemSimilarities(long itemID1, long[] itemID2s) {
-    int length = itemID2s.Length;
-    double[] result = new double[length];
-    for (int i = 0; i < length; i++) {
-      result[i] = ItemSimilarity(itemID1, itemID2s[i]);
+        public override double[] ItemSimilarities(long itemID1, long[] itemID2s)
+        {
+            int length = itemID2s.Length;
+            double[] result = new double[length];
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = ItemSimilarity(itemID1, itemID2s[i]);
+            }
+            return result;
+        }
+
+        public void SetPreferenceInferrer(IPreferenceInferrer inferrer)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Refresh(IList<IRefreshable> alreadyRefreshed)
+        {
+            // do nothing
+        }
     }
-    return result;
-  }
-  
-  public void SetPreferenceInferrer(IPreferenceInferrer inferrer) {
-    throw new NotSupportedException();
-  }
-
-  public void Refresh(IList<IRefreshable> alreadyRefreshed) {
-  // do nothing
-  }
-  
-}
-
 }

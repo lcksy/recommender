@@ -306,7 +306,5 @@ namespace NReco.CF.Taste.Impl.Model
             Assert.AreEqual(1, instance.GetNumUsersWithPreferenceFor(sampleItemID, sampleItemID2));
             Assert.AreEqual(1, instance.GetNumUsersWithPreferenceFor(sampleItemID, sampleItemID3));
         }
-
     }
-
 }

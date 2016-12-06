@@ -30,68 +30,66 @@ using System.IO;
 using NReco.CF.Taste.Impl;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Common {
+namespace NReco.CF.Taste.Impl.Common
+{
+    /// <p>Tests {@link WeightedRunningAverage} and {@link WeightedRunningAverageAndStdDev}.</p>
+    public sealed class WeightedRunningAverageTest : TasteTestCase
+    {
+        [Test]
+        public void testWeighted()
+        {
+            WeightedRunningAverage runningAverage = new WeightedRunningAverage();
 
- /// <p>Tests {@link WeightedRunningAverage} and {@link WeightedRunningAverageAndStdDev}.</p>
-public sealed class WeightedRunningAverageTest : TasteTestCase {
+            Assert.AreEqual(0, runningAverage.GetCount());
+            Assert.True(Double.IsNaN(runningAverage.GetAverage()));
+            runningAverage.AddDatum(1.0, 2.0);
+            Assert.AreEqual(1.0, runningAverage.GetAverage(), EPSILON);
+            runningAverage.AddDatum(1.0);
+            Assert.AreEqual(1.0, runningAverage.GetAverage(), EPSILON);
+            runningAverage.AddDatum(8.0, 0.5);
+            Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
+            runningAverage.AddDatum(-4.0);
+            Assert.AreEqual(2.0 / 3.0, runningAverage.GetAverage(), EPSILON);
 
-  [Test]
-  public void testWeighted() {
+            runningAverage.RemoveDatum(-4.0);
+            Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
+            runningAverage.RemoveDatum(2.0, 2.0);
+            Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
 
-    WeightedRunningAverage runningAverage = new WeightedRunningAverage();
+            runningAverage.ChangeDatum(0.0);
+            Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
+            runningAverage.ChangeDatum(4.0, 0.5);
+            Assert.AreEqual(5.0 / 1.5, runningAverage.GetAverage(), EPSILON);
+        }
 
-    Assert.AreEqual(0, runningAverage.GetCount());
-    Assert.True(Double.IsNaN(runningAverage.GetAverage()));
-    runningAverage.AddDatum(1.0, 2.0);
-    Assert.AreEqual(1.0, runningAverage.GetAverage(), EPSILON);
-    runningAverage.AddDatum(1.0);
-    Assert.AreEqual(1.0, runningAverage.GetAverage(), EPSILON);
-    runningAverage.AddDatum(8.0, 0.5);
-    Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
-    runningAverage.AddDatum(-4.0);
-    Assert.AreEqual(2.0/3.0, runningAverage.GetAverage(), EPSILON);
+        [Test]
+        public void testWeightedAndStdDev()
+        {
+            WeightedRunningAverageAndStdDev runningAverage = new WeightedRunningAverageAndStdDev();
 
-    runningAverage.RemoveDatum(-4.0);
-    Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
-    runningAverage.RemoveDatum(2.0, 2.0);
-    Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
+            Assert.AreEqual(0, runningAverage.GetCount());
+            Assert.True(Double.IsNaN(runningAverage.GetAverage()));
+            Assert.True(Double.IsNaN(runningAverage.GetStandardDeviation()));
 
-    runningAverage.ChangeDatum(0.0);
-    Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
-    runningAverage.ChangeDatum(4.0, 0.5);
-    Assert.AreEqual(5.0/1.5, runningAverage.GetAverage(), EPSILON);
-  }
+            runningAverage.AddDatum(1.0);
+            Assert.AreEqual(1.0, runningAverage.GetAverage(), EPSILON);
+            Assert.True(Double.IsNaN(runningAverage.GetStandardDeviation()));
+            runningAverage.AddDatum(1.0, 2.0);
+            Assert.AreEqual(1.0, runningAverage.GetAverage(), EPSILON);
+            Assert.AreEqual(0.0, runningAverage.GetStandardDeviation(), EPSILON);
+            runningAverage.AddDatum(8.0, 0.5);
+            Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
+            Assert.AreEqual(Math.Sqrt(10.5), runningAverage.GetStandardDeviation(), EPSILON);
+            runningAverage.AddDatum(-4.0);
+            Assert.AreEqual(2.0 / 3.0, runningAverage.GetAverage(), EPSILON);
+            Assert.AreEqual(Math.Sqrt(15.75), runningAverage.GetStandardDeviation(), EPSILON);
 
-  [Test]
-  public void testWeightedAndStdDev() {
-
-    WeightedRunningAverageAndStdDev runningAverage = new WeightedRunningAverageAndStdDev();
-
-    Assert.AreEqual(0, runningAverage.GetCount());
-    Assert.True(Double.IsNaN(runningAverage.GetAverage()));
-    Assert.True(Double.IsNaN(runningAverage.GetStandardDeviation()));
-
-    runningAverage.AddDatum(1.0);
-    Assert.AreEqual(1.0, runningAverage.GetAverage(), EPSILON);
-    Assert.True(Double.IsNaN(runningAverage.GetStandardDeviation()));
-    runningAverage.AddDatum(1.0, 2.0);
-    Assert.AreEqual(1.0, runningAverage.GetAverage(), EPSILON);
-    Assert.AreEqual(0.0, runningAverage.GetStandardDeviation(), EPSILON);
-    runningAverage.AddDatum(8.0, 0.5);
-    Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
-    Assert.AreEqual(Math.Sqrt(10.5), runningAverage.GetStandardDeviation(), EPSILON);
-    runningAverage.AddDatum(-4.0);
-    Assert.AreEqual(2.0/3.0, runningAverage.GetAverage(), EPSILON);
-    Assert.AreEqual(Math.Sqrt(15.75), runningAverage.GetStandardDeviation(), EPSILON);
-
-    runningAverage.RemoveDatum(-4.0);
-    Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
-    Assert.AreEqual(Math.Sqrt(10.5), runningAverage.GetStandardDeviation(), EPSILON);
-    runningAverage.RemoveDatum(2.0, 2.0);
-    Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
-    Assert.AreEqual(Math.Sqrt(31.5), runningAverage.GetStandardDeviation(), EPSILON);
-  }
-
-}
-
+            runningAverage.RemoveDatum(-4.0);
+            Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
+            Assert.AreEqual(Math.Sqrt(10.5), runningAverage.GetStandardDeviation(), EPSILON);
+            runningAverage.RemoveDatum(2.0, 2.0);
+            Assert.AreEqual(2.0, runningAverage.GetAverage(), EPSILON);
+            Assert.AreEqual(Math.Sqrt(31.5), runningAverage.GetStandardDeviation(), EPSILON);
+        }
+    }
 }

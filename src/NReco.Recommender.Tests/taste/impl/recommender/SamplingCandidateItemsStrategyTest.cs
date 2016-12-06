@@ -36,41 +36,40 @@ using NReco.CF.Taste.Model;
 using NReco.CF.Taste.Recommender;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Recommender {
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// Tests {@link SamplingCandidateItemsStrategy}
+    public sealed class SamplingCandidateItemsStrategyTest : TasteTestCase
+    {
+        [Test]
+        public void testStrategy()
+        {
+            List<IPreference> prefsOfUser123 = new List<IPreference>();
+            prefsOfUser123.Add(new GenericPreference(123L, 1L, 1.0f));
 
+            List<IPreference> prefsOfUser456 = new List<IPreference>();
+            prefsOfUser456.Add(new GenericPreference(456L, 1L, 1.0f));
+            prefsOfUser456.Add(new GenericPreference(456L, 2L, 1.0f));
 
- /// Tests {@link SamplingCandidateItemsStrategy}
-public sealed class SamplingCandidateItemsStrategyTest : TasteTestCase {
+            List<IPreference> prefsOfUser789 = new List<IPreference>();
+            prefsOfUser789.Add(new GenericPreference(789L, 1L, 0.5f));
+            prefsOfUser789.Add(new GenericPreference(789L, 3L, 1.0f));
 
-  [Test]
-  public void testStrategy() {
-    List<IPreference> prefsOfUser123 = new List<IPreference>();
-    prefsOfUser123.Add(new GenericPreference(123L, 1L, 1.0f));
+            IPreferenceArray prefArrayOfUser123 = new GenericUserPreferenceArray(prefsOfUser123);
 
-    List<IPreference> prefsOfUser456 = new List<IPreference>();
-    prefsOfUser456.Add(new GenericPreference(456L, 1L, 1.0f));
-    prefsOfUser456.Add(new GenericPreference(456L, 2L, 1.0f));
+            FastByIDMap<IPreferenceArray> userData = new FastByIDMap<IPreferenceArray>();
+            userData.Put(123L, prefArrayOfUser123);
+            userData.Put(456L, new GenericUserPreferenceArray(prefsOfUser456));
+            userData.Put(789L, new GenericUserPreferenceArray(prefsOfUser789));
 
-	List<IPreference> prefsOfUser789 = new List<IPreference>();
-    prefsOfUser789.Add(new GenericPreference(789L, 1L, 0.5f));
-    prefsOfUser789.Add(new GenericPreference(789L, 3L, 1.0f));
+            IDataModel dataModel = new GenericDataModel(userData);
 
-    IPreferenceArray prefArrayOfUser123 = new GenericUserPreferenceArray(prefsOfUser123);
+            ICandidateItemsStrategy strategy =
+                new SamplingCandidateItemsStrategy(1, 1, 1, dataModel.GetNumUsers(), dataModel.GetNumItems());
 
-    FastByIDMap<IPreferenceArray> userData = new FastByIDMap<IPreferenceArray>();
-    userData.Put(123L, prefArrayOfUser123);
-    userData.Put(456L, new GenericUserPreferenceArray(prefsOfUser456));
-    userData.Put(789L, new GenericUserPreferenceArray(prefsOfUser789));
-
-    IDataModel dataModel = new GenericDataModel(userData);
-
-    ICandidateItemsStrategy strategy =
-        new SamplingCandidateItemsStrategy(1, 1, 1, dataModel.GetNumUsers(), dataModel.GetNumItems());
-
-    FastIDSet candidateItems = strategy.GetCandidateItems(123L, prefArrayOfUser123, dataModel);
-	Assert.True(candidateItems.Count() <= 1);
-    Assert.False(candidateItems.Contains(1L));
-  }
-}
-
+            FastIDSet candidateItems = strategy.GetCandidateItems(123L, prefArrayOfUser123, dataModel);
+            Assert.True(candidateItems.Count() <= 1);
+            Assert.False(candidateItems.Contains(1L));
+        }
+    }
 }

@@ -31,24 +31,23 @@ using NReco.CF.Taste.Impl;
 using NReco.CF.Taste.Recommender;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Recommender {
-
-
-public sealed class ItemAverageRecommenderTest : TasteTestCase {
-
-  [Test]
-  public void testRecommender() {
-    IRecommender recommender = new ItemAverageRecommender(getDataModel());
-    IList<IRecommendedItem> recommended = recommender.Recommend(1, 1);
-    Assert.NotNull(recommended);
-    Assert.AreEqual(1, recommended.Count);
-    IRecommendedItem firstRecommended = recommended[0];
-    Assert.AreEqual(2, firstRecommended.GetItemID());
-    Assert.AreEqual(0.53333336f, firstRecommended.GetValue(), EPSILON);
-    recommender.Refresh(null);
-    Assert.AreEqual(2, firstRecommended.GetItemID());
-    Assert.AreEqual(0.53333336f, firstRecommended.GetValue(), EPSILON);
-  }
-
-}
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    public sealed class ItemAverageRecommenderTest : TasteTestCase
+    {
+        [Test]
+        public void testRecommender()
+        {
+            IRecommender recommender = new ItemAverageRecommender(getDataModel());
+            IList<IRecommendedItem> recommended = recommender.Recommend(1, 1);
+            Assert.NotNull(recommended);
+            Assert.AreEqual(1, recommended.Count);
+            IRecommendedItem firstRecommended = recommended[0];
+            Assert.AreEqual(2, firstRecommended.GetItemID());
+            Assert.AreEqual(0.53333336f, firstRecommended.GetValue(), EPSILON);
+            recommender.Refresh(null);
+            Assert.AreEqual(2, firstRecommended.GetItemID());
+            Assert.AreEqual(0.53333336f, firstRecommended.GetValue(), EPSILON);
+        }
+    }
 }

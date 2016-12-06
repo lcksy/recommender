@@ -32,10 +32,8 @@ using NUnit.Framework;
 
 namespace NReco.CF.Taste.Impl.Common
 {
-
     public sealed class BitSetTest : TasteTestCase
     {
-
         private static int NUM_BITS = 100;
 
         [Test]
@@ -45,7 +43,6 @@ namespace NReco.CF.Taste.Impl.Common
             for (int i = 0; i < NUM_BITS; i++)
             {
                 Assert.False(bitSet.Get(i));
-
             }
             bitSet.Set(0);
             bitSet.Set(NUM_BITS - 1);
@@ -98,6 +95,5 @@ namespace NReco.CF.Taste.Impl.Common
             bitSet = (BitSet)bitSet.Clone();
             Assert.True(bitSet.Get(NUM_BITS - 1));
         }
-
     }
 }

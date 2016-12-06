@@ -32,10 +32,8 @@ using NUnit.Framework;
 
 namespace NReco.CF.Taste.Impl.Common
 {
-
     public sealed class SamplinglongPrimitiveIteratorTest : TasteTestCase
     {
-
         [Test]
         public void testEmptyCase()
         {
@@ -86,7 +84,6 @@ namespace NReco.CF.Taste.Impl.Common
         [Test]
         public void testSample()
         {
-
             double p = 0.1;
             int n = 1000;
             double sd = Math.Sqrt(n * p * (1.0 - p));
@@ -116,6 +113,5 @@ namespace NReco.CF.Taste.Impl.Common
             }
             return ((IEnumerable<long>)data).GetEnumerator();
         }
-
     }
 }

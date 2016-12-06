@@ -34,127 +34,132 @@ using NReco.CF.Taste.Recommender;
 using NUnit.Mocks;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Recommender.SVD {
+namespace NReco.CF.Taste.Impl.Recommender.SVD
+{
+    public class SVDRecommenderTest : TasteTestCase
+    {
+        [Test]
+        public void estimatePreference()
+        {
+            var dataModelMock = new DynamicMock(typeof(IDataModel));
+            var factorizerMock = new DynamicMock(typeof(IFactorizer));
+            var factorization = new Factorization_estimatePreference_TestMock();
+
+            factorizerMock.ExpectAndReturn("Factorize", factorization);
+
+            //EasyMock.replay(dataModel, factorizer, factorization);
+
+            SVDRecommender svdRecommender = new SVDRecommender((IDataModel)dataModelMock.MockInstance, (IFactorizer)factorizerMock.MockInstance);
+
+            float estimate = svdRecommender.EstimatePreference(1L, 5L);
+            Assert.AreEqual(1, estimate, EPSILON);
+
+            factorizerMock.Verify();
+            Assert.AreEqual(1, factorization.getItemFeaturesCallCount);
+            Assert.AreEqual(1, factorization.getUserFeaturesCallCount);
+            //EasyMock.verify(dataModel, factorizer, factorization);
+        }
 
 
-public class SVDRecommenderTest : TasteTestCase {
+        public class Factorization_estimatePreference_TestMock : Factorization
+        {
+            public int getItemFeaturesCallCount = 0;
+            public int getUserFeaturesCallCount = 0;
 
-  [Test]
-  public void estimatePreference() {
-    var dataModelMock = new DynamicMock( typeof( IDataModel) );
-    var factorizerMock = new DynamicMock( typeof(IFactorizer) );
-    var factorization = new Factorization_estimatePreference_TestMock();
+            public Factorization_estimatePreference_TestMock()
+                : base(new FastByIDMap<int?>(0), new FastByIDMap<int?>(0),
+                    null, null)
+            {
 
-	factorizerMock.ExpectAndReturn("Factorize", factorization);
-    
-	 //EasyMock.replay(dataModel, factorizer, factorization);
+            }
 
-    SVDRecommender svdRecommender = new SVDRecommender( (IDataModel)dataModelMock.MockInstance, (IFactorizer)factorizerMock.MockInstance);
+            public override double[] getItemFeatures(long itemID)
+            {
+                getItemFeaturesCallCount++;
+                if (itemID == 5L)
+                    return new double[] { 1, 0.3 };
+                throw new Exception();
+            }
+            public override double[] getUserFeatures(long userID)
+            {
+                getUserFeaturesCallCount++;
+                if (userID == 1L)
+                    return new double[] { 0.4, 2 };
+                throw new Exception();
+            }
+        }
 
-    float estimate = svdRecommender.EstimatePreference(1L, 5L);
-    Assert.AreEqual(1, estimate, EPSILON);
+        [Test]
+        public void recommend()
+        {
+            var dataModelMock = new DynamicMock(typeof(IDataModel));
+            var preferencesFromUserMock = new DynamicMock(typeof(IPreferenceArray));
+            var candidateItemsStrategyMock = new DynamicMock(typeof(ICandidateItemsStrategy));
+            var factorizerMock = new DynamicMock(typeof(IFactorizer));
+            var factorization = new Factorization_recommend_TestMock();
 
-	factorizerMock.Verify();
-	Assert.AreEqual(1, factorization.getItemFeaturesCallCount );
-	Assert.AreEqual(1, factorization.getUserFeaturesCallCount);
-		//EasyMock.verify(dataModel, factorizer, factorization);
-  }
+            FastIDSet candidateItems = new FastIDSet();
+            candidateItems.Add(5L);
+            candidateItems.Add(3L);
 
+            factorizerMock.ExpectAndReturn("Factorize", factorization);
 
-  public class Factorization_estimatePreference_TestMock : Factorization {
-	  public int getItemFeaturesCallCount = 0;
-	  public int getUserFeaturesCallCount = 0;
+            dataModelMock.ExpectAndReturn("GetPreferencesFromUser", preferencesFromUserMock.MockInstance, (1L));
 
-	  public Factorization_estimatePreference_TestMock() : base( new FastByIDMap<int?>(0), new FastByIDMap<int?>(0),
-		null,null) {
+            candidateItemsStrategyMock.ExpectAndReturn("GetCandidateItems", candidateItems,
+                1L, preferencesFromUserMock.MockInstance, dataModelMock.MockInstance);
 
-		}
+            //EasyMock.replay(dataModel, candidateItemsStrategy, factorizer, factorization);
 
-	  public override double[] getItemFeatures(long itemID) {
-		  getItemFeaturesCallCount++;
-		  if (itemID == 5L) 
-			return new double[] { 1, 0.3 };
-		  throw new Exception();
-	  }
-	  public override double[] getUserFeatures(long userID) {
-		  getUserFeaturesCallCount++;
-		  if (userID == 1L)
-			  return new double[] { 0.4, 2 };
-		  throw new Exception();
-	  }
-  }
+            SVDRecommender svdRecommender = new SVDRecommender(
+                (IDataModel)dataModelMock.MockInstance,
+                (IFactorizer)factorizerMock.MockInstance,
+                (ICandidateItemsStrategy)candidateItemsStrategyMock.MockInstance);
 
-  [Test]
-  public void recommend() {
-    var dataModelMock = new DynamicMock( typeof(IDataModel) );
-    var preferencesFromUserMock = new DynamicMock( typeof(IPreferenceArray) );
-    var candidateItemsStrategyMock = new DynamicMock( typeof(ICandidateItemsStrategy) );
-    var factorizerMock = new DynamicMock( typeof(IFactorizer) );
-    var factorization = new Factorization_recommend_TestMock();
+            IList<IRecommendedItem> recommendedItems = svdRecommender.Recommend(1L, 5);
+            Assert.AreEqual(2, recommendedItems.Count);
+            Assert.AreEqual(3L, recommendedItems[0].GetItemID());
+            Assert.AreEqual(2.0f, recommendedItems[0].GetValue(), EPSILON);
+            Assert.AreEqual(5L, recommendedItems[1].GetItemID());
+            Assert.AreEqual(1.0f, recommendedItems[1].GetValue(), EPSILON);
 
-    FastIDSet candidateItems = new FastIDSet();
-    candidateItems.Add(5L);
-    candidateItems.Add(3L);
+            dataModelMock.Verify();
+            candidateItemsStrategyMock.Verify();
+            factorizerMock.Verify();
 
-    factorizerMock.ExpectAndReturn("Factorize", factorization);
-
-	dataModelMock.ExpectAndReturn("GetPreferencesFromUser", preferencesFromUserMock.MockInstance, (1L));
-
-	candidateItemsStrategyMock.ExpectAndReturn("GetCandidateItems", candidateItems, 
-		1L, preferencesFromUserMock.MockInstance, dataModelMock.MockInstance);
-
-    //EasyMock.replay(dataModel, candidateItemsStrategy, factorizer, factorization);
-
-    SVDRecommender svdRecommender = new SVDRecommender( 
-		(IDataModel)dataModelMock.MockInstance, 
-		(IFactorizer)factorizerMock.MockInstance, 
-		(ICandidateItemsStrategy)candidateItemsStrategyMock.MockInstance);
-
-    IList<IRecommendedItem> recommendedItems = svdRecommender.Recommend(1L, 5);
-    Assert.AreEqual(2, recommendedItems.Count);
-    Assert.AreEqual(3L, recommendedItems[0].GetItemID());
-    Assert.AreEqual(2.0f, recommendedItems[0].GetValue(), EPSILON);
-    Assert.AreEqual(5L, recommendedItems[1].GetItemID());
-    Assert.AreEqual(1.0f, recommendedItems[1].GetValue(), EPSILON);
-
-	dataModelMock.Verify();
-	candidateItemsStrategyMock.Verify();
-	factorizerMock.Verify();
-
-	Assert.AreEqual(2, factorization.getItemFeaturesCallCount);
-	Assert.AreEqual(2, factorization.getUserFeaturesCallCount);
-    //EasyMock.verify(dataModel, candidateItemsStrategy, factorizer, factorization);
-  }
+            Assert.AreEqual(2, factorization.getItemFeaturesCallCount);
+            Assert.AreEqual(2, factorization.getUserFeaturesCallCount);
+            //EasyMock.verify(dataModel, candidateItemsStrategy, factorizer, factorization);
+        }
 
 
-  public class Factorization_recommend_TestMock : Factorization {
-	  public int getItemFeaturesCallCount = 0;
-	  public int getUserFeaturesCallCount = 0;
+        public class Factorization_recommend_TestMock : Factorization
+        {
+            public int getItemFeaturesCallCount = 0;
+            public int getUserFeaturesCallCount = 0;
 
-	  public Factorization_recommend_TestMock()
-		  : base(new FastByIDMap<int?>(0), new FastByIDMap<int?>(0),
-			  null, null) {
+            public Factorization_recommend_TestMock()
+                : base(new FastByIDMap<int?>(0), new FastByIDMap<int?>(0), null, null)
+            {
 
-	  }
+            }
 
-	  public override double[] getItemFeatures(long itemID) {
-		  getItemFeaturesCallCount++;
-		  if (itemID == 5L)
-			  return new double[] { 1, 0.3 };
-		  if (itemID == 3L)
-			  return new double[] { 2, 0.6 };
-		  throw new Exception();
-	  }
-	  public override double[] getUserFeatures(long userID) {
-		  getUserFeaturesCallCount++;
-		  if (userID == 1L)
-			  return new double[] { 0.4, 2 };
-		  throw new Exception();
-	  }
-  }
-
-
-
-}
-
+            public override double[] getItemFeatures(long itemID)
+            {
+                getItemFeaturesCallCount++;
+                if (itemID == 5L)
+                    return new double[] { 1, 0.3 };
+                if (itemID == 3L)
+                    return new double[] { 2, 0.6 };
+                throw new Exception();
+            }
+            public override double[] getUserFeatures(long userID)
+            {
+                getUserFeaturesCallCount++;
+                if (userID == 1L)
+                    return new double[] { 0.4, 2 };
+                throw new Exception();
+            }
+        }
+    }
 }

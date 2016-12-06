@@ -29,26 +29,26 @@ using System.Collections.Generic;
 using System.IO;
 using NReco.CF.Taste.Common;
 
+namespace NReco.CF.Taste.Impl.Common
+{
+    /// A mock {@link Refreshable} which counts the number of times it has been refreshed, for use in tests. 
+    sealed class MockRefreshable : IRefreshable
+    {
+        private int callCount;
 
-namespace NReco.CF.Taste.Impl.Common {
+        public void Refresh(IList<IRefreshable> alreadyRefreshed)
+        {
+            call();
+        }
 
-/// A mock {@link Refreshable} which counts the number of times it has been refreshed, for use in tests. 
-sealed class MockRefreshable : IRefreshable {
+        public void call()
+        {
+            callCount++;
+        }
 
-  private int callCount;
-
-  public void Refresh(IList<IRefreshable> alreadyRefreshed) {
-    call();
-  }
-
-  public void call() {
-    callCount++;
-  }
-
-  public int getCallCount() {
-    return callCount;
-  }
-
-}
-
+        public int getCallCount()
+        {
+            return callCount;
+        }
+    }
 }

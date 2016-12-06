@@ -32,41 +32,51 @@ using NReco.CF.Taste.Impl;
 using NReco.CF;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Common {
+namespace NReco.CF.Taste.Impl.Common
+{
+    public sealed class CacheTest : TasteTestCase
+    {
+        [Test]
+        public void testLotsOfGets()
+        {
+            IRetriever<Object, Object> retriever = new IdentityRetriever();
+            Cache<Object, Object> cache = new Cache<Object, Object>(retriever, 1000);
+            for (int i = 0; i < 1000000; i++)
+            {
+                Assert.AreEqual(i, cache.Get(i));
+            }
+        }
 
+        [Test]
+        public void testMixedUsage()
+        {
+            var random = RandomUtils.getRandom();
+            IRetriever<Object, Object> retriever = new IdentityRetriever();
+            Cache<Object, Object> cache = new Cache<Object, Object>(retriever, 1000);
+            for (int i = 0; i < 1000000; i++)
+            {
+                double r = random.nextDouble();
+                if (r < 0.01)
+                {
+                    cache.Clear();
+                }
+                else if (r < 0.1)
+                {
+                    cache.Remove(r - 100);
+                }
+                else
+                {
+                    Assert.AreEqual(i, cache.Get(i));
+                }
+            }
+        }
 
-public sealed class CacheTest : TasteTestCase {
-
-  [Test]
-  public void testLotsOfGets() {
-    IRetriever<Object,Object> retriever = new IdentityRetriever();
-    Cache<Object,Object> cache = new Cache<Object,Object>(retriever, 1000);
-    for (int i = 0; i < 1000000; i++) {
-      Assert.AreEqual(i, cache.Get(i));
+        private class IdentityRetriever : IRetriever<Object, Object>
+        {
+            public Object Get(Object key)
+            {
+                return key;
+            }
+        }
     }
-  }
-
-  [Test]
-  public void testMixedUsage() {
-    var random = RandomUtils.getRandom();
-    IRetriever<Object,Object> retriever = new IdentityRetriever();
-    Cache<Object,Object> cache = new Cache<Object,Object>(retriever, 1000);
-    for (int i = 0; i < 1000000; i++) {
-      double r = random.nextDouble();
-      if (r < 0.01) {
-        cache.Clear();
-      } else if (r < 0.1) {
-        cache.Remove(r - 100);
-      } else {
-        Assert.AreEqual(i, cache.Get(i));
-      }
-    }
-  }
-  
-  private class IdentityRetriever : IRetriever<Object,Object> {
-    public Object Get(Object key) {
-      return key;
-    }
-  }
-}
 }

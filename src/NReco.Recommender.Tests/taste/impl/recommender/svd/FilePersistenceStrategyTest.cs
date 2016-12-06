@@ -32,41 +32,44 @@ using NReco.CF.Taste.Impl;
 using NReco.CF.Taste.Impl.Common;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Recommender.SVD {
+namespace NReco.CF.Taste.Impl.Recommender.SVD
+{
+    public class FilePersistenceStrategyTest : TasteTestCase
+    {
+        [Test]
+        public void persistAndLoad()
+        {
+            FastByIDMap<int?> userIDMapping = new FastByIDMap<int?>();
+            FastByIDMap<int?> itemIDMapping = new FastByIDMap<int?>();
 
+            userIDMapping.Put(123, 0);
+            userIDMapping.Put(456, 1);
 
-public class FilePersistenceStrategyTest : TasteTestCase {
+            itemIDMapping.Put(12, 0);
+            itemIDMapping.Put(34, 1);
 
-  [Test]
-  public void persistAndLoad() {
-    FastByIDMap<int?> userIDMapping = new FastByIDMap<int?>();
-    FastByIDMap<int?> itemIDMapping = new FastByIDMap<int?>();
+            double[][] userFeatures = new double[][] { new double[] { 0.1, 0.2, 0.3 }, new double[] { 0.4, 0.5, 0.6 } };
+            double[][] itemFeatures = new double[][] { new double[] { 0.7, 0.8, 0.9 }, new double[] { 1.0, 1.1, 1.2 } };
 
-    userIDMapping.Put(123, 0);
-    userIDMapping.Put(456, 1);
+            Factorization original = new Factorization(userIDMapping, itemIDMapping, userFeatures, itemFeatures);
+            var storage = Path.Combine(Path.GetTempPath(), "storage.bin");
+            try
+            {
+                IPersistenceStrategy persistenceStrategy = new FilePersistenceStrategy(storage);
 
-    itemIDMapping.Put(12, 0);
-    itemIDMapping.Put(34, 1);
+                Assert.IsNull(persistenceStrategy.Load());
 
-    double[][] userFeatures = new double[][] { new double[] { 0.1, 0.2, 0.3 }, new double[] { 0.4, 0.5, 0.6 } };
-    double[][] itemFeatures = new double[][] { new double[] { 0.7, 0.8, 0.9 }, new double[] { 1.0, 1.1, 1.2 } };
+                persistenceStrategy.MaybePersist(original);
+                Factorization clone = persistenceStrategy.Load();
 
-    Factorization original = new Factorization(userIDMapping, itemIDMapping, userFeatures, itemFeatures);
-    var storage = Path.Combine( Path.GetTempPath(), "storage.bin");
-	try {
-		IPersistenceStrategy persistenceStrategy = new FilePersistenceStrategy(storage);
-
-		Assert.IsNull(persistenceStrategy.Load());
-
-		persistenceStrategy.MaybePersist(original);
-		Factorization clone = persistenceStrategy.Load();
-
-		Assert.True(original.Equals( clone ) );
-	} finally {
-		if (File.Exists(storage))
-			try { File.Delete(storage); } catch { }
-	}
-  }
-}
-
+                Assert.True(original.Equals(clone));
+            }
+            finally
+            {
+                if (File.Exists(storage))
+                    try { File.Delete(storage); }
+                    catch { }
+            }
+        }
+    }
 }

@@ -32,59 +32,58 @@ using NReco.CF.Taste.Impl;
 using NReco.CF.Taste.Recommender;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Recommender {
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// <p>Tests {@link CachingRecommender}.</p> 
+    public sealed class CachingRecommenderTest : TasteTestCase
+    {
+        [Test]
+        public void testRecommender()
+        {
+            var mockRecommender = new MockRecommender(0);
 
-/// <p>Tests {@link CachingRecommender}.</p> 
-public sealed class CachingRecommenderTest : TasteTestCase {
+            IRecommender cachingRecommender = new CachingRecommender(mockRecommender);
+            cachingRecommender.Recommend(1, 1);
+            Assert.AreEqual(1, mockRecommender.recommendCount);
+            cachingRecommender.Recommend(2, 1);
+            Assert.AreEqual(2, mockRecommender.recommendCount);
+            cachingRecommender.Recommend(1, 1);
+            Assert.AreEqual(2, mockRecommender.recommendCount);
+            cachingRecommender.Recommend(2, 1);
+            Assert.AreEqual(2, mockRecommender.recommendCount);
+            cachingRecommender.Refresh(null);
+            cachingRecommender.Recommend(1, 1);
+            Assert.AreEqual(3, mockRecommender.recommendCount);
+            cachingRecommender.Recommend(2, 1);
+            Assert.AreEqual(4, mockRecommender.recommendCount);
+            cachingRecommender.Recommend(3, 1);
+            Assert.AreEqual(5, mockRecommender.recommendCount);
 
-  [Test]
-  public void testRecommender() {
-    var mockRecommender = new MockRecommender(0);
+            // Results from this recommend() method can be cached...
+            IDRescorer rescorer = NullRescorer.getItemInstance();
+            cachingRecommender.Refresh(null);
+            cachingRecommender.Recommend(1, 1, rescorer);
+            Assert.AreEqual(6, mockRecommender.recommendCount);
+            cachingRecommender.Recommend(2, 1, rescorer);
+            Assert.AreEqual(7, mockRecommender.recommendCount);
+            cachingRecommender.Recommend(1, 1, rescorer);
+            Assert.AreEqual(7, mockRecommender.recommendCount);
+            cachingRecommender.Recommend(2, 1, rescorer);
+            Assert.AreEqual(7, mockRecommender.recommendCount);
 
-    IRecommender cachingRecommender = new CachingRecommender(mockRecommender);
-    cachingRecommender.Recommend(1, 1);
-    Assert.AreEqual(1, mockRecommender.recommendCount);
-    cachingRecommender.Recommend(2, 1);
-	Assert.AreEqual(2, mockRecommender.recommendCount);
-    cachingRecommender.Recommend(1, 1);
-	Assert.AreEqual(2, mockRecommender.recommendCount);
-    cachingRecommender.Recommend(2, 1);
-	Assert.AreEqual(2, mockRecommender.recommendCount);
-    cachingRecommender.Refresh(null);
-    cachingRecommender.Recommend(1, 1);
-	Assert.AreEqual(3, mockRecommender.recommendCount);
-    cachingRecommender.Recommend(2, 1);
-	Assert.AreEqual(4, mockRecommender.recommendCount);
-    cachingRecommender.Recommend(3, 1);
-	Assert.AreEqual(5, mockRecommender.recommendCount);
+            // until you switch Rescorers
+            cachingRecommender.Recommend(1, 1, null);
+            Assert.AreEqual(8, mockRecommender.recommendCount);
+            cachingRecommender.Recommend(2, 1, null);
+            Assert.AreEqual(9, mockRecommender.recommendCount);
 
-    // Results from this recommend() method can be cached...
-    IDRescorer rescorer = NullRescorer.getItemInstance();
-    cachingRecommender.Refresh(null);
-    cachingRecommender.Recommend(1, 1, rescorer);
-	Assert.AreEqual(6, mockRecommender.recommendCount);
-    cachingRecommender.Recommend(2, 1, rescorer);
-	Assert.AreEqual(7, mockRecommender.recommendCount);
-    cachingRecommender.Recommend(1, 1, rescorer);
-	Assert.AreEqual(7, mockRecommender.recommendCount);
-    cachingRecommender.Recommend(2, 1, rescorer);
-	Assert.AreEqual(7, mockRecommender.recommendCount);
-
-    // until you switch Rescorers
-    cachingRecommender.Recommend(1, 1, null);
-	Assert.AreEqual(8, mockRecommender.recommendCount);
-    cachingRecommender.Recommend(2, 1, null);
-	Assert.AreEqual(9, mockRecommender.recommendCount);
-
-    cachingRecommender.Refresh(null);
-    cachingRecommender.EstimatePreference(1, 1);
-	Assert.AreEqual(10, mockRecommender.recommendCount);
-    cachingRecommender.EstimatePreference(1, 2);
-	Assert.AreEqual(11, mockRecommender.recommendCount);
-    cachingRecommender.EstimatePreference(1, 2);
-	Assert.AreEqual(11, mockRecommender.recommendCount);
-  }
-
-}
-
+            cachingRecommender.Refresh(null);
+            cachingRecommender.EstimatePreference(1, 1);
+            Assert.AreEqual(10, mockRecommender.recommendCount);
+            cachingRecommender.EstimatePreference(1, 2);
+            Assert.AreEqual(11, mockRecommender.recommendCount);
+            cachingRecommender.EstimatePreference(1, 2);
+            Assert.AreEqual(11, mockRecommender.recommendCount);
+        }
+    }
 }

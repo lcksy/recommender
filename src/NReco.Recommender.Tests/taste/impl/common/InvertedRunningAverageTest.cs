@@ -32,7 +32,6 @@ using NUnit.Framework;
 
 namespace NReco.CF.Taste.Impl.Common
 {
-
     public sealed class InvertedRunningAverageTest : TasteTestCase
     {
         [Test]

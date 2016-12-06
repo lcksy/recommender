@@ -33,10 +33,8 @@ using NUnit.Framework;
 
 namespace NReco.CF.Taste.Impl.Model
 {
-
     public sealed class BooleanUserPreferenceArrayTest : TasteTestCase
     {
-
         [Test]
         public void testUserID()
         {
@@ -106,6 +104,5 @@ namespace NReco.CF.Taste.Impl.Model
             Assert.AreEqual(3L, prefs.GetItemID(0));
             Assert.AreEqual(1L, prefs.GetUserID(1));
         }
-
     }
 }

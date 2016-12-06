@@ -33,59 +33,67 @@ using NReco.CF.Taste.Impl;
 using NReco.CF.Taste.Model;
 using NReco.CF.Taste.Recommender;
 
-namespace NReco.CF.Taste.Impl.Recommender {
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    public sealed class MockRecommender : IRecommender
+    {
+        public int recommendCount;
 
+        public MockRecommender(int recommendCount)
+        {
+            this.recommendCount = recommendCount;
+        }
 
+        public IList<IRecommendedItem> Recommend(long userID, int howMany)
+        {
+            lock (this)
+            {
+                recommendCount++;
+            }
+            return new List<IRecommendedItem>() {
+                new GenericRecommendedItem(1, 1.0f) 
+            };
+        }
 
-public sealed class MockRecommender : IRecommender {
+        public IList<IRecommendedItem> Recommend(long userID, int howMany, IDRescorer rescorer)
+        {
+            return Recommend(userID, howMany);
+        }
 
-  public int recommendCount;
+        public float EstimatePreference(long userID, long itemID)
+        {
+            lock (this)
+            {
+                recommendCount++;
+            }
+            return 0.0f;
+        }
 
-  public MockRecommender(int recommendCount) {
-    this.recommendCount = recommendCount;
-  }
+        public void SetPreference(long userID, long itemID, float value)
+        {
+            // do nothing
+        }
 
-  public IList<IRecommendedItem> Recommend(long userID, int howMany) {
-	  lock (this) {
-		  recommendCount++;
-	  }
-	return new List<IRecommendedItem>() {
-        new GenericRecommendedItem(1, 1.0f) };
-  }
+        public void RemovePreference(long userID, long itemID)
+        {
+            // do nothing
+        }
 
-  public IList<IRecommendedItem> Recommend(long userID, int howMany, IDRescorer rescorer) {
-    return Recommend(userID, howMany);
-  }
+        public IDataModel GetDataModel()
+        {
+            return TasteTestCase.getDataModel(
+                new long[] { 1, 2, 3 },
+                new Double?[][]{
+				    new double?[]{1.0},
+				    new double?[]{2.0},
+				    new double?[]{3.0}
+                }
+           );
+        }
 
-  public float EstimatePreference(long userID, long itemID) {
-	  lock (this) {
-		  recommendCount++;
-	  }
-    return 0.0f;
-  }
-
-  public void SetPreference(long userID, long itemID, float value) {
-    // do nothing
-  }
-
-  public void RemovePreference(long userID, long itemID) {
-    // do nothing
-  }
-
-  public IDataModel GetDataModel() {
-    return TasteTestCase.getDataModel(
-            new long[] {1, 2, 3},
-            new Double?[][]{
-				new double?[]{1.0},
-				new double?[]{2.0},
-				new double?[]{3.0}
-			});
-  }
-
-  public void Refresh(IList<IRefreshable> alreadyRefreshed) {
-    // do nothing
-  }
-
-}
-
+        public void Refresh(IList<IRefreshable> alreadyRefreshed)
+        {
+            // do nothing
+        }
+    }
 }

@@ -30,65 +30,72 @@ using System.IO;
 using NReco.CF.Taste.Model;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Similarity {
-
-/// <p>Tests {@link SpearmanCorrelationSimilarity}.</p> 
-public sealed class SpearmanCorrelationSimilarityTest : SimilarityTestCase {
-
-  [Test]
-  public void testFullCorrelation1() {
-    IDataModel dataModel = getDataModel(
-            new long[] {1, 2},
-            new Double?[][] {
+namespace NReco.CF.Taste.Impl.Similarity
+{
+    /// <p>Tests {@link SpearmanCorrelationSimilarity}.</p> 
+    public sealed class SpearmanCorrelationSimilarityTest : SimilarityTestCase
+    {
+        [Test]
+        public void testFullCorrelation1()
+        {
+            IDataModel dataModel = getDataModel(
+                new long[] { 1, 2 },
+                new Double?[][] {
                     new double?[]{1.0, 2.0, 3.0},
+                    new double?[]{1.0, 2.0, 3.0}
+                }
+            );
+            double correlation = new SpearmanCorrelationSimilarity(dataModel).UserSimilarity(1, 2);
+            assertCorrelationEquals(1.0, correlation);
+        }
+
+        [Test]
+        public void testFullCorrelation2()
+        {
+            IDataModel dataModel = getDataModel(
+                new long[] { 1, 2 },
+                new Double?[][] {
+                    new double?[] {1.0, 2.0, 3.0},
+                    new double?[] {4.0, 5.0, 6.0}
+                }
+            );
+            double correlation = new SpearmanCorrelationSimilarity(dataModel).UserSimilarity(1, 2);
+            assertCorrelationEquals(1.0, correlation);
+        }
+
+        [Test]
+        public void testAnticorrelation()
+        {
+            IDataModel dataModel = getDataModel(
+                new long[] { 1, 2 },
+                new Double?[][] {
                     new double?[]{1.0, 2.0, 3.0},
-            });
-    double correlation = new SpearmanCorrelationSimilarity(dataModel).UserSimilarity(1, 2);
-    assertCorrelationEquals(1.0, correlation);
-  }
+                    new double?[]{3.0, 2.0, 1.0}
+                }
+            );
+            double correlation = new SpearmanCorrelationSimilarity(dataModel).UserSimilarity(1, 2);
+            assertCorrelationEquals(-1.0, correlation);
+        }
 
-  [Test]
-  public void testFullCorrelation2() {
-    IDataModel dataModel = getDataModel(
-            new long[] {1, 2},
-            new Double?[][] {
-                   new double?[] {1.0, 2.0, 3.0},
-                   new double?[] {4.0, 5.0, 6.0},
-            });
-    double correlation = new SpearmanCorrelationSimilarity(dataModel).UserSimilarity(1, 2);
-    assertCorrelationEquals(1.0, correlation);
-  }
-
-  [Test]
-  public void testAnticorrelation() {
-    IDataModel dataModel = getDataModel(
-            new long[] {1, 2},
-            new Double?[][] {
+        [Test]
+        public void testSimple()
+        {
+            IDataModel dataModel = getDataModel(
+                new long[] { 1, 2 },
+                new Double?[][] {
                     new double?[]{1.0, 2.0, 3.0},
-                    new double?[]{3.0, 2.0, 1.0},
-            });
-    double correlation = new SpearmanCorrelationSimilarity(dataModel).UserSimilarity(1, 2);
-    assertCorrelationEquals(-1.0, correlation);
-  }
+                    new double?[]{2.0, 3.0, 1.0}
+                }
+            );
+            double correlation = new SpearmanCorrelationSimilarity(dataModel).UserSimilarity(1, 2);
+            assertCorrelationEquals(-0.5, correlation);
+        }
 
-  [Test]
-  public void testSimple() {
-    IDataModel dataModel = getDataModel(
-            new long[] {1, 2},
-            new Double?[][] {
-                    new double?[]{1.0, 2.0, 3.0},
-                    new double?[]{2.0, 3.0, 1.0},
-            });
-    double correlation = new SpearmanCorrelationSimilarity(dataModel).UserSimilarity(1, 2);
-    assertCorrelationEquals(-0.5, correlation);
-  }
-
-  [Test]
-  public void testRefresh() {
-    // Make sure this doesn't throw an exception
-    new SpearmanCorrelationSimilarity(getDataModel()).Refresh(null);
-  }
-
-}
-
+        [Test]
+        public void testRefresh()
+        {
+            // Make sure this doesn't throw an exception
+            new SpearmanCorrelationSimilarity(getDataModel()).Refresh(null);
+        }
+    }
 }

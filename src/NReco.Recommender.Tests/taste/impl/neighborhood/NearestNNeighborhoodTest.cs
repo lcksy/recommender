@@ -31,37 +31,36 @@ using NReco.CF.Taste.Impl;
 using NReco.CF.Taste.Model;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Neighborhood {
+namespace NReco.CF.Taste.Impl.Neighborhood
+{
+    /// <p>Tests {@link NearestNUserNeighborhood}.</p> 
+    public sealed class NearestNNeighborhoodTest : TasteTestCase
+    {
+        [Test]
+        public void testNeighborhood()
+        {
+            IDataModel dataModel = getDataModel();
 
-/// <p>Tests {@link NearestNUserNeighborhood}.</p> 
-public sealed class NearestNNeighborhoodTest : TasteTestCase {
+            long[] neighborhood =
+                new NearestNUserNeighborhood(1, new DummySimilarity(dataModel), dataModel).GetUserNeighborhood(1);
+            Assert.NotNull(neighborhood);
+            Assert.AreEqual(1, neighborhood.Length);
+            Assert.True(arrayContains(neighborhood, 2));
 
-  [Test]
-  public void testNeighborhood() {
-    IDataModel dataModel = getDataModel();
-	  
-    long[] neighborhood =
-        new NearestNUserNeighborhood(1, new DummySimilarity(dataModel), dataModel).GetUserNeighborhood(1);
-    Assert.NotNull(neighborhood);
-    Assert.AreEqual(1, neighborhood.Length);
-    Assert.True(arrayContains(neighborhood, 2));
+            long[] neighborhood2 =
+                new NearestNUserNeighborhood(2, new DummySimilarity(dataModel), dataModel).GetUserNeighborhood(2);
+            Assert.NotNull(neighborhood2);
+            Assert.AreEqual(2, neighborhood2.Length);
+            Assert.True(arrayContains(neighborhood2, 1));
+            Assert.True(arrayContains(neighborhood2, 3));
 
-    long[] neighborhood2 =
-        new NearestNUserNeighborhood(2, new DummySimilarity(dataModel), dataModel).GetUserNeighborhood(2);
-    Assert.NotNull(neighborhood2);
-    Assert.AreEqual(2, neighborhood2.Length);
-    Assert.True(arrayContains(neighborhood2, 1));
-    Assert.True(arrayContains(neighborhood2, 3));
-
-    long[] neighborhood3 =
-        new NearestNUserNeighborhood(4, new DummySimilarity(dataModel), dataModel).GetUserNeighborhood(4);
-    Assert.NotNull(neighborhood3);
-    Assert.AreEqual(3, neighborhood3.Length);
-    Assert.True(arrayContains(neighborhood3, 1));
-    Assert.True(arrayContains(neighborhood3, 2));
-    Assert.True(arrayContains(neighborhood3, 3));
-  }
-
-}
-
+            long[] neighborhood3 =
+                new NearestNUserNeighborhood(4, new DummySimilarity(dataModel), dataModel).GetUserNeighborhood(4);
+            Assert.NotNull(neighborhood3);
+            Assert.AreEqual(3, neighborhood3.Length);
+            Assert.True(arrayContains(neighborhood3, 1));
+            Assert.True(arrayContains(neighborhood3, 2));
+            Assert.True(arrayContains(neighborhood3, 3));
+        }
+    }
 }

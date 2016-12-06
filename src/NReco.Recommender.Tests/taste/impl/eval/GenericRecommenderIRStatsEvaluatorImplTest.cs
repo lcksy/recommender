@@ -29,50 +29,54 @@ using NReco.CF.Taste.Model;
 using NReco.CF.Taste.Recommender;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Eval {
+namespace NReco.CF.Taste.Impl.Eval
+{
+    public sealed class GenericRecommenderIRStatsEvaluatorImplTest : TasteTestCase
+    {
+        [Test]
+        public void testBoolean()
+        {
+            IDataModel model = getBooleanDataModel();
+            IRecommenderBuilder builder = new TestRecommenderBuilder();
 
-public sealed class GenericRecommenderIRStatsEvaluatorImplTest : TasteTestCase {
+            IDataModelBuilder dataModelBuilder = new TestDataModelBuilder();
+            IRecommenderIRStatsEvaluator evaluator = new GenericRecommenderIRStatsEvaluator();
+            IRStatistics stats = evaluator.Evaluate(
+                builder, dataModelBuilder, model, null, 1, GenericRecommenderIRStatsEvaluator.CHOOSE_THRESHOLD, 1.0);
 
-  [Test]
-  public void testBoolean() {
-    IDataModel model = getBooleanDataModel();
-    IRecommenderBuilder builder = new TestRecommenderBuilder();
+            Assert.NotNull(stats);
+            Assert.AreEqual(0.666666666, stats.GetPrecision(), EPSILON);
+            Assert.AreEqual(0.666666666, stats.GetRecall(), EPSILON);
+            Assert.AreEqual(0.666666666, stats.GetF1Measure(), EPSILON);
+            Assert.AreEqual(0.666666666, stats.GetFNMeasure(2.0), EPSILON);
+            Assert.AreEqual(0.666666666, stats.GetNormalizedDiscountedCumulativeGain(), EPSILON);
+        }
 
-	IDataModelBuilder dataModelBuilder = new TestDataModelBuilder();
-    IRecommenderIRStatsEvaluator evaluator = new GenericRecommenderIRStatsEvaluator();
-    IRStatistics stats = evaluator.Evaluate(
-        builder, dataModelBuilder, model, null, 1, GenericRecommenderIRStatsEvaluator.CHOOSE_THRESHOLD, 1.0);
+        public class TestRecommenderBuilder : IRecommenderBuilder
+        {
+            public IRecommender BuildRecommender(IDataModel dataModel)
+            {
+                return new GenericBooleanPrefItemBasedRecommender(dataModel, new LogLikelihoodSimilarity(dataModel));
+            }
+        };
 
-    Assert.NotNull(stats);
-    Assert.AreEqual(0.666666666, stats.GetPrecision(), EPSILON);
-    Assert.AreEqual(0.666666666, stats.GetRecall(), EPSILON);
-    Assert.AreEqual(0.666666666, stats.GetF1Measure(), EPSILON);
-    Assert.AreEqual(0.666666666, stats.GetFNMeasure(2.0), EPSILON);
-    Assert.AreEqual(0.666666666, stats.GetNormalizedDiscountedCumulativeGain(), EPSILON);
-  }
+        public class TestDataModelBuilder : IDataModelBuilder
+        {
+            public IDataModel BuildDataModel(FastByIDMap<IPreferenceArray> trainingData)
+            {
+                return new GenericBooleanPrefDataModel(GenericBooleanPrefDataModel.toDataMap(trainingData));
+            }
+        };
 
-  public class TestRecommenderBuilder : IRecommenderBuilder {
-      public IRecommender BuildRecommender(IDataModel dataModel) {
-        return new GenericBooleanPrefItemBasedRecommender(dataModel, new LogLikelihoodSimilarity(dataModel));
-      }
-    };
-
-  public class TestDataModelBuilder : IDataModelBuilder {
-	  public IDataModel BuildDataModel(FastByIDMap<IPreferenceArray> trainingData) {
-		  return new GenericBooleanPrefDataModel(GenericBooleanPrefDataModel.toDataMap(trainingData));
-	  }
-  };
-  
-
-  [Test]
-  public void testIRStats() {
-    IRStatistics stats = new IRStatisticsImpl(0.3, 0.1, 0.2, 0.05, 0.15);
-    Assert.AreEqual(0.3, stats.GetPrecision(), EPSILON);
-    Assert.AreEqual(0.1, stats.GetRecall(), EPSILON);
-    Assert.AreEqual(0.15, stats.GetF1Measure(), EPSILON);
-    Assert.AreEqual(0.11538461538462, stats.GetFNMeasure(2.0), EPSILON);
-    Assert.AreEqual(0.05, stats.GetNormalizedDiscountedCumulativeGain(), EPSILON);
-  }
-
-}
+        [Test]
+        public void testIRStats()
+        {
+            IRStatistics stats = new IRStatisticsImpl(0.3, 0.1, 0.2, 0.05, 0.15);
+            Assert.AreEqual(0.3, stats.GetPrecision(), EPSILON);
+            Assert.AreEqual(0.1, stats.GetRecall(), EPSILON);
+            Assert.AreEqual(0.15, stats.GetF1Measure(), EPSILON);
+            Assert.AreEqual(0.11538461538462, stats.GetFNMeasure(2.0), EPSILON);
+            Assert.AreEqual(0.05, stats.GetNormalizedDiscountedCumulativeGain(), EPSILON);
+        }
+    }
 }

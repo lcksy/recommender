@@ -33,31 +33,29 @@ using System.Runtime.Serialization.Formatters.Binary;
 using NReco.CF.Taste.Impl;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Model {
+namespace NReco.CF.Taste.Impl.Model
+{
+    /// Tests {@link GenericDataModel}.
+    public sealed class GenericDataModelTest : TasteTestCase
+    {
+        [Test]
+        public void testSerialization()
+        {
+            GenericDataModel model = (GenericDataModel)getDataModel();
 
- /// Tests {@link GenericDataModel}.
-public sealed class GenericDataModelTest : TasteTestCase {
+            var formatter = new BinaryFormatter();
+            var ms = new MemoryStream();
+            formatter.Serialize(ms, model);
+            ms.Position = 0;
 
-  [Test]  
-  public void testSerialization() {
-    GenericDataModel model = (GenericDataModel) getDataModel();
-    
-	  var formatter = new BinaryFormatter();
-	  var ms = new MemoryStream();
-		formatter.Serialize(ms, model);
-	  ms.Position = 0;
+            GenericDataModel newModel = (GenericDataModel)formatter.Deserialize(ms);
 
-	  GenericDataModel newModel = (GenericDataModel)formatter.Deserialize(ms);
-
-    Assert.AreEqual(model.GetNumItems(), newModel.GetNumItems());
-    Assert.AreEqual(model.GetNumUsers(), newModel.GetNumUsers());
-    Assert.True(model.GetPreferencesFromUser(1L).Equals( newModel.GetPreferencesFromUser(1L) ) );    
-    Assert.True(model.GetPreferencesForItem(1L).Equals(newModel.GetPreferencesForItem(1L) ) );
-    Assert.AreEqual(model.GetRawUserData(), newModel.GetRawUserData());
-  }
-
-  // Lots of other stuff should be tested but is kind of covered by FileDataModelTest
-
-}
-
+            Assert.AreEqual(model.GetNumItems(), newModel.GetNumItems());
+            Assert.AreEqual(model.GetNumUsers(), newModel.GetNumUsers());
+            Assert.True(model.GetPreferencesFromUser(1L).Equals(newModel.GetPreferencesFromUser(1L)));
+            Assert.True(model.GetPreferencesForItem(1L).Equals(newModel.GetPreferencesForItem(1L)));
+            Assert.AreEqual(model.GetRawUserData(), newModel.GetRawUserData());
+        }
+        // Lots of other stuff should be tested but is kind of covered by FileDataModelTest
+    }
 }

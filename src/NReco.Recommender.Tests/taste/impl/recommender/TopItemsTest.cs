@@ -35,133 +35,153 @@ using NReco.CF.Taste.Recommender;
 using NReco.CF;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Recommender {
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// Tests for {@link TopItems}.
+    public sealed class TopItemsTest : TasteTestCase
+    {
+        [Test]
+        public void testTopItems()
+        {
+            long[] ids = new long[100];
+            for (int i = 0; i < 100; i++)
+            {
+                ids[i] = i;
+            }
+            var possibleItemIds = ((IEnumerable<long>)ids).GetEnumerator();
+            TopItems.IEstimator<long> estimator = new TestTopItemsEstimator();
+            List<IRecommendedItem> topItems = TopItems.GetTopItems(10, possibleItemIds, null, estimator);
+            int gold = 99;
+            foreach (IRecommendedItem topItem in topItems)
+            {
+                Assert.AreEqual(gold, topItem.GetItemID());
+                Assert.AreEqual(gold--, topItem.GetValue(), 0.01);
+            }
+        }
 
+        public class TestTopItemsEstimator : TopItems.IEstimator<long>
+        {
+            public double Estimate(long thing)
+            {
+                return thing;
+            }
+        }
 
- /// Tests for {@link TopItems}.
-public sealed class TopItemsTest : TasteTestCase {
+        [Test]
+        public void testTopItemsRandom()
+        {
+            long[] ids = new long[100];
+            for (int i = 0; i < 100; i++)
+            {
+                ids[i] = i;
+            }
+            var possibleItemIds = ((IEnumerable<long>)ids).GetEnumerator();
 
-  [Test]
-  public void testTopItems() {
-    long[] ids = new long[100];
-    for (int i = 0; i < 100; i++) {
-      ids[i] = i;
+            TopItems.IEstimator<long> estimator = new TestRndTopItemsEstimator();
+            List<IRecommendedItem> topItems = TopItems.GetTopItems(10, possibleItemIds, null, estimator);
+            Assert.AreEqual(10, topItems.Count);
+            double last = 2.0;
+            foreach (IRecommendedItem topItem in topItems)
+            {
+                Assert.True(topItem.GetValue() <= last);
+                last = topItem.GetItemID();
+            }
+        }
+
+        public class TestRndTopItemsEstimator : TopItems.IEstimator<long>
+        {
+            RandomWrapper random = RandomUtils.getRandom();
+            public double Estimate(long thing)
+            {
+                return random.nextDouble();
+            }
+        }
+
+        [Test]
+        public void testTopUsers()
+        {
+            long[] ids = new long[100];
+            for (int i = 0; i < 100; i++)
+            {
+                ids[i] = i;
+            }
+            var possibleItemIds = ((IEnumerable<long>)ids).GetEnumerator();
+            TopItems.IEstimator<long> estimator = new TestTopItemsEstimator();
+
+            long[] topItems = TopItems.GetTopUsers(10, possibleItemIds, null, estimator);
+            int gold = 99;
+            foreach (long topItem in topItems)
+            {
+                Assert.AreEqual(gold--, topItem);
+            }
+        }
+
+        [Test]
+        public void testTopItemItem()
+        {
+            List<GenericItemSimilarity.ItemItemSimilarity> sims = new List<GenericItemSimilarity.ItemItemSimilarity>();
+            for (int i = 0; i < 99; i++)
+            {
+                sims.Add(new GenericItemSimilarity.ItemItemSimilarity(i, i + 1, i / 99.0));
+            }
+
+            List<GenericItemSimilarity.ItemItemSimilarity> res = TopItems.GetTopItemItemSimilarities(10, sims.GetEnumerator());
+            int gold = 99;
+            foreach (GenericItemSimilarity.ItemItemSimilarity re in res)
+            {
+                Assert.AreEqual(gold--, re.getItemID2()); //the second id should be equal to 99 to start
+            }
+        }
+
+        [Test]
+        public void testTopItemItemAlt()
+        {
+            List<GenericItemSimilarity.ItemItemSimilarity> sims = new List<GenericItemSimilarity.ItemItemSimilarity>();
+            for (int i = 0; i < 99; i++)
+            {
+                sims.Add(new GenericItemSimilarity.ItemItemSimilarity(i, i + 1, 1 - (i / 99.0)));
+            }
+
+            List<GenericItemSimilarity.ItemItemSimilarity> res = TopItems.GetTopItemItemSimilarities(10, sims.GetEnumerator());
+            int gold = 0;
+            foreach (GenericItemSimilarity.ItemItemSimilarity re in res)
+            {
+                Assert.AreEqual(gold++, re.getItemID1()); //the second id should be equal to 99 to start
+            }
+        }
+
+        [Test]
+        public void testTopUserUser()
+        {
+            List<GenericUserSimilarity.UserUserSimilarity> sims = new List<GenericUserSimilarity.UserUserSimilarity>();
+            for (int i = 0; i < 99; i++)
+            {
+                sims.Add(new GenericUserSimilarity.UserUserSimilarity(i, i + 1, i / 99.0));
+            }
+
+            List<GenericUserSimilarity.UserUserSimilarity> res = TopItems.GetTopUserUserSimilarities(10, sims.GetEnumerator());
+            int gold = 99;
+            foreach (GenericUserSimilarity.UserUserSimilarity re in res)
+            {
+                Assert.AreEqual(gold--, re.getUserID2()); //the second id should be equal to 99 to start
+            }
+        }
+
+        [Test]
+        public void testTopUserUserAlt()
+        {
+            List<GenericUserSimilarity.UserUserSimilarity> sims = new List<GenericUserSimilarity.UserUserSimilarity>();
+            for (int i = 0; i < 99; i++)
+            {
+                sims.Add(new GenericUserSimilarity.UserUserSimilarity(i, i + 1, 1 - (i / 99.0)));
+            }
+
+            List<GenericUserSimilarity.UserUserSimilarity> res = TopItems.GetTopUserUserSimilarities(10, sims.GetEnumerator());
+            int gold = 0;
+            foreach (GenericUserSimilarity.UserUserSimilarity re in res)
+            {
+                Assert.AreEqual(gold++, re.getUserID1()); //the first id should be equal to 0 to start
+            }
+        }
     }
-    var possibleItemIds = ((IEnumerable<long>) ids).GetEnumerator();
-    TopItems.IEstimator<long> estimator = new TestTopItemsEstimator();
-    List<IRecommendedItem> topItems = TopItems.GetTopItems(10, possibleItemIds, null, estimator);
-	int gold = 99;
-    foreach (IRecommendedItem topItem in topItems) {
-      Assert.AreEqual(gold, topItem.GetItemID());
-      Assert.AreEqual(gold--, topItem.GetValue(), 0.01);
-    }
-  }
-
-  public class TestTopItemsEstimator : TopItems.IEstimator<long> {
-      public double Estimate(long thing) {
-        return thing;
-      }
- }
-
-
-  [Test]
-  public void testTopItemsRandom() {
-    long[] ids = new long[100];
-    for (int i = 0; i < 100; i++) {
-      ids[i] = i;
-    }
-    var possibleItemIds = ((IEnumerable<long>) ids).GetEnumerator();
-   
-    TopItems.IEstimator<long> estimator = new TestRndTopItemsEstimator();
-    List<IRecommendedItem> topItems = TopItems.GetTopItems(10, possibleItemIds, null, estimator);
-    Assert.AreEqual(10, topItems.Count);
-    double last = 2.0;
-    foreach (IRecommendedItem topItem in topItems) {
-      Assert.True(topItem.GetValue() <= last);
-      last = topItem.GetItemID();
-    }
-  }
-
-   public class TestRndTopItemsEstimator : TopItems.IEstimator<long> {
-	    RandomWrapper random = RandomUtils.getRandom();
-      public double Estimate(long thing) {
-         return random.nextDouble();
-      }
- } 
-
-
-  [Test]
-  public void testTopUsers() {
-    long[] ids = new long[100];
-    for (int i = 0; i < 100; i++) {
-      ids[i] = i;
-    }
-    var possibleItemIds = ((IEnumerable<long>) ids).GetEnumerator();
-    TopItems.IEstimator<long> estimator = new TestTopItemsEstimator();
-
-    long[] topItems = TopItems.GetTopUsers(10, possibleItemIds, null, estimator);
-    int gold = 99;
-    foreach (long topItem in topItems) {
-      Assert.AreEqual(gold--, topItem);
-    }
-  }
-
-  [Test]
-  public void testTopItemItem() {
-    List<GenericItemSimilarity.ItemItemSimilarity> sims = new List<GenericItemSimilarity.ItemItemSimilarity>();
-    for (int i = 0; i < 99; i++) {
-      sims.Add(new GenericItemSimilarity.ItemItemSimilarity(i, i + 1, i / 99.0));
-    }
-
-    List<GenericItemSimilarity.ItemItemSimilarity> res = TopItems.GetTopItemItemSimilarities(10, sims.GetEnumerator());
-    int gold = 99;
-    foreach (GenericItemSimilarity.ItemItemSimilarity re in res) {
-      Assert.AreEqual(gold--, re.getItemID2()); //the second id should be equal to 99 to start
-    }
-  }
-
-  [Test]
-  public void testTopItemItemAlt() {
-    List<GenericItemSimilarity.ItemItemSimilarity> sims = new List<GenericItemSimilarity.ItemItemSimilarity>();
-    for (int i = 0; i < 99; i++) {
-      sims.Add(new GenericItemSimilarity.ItemItemSimilarity(i, i + 1, 1 - (i / 99.0)));
-    }
-
-    List<GenericItemSimilarity.ItemItemSimilarity> res = TopItems.GetTopItemItemSimilarities(10, sims.GetEnumerator());
-    int gold = 0;
-    foreach (GenericItemSimilarity.ItemItemSimilarity re in res) {
-      Assert.AreEqual(gold++, re.getItemID1()); //the second id should be equal to 99 to start
-    }
-  }
-
-  [Test]
-  public void testTopUserUser() {
-    List<GenericUserSimilarity.UserUserSimilarity> sims = new List<GenericUserSimilarity.UserUserSimilarity>();
-    for (int i = 0; i < 99; i++) {
-      sims.Add(new GenericUserSimilarity.UserUserSimilarity(i, i + 1, i / 99.0));
-    }
-
-    List<GenericUserSimilarity.UserUserSimilarity> res = TopItems.GetTopUserUserSimilarities(10, sims.GetEnumerator());
-    int gold = 99;
-    foreach (GenericUserSimilarity.UserUserSimilarity re in res) {
-      Assert.AreEqual(gold--, re.getUserID2()); //the second id should be equal to 99 to start
-    }
-  }
-
-  [Test]
-  public void testTopUserUserAlt() {
-    List<GenericUserSimilarity.UserUserSimilarity> sims = new List<GenericUserSimilarity.UserUserSimilarity>();
-    for (int i = 0; i < 99; i++) {
-      sims.Add(new GenericUserSimilarity.UserUserSimilarity(i, i + 1, 1 - (i / 99.0)));
-    }
-
-    List<GenericUserSimilarity.UserUserSimilarity> res = TopItems.GetTopUserUserSimilarities(10, sims.GetEnumerator());
-    int gold = 0;
-    foreach (GenericUserSimilarity.UserUserSimilarity re in res) {
-      Assert.AreEqual(gold++, re.getUserID1()); //the first id should be equal to 0 to start
-    }
-  }
-
-}
-
 }

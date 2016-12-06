@@ -36,41 +36,40 @@ using NReco.CF.Taste.Recommender;
 using NUnit.Mocks;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Recommender {
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// Tests {@link AllUnknownItemsCandidateItemsStrategyTest}
+    public sealed class AllUnknownItemsCandidateItemsStrategyTest : TasteTestCase
+    {
+        [Test]
+        public void testStrategy()
+        {
+            FastIDSet allItemIDs = new FastIDSet();
+            allItemIDs.AddAll(new long[] { 1L, 2L, 3L });
+
+            FastIDSet preferredItemIDs = new FastIDSet(1);
+            preferredItemIDs.Add(2L);
+
+            var dataModelMock = new DynamicMock(typeof(IDataModel));
+            dataModelMock.ExpectAndReturn("GetNumItems", 3);
+            dataModelMock.ExpectAndReturn("GetItemIDs", allItemIDs.GetEnumerator());
+
+            IPreferenceArray prefArrayOfUser123 = new GenericUserPreferenceArray(new List<IPreference>() {
+                new GenericPreference(123L, 2L, 1.0f)
+            });
+
+            ICandidateItemsStrategy strategy = new AllUnknownItemsCandidateItemsStrategy();
+
+            //EasyMock.replay(dataModel);
 
 
- /// Tests {@link AllUnknownItemsCandidateItemsStrategyTest}
-public sealed class AllUnknownItemsCandidateItemsStrategyTest : TasteTestCase {
+            FastIDSet candidateItems = strategy.GetCandidateItems(123L, prefArrayOfUser123, (IDataModel)dataModelMock.MockInstance);
+            Assert.AreEqual(2, candidateItems.Count());
+            Assert.True(candidateItems.Contains(1L));
+            Assert.True(candidateItems.Contains(3L));
 
-  [Test]  
-  public void testStrategy() {
-    FastIDSet allItemIDs = new FastIDSet();
-    allItemIDs.AddAll(new long[] { 1L, 2L, 3L });
-
-    FastIDSet preferredItemIDs = new FastIDSet(1);
-    preferredItemIDs.Add(2L);
-    
-    var dataModelMock = new DynamicMock( typeof( IDataModel ));
-	dataModelMock.ExpectAndReturn("GetNumItems", 3);
-	dataModelMock.ExpectAndReturn("GetItemIDs", allItemIDs.GetEnumerator());
-
-    IPreferenceArray prefArrayOfUser123 = new GenericUserPreferenceArray( new List<IPreference>() {
-        new GenericPreference(123L, 2L, 1.0f) } );
-
-    ICandidateItemsStrategy strategy = new AllUnknownItemsCandidateItemsStrategy();
-
-    //EasyMock.replay(dataModel);
-
-
-	FastIDSet candidateItems = strategy.GetCandidateItems(123L, prefArrayOfUser123, (IDataModel)dataModelMock.MockInstance);
-    Assert.AreEqual(2, candidateItems.Count() );
-    Assert.True(candidateItems.Contains(1L));
-    Assert.True(candidateItems.Contains(3L));
-
-	dataModelMock.Verify();
-    //EasyMock.verify(dataModel);
-  }
-
-}
-
+            dataModelMock.Verify();
+            //EasyMock.verify(dataModel);
+        }
+    }
 }

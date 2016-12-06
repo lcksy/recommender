@@ -29,27 +29,29 @@ using System.Collections.Generic;
 using System.IO;
 using NReco.CF.Taste.Recommender;
 
-namespace NReco.CF.Taste.Impl.Recommender {
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// <p>Simple {@link Rescorer} which negates the given score, thus reversing order of rankings.</p> 
+    public sealed class ReversingRescorer<T> : IRescorer<T>, IDRescorer
+    {
+        public double Rescore(T thing, double originalScore)
+        {
+            return -originalScore;
+        }
 
-/// <p>Simple {@link Rescorer} which negates the given score, thus reversing order of rankings.</p> 
-public sealed class ReversingRescorer<T> : IRescorer<T>, IDRescorer {
+        public bool IsFiltered(T thing)
+        {
+            return false;
+        }
 
-  public double Rescore(T thing, double originalScore) {
-    return -originalScore;
-  }
+        public double rescore(long ID, double originalScore)
+        {
+            return -originalScore;
+        }
 
-  public bool IsFiltered(T thing) {
-    return false;
-  }
-
-  public double rescore(long ID, double originalScore) {
-    return -originalScore;
-  }
-
-  public bool isFiltered(long ID) {
-    return false;
-  }
-
-}
-
+        public bool isFiltered(long ID)
+        {
+            return false;
+        }
+    }
 }

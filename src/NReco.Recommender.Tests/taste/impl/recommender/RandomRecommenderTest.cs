@@ -31,22 +31,21 @@ using NReco.CF.Taste.Impl;
 using NReco.CF.Taste.Recommender;
 using NUnit.Framework;
 
-namespace NReco.CF.Taste.Impl.Recommender {
-
-
-public sealed class RandomRecommenderTest : TasteTestCase {
-
-  [Test]
-  public void testRecommender() {
-    IRecommender recommender = new RandomRecommender(getDataModel());
-    IList<IRecommendedItem> recommended = recommender.Recommend(1, 1);
-    Assert.NotNull(recommended);
-    Assert.AreEqual(1, recommended.Count);
-    IRecommendedItem firstRecommended = recommended[0];
-    Assert.AreEqual(2, firstRecommended.GetItemID());
-    recommender.Refresh(null);
-    Assert.AreEqual(2, firstRecommended.GetItemID());
-  }
-
-}
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    public sealed class RandomRecommenderTest : TasteTestCase
+    {
+        [Test]
+        public void testRecommender()
+        {
+            IRecommender recommender = new RandomRecommender(getDataModel());
+            IList<IRecommendedItem> recommended = recommender.Recommend(1, 1);
+            Assert.NotNull(recommended);
+            Assert.AreEqual(1, recommended.Count);
+            IRecommendedItem firstRecommended = recommended[0];
+            Assert.AreEqual(2, firstRecommended.GetItemID());
+            recommender.Refresh(null);
+            Assert.AreEqual(2, firstRecommended.GetItemID());
+        }
+    }
 }
