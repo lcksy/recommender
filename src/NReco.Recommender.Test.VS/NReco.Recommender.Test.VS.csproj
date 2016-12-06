@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="mytest\MyRecommender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="taste\impl\recommender\GenericUserBasedRecommenderTest.cs" />
     <Compile Include="taste\impl\recommender\ReversingRescorer.cs" />
