@@ -21,31 +21,26 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 
-namespace NReco.CF.Taste.Impl.Recommender {
-
-/// <summary>
-/// Return all items the user has not yet seen
-/// </summary>
-public sealed class AllUnknownItemsCandidateItemsStrategy : AbstractCandidateItemsStrategy {
-
-  protected override FastIDSet doGetCandidateItems(long[] preferredItemIDs, IDataModel dataModel) {
-    FastIDSet possibleItemIDs = new FastIDSet(dataModel.GetNumItems());
-    var allItemIDs = dataModel.GetItemIDs();
-    while (allItemIDs.MoveNext()) {
-      possibleItemIDs.Add(allItemIDs.Current);
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// <summary>
+    /// Return all items the user has not yet seen
+    /// </summary>
+    public sealed class AllUnknownItemsCandidateItemsStrategy : AbstractCandidateItemsStrategy
+    {
+        protected override FastIDSet doGetCandidateItems(long[] preferredItemIDs, IDataModel dataModel)
+        {
+            FastIDSet possibleItemIDs = new FastIDSet(dataModel.GetNumItems());
+            var allItemIDs = dataModel.GetItemIDs();
+            while (allItemIDs.MoveNext())
+            {
+                possibleItemIDs.Add(allItemIDs.Current);
+            }
+            possibleItemIDs.RemoveAll(preferredItemIDs);
+            return possibleItemIDs;
+        }
     }
-    possibleItemIDs.RemoveAll(preferredItemIDs);
-    return possibleItemIDs;
-  }
-}
-
 }

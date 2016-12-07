@@ -22,54 +22,55 @@
  */
 
 using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 using NReco.CF.Taste.Similarity;
 
-namespace NReco.CF.Taste.Impl.Similarity {
+namespace NReco.CF.Taste.Impl.Similarity
+{
+    public abstract class AbstractItemSimilarity : IItemSimilarity
+    {
+        private IDataModel dataModel;
+        private RefreshHelper refreshHelper;
 
+        protected AbstractItemSimilarity(IDataModel dataModel)
+        {
+            //Preconditions.checkArgument(dataModel != null, "dataModel is null");
+            this.dataModel = dataModel;
+            this.refreshHelper = new RefreshHelper(null);
+            refreshHelper.AddDependency(this.dataModel);
+        }
 
-public abstract class AbstractItemSimilarity : IItemSimilarity {
+        protected IDataModel getDataModel()
+        {
+            return dataModel;
+        }
 
-  private IDataModel dataModel;
-  private RefreshHelper refreshHelper;
+        public abstract double ItemSimilarity(long itemID1, long itemID2);
 
-  protected AbstractItemSimilarity(IDataModel dataModel) {
-    //Preconditions.checkArgument(dataModel != null, "dataModel is null");
-    this.dataModel = dataModel;
-    this.refreshHelper = new RefreshHelper(null);
-    refreshHelper.AddDependency(this.dataModel);
-  }
+        public abstract double[] ItemSimilarities(long itemID1, long[] itemID2s);
 
-  protected IDataModel getDataModel() {
-    return dataModel;
-  }
+        public virtual long[] AllSimilarItemIDs(long itemID)
+        {
+            FastIDSet allSimilarItemIDs = new FastIDSet();
+            var allItemIDs = dataModel.GetItemIDs();
+            while (allItemIDs.MoveNext())
+            {
+                long possiblySimilarItemID = allItemIDs.Current;
+                if (!Double.IsNaN(ItemSimilarity(itemID, possiblySimilarItemID)))
+                {
+                    allSimilarItemIDs.Add(possiblySimilarItemID);
+                }
+            }
+            return allSimilarItemIDs.ToArray();
+        }
 
-  public abstract double ItemSimilarity(long itemID1, long itemID2);
-
-  public abstract double[] ItemSimilarities(long itemID1, long[] itemID2s);
-
-  public virtual long[] AllSimilarItemIDs(long itemID) {
-    FastIDSet allSimilarItemIDs = new FastIDSet();
-    var allItemIDs = dataModel.GetItemIDs();
-    while (allItemIDs.MoveNext()) {
-      long possiblySimilarItemID = allItemIDs.Current;
-      if (!Double.IsNaN(ItemSimilarity(itemID, possiblySimilarItemID))) {
-        allSimilarItemIDs.Add(possiblySimilarItemID);
-      }
+        public virtual void Refresh(IList<IRefreshable> alreadyRefreshed)
+        {
+            refreshHelper.Refresh(alreadyRefreshed);
+        }
     }
-    return allSimilarItemIDs.ToArray();
-  }
-
-  public virtual void Refresh(IList<IRefreshable> alreadyRefreshed) {
-    refreshHelper.Refresh(alreadyRefreshed);
-  }
-}
-
 }

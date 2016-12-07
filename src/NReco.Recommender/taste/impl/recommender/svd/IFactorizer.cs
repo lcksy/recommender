@@ -21,20 +21,14 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using NReco.CF.Taste.Common;
 
-namespace NReco.CF.Taste.Impl.Recommender.SVD {
+namespace NReco.CF.Taste.Impl.Recommender.SVD
+{
+    /// <summary>Implementation must be able to create a factorization of a rating matrix</summary>
+    public interface IFactorizer : IRefreshable
+    {
+        Factorization Factorize();
 
-/// <summary>Implementation must be able to create a factorization of a rating matrix</summary>
-public interface IFactorizer : IRefreshable {
-
-  Factorization Factorize() ;
-
-}
-
+    }
 }

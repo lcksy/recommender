@@ -21,34 +21,30 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using NReco.CF.Taste.Impl.Model;
 
-namespace NReco.CF.Taste.Impl.Recommender.SVD {
+namespace NReco.CF.Taste.Impl.Recommender.SVD
+{
+    sealed class SVDPreference : GenericPreference
+    {
+        private double cache;
 
-sealed class SVDPreference : GenericPreference {
+        public SVDPreference(long userID, long itemID, float value, double cache)
+            : base(userID, itemID, value)
+        {
+            ;
+            setCache(cache);
+        }
 
-  private double cache;
+        public double getCache()
+        {
+            return cache;
+        }
 
-  public SVDPreference(long userID, long itemID, float value, double cache)
-	  : base(userID, itemID, value) {
-   ;
-    setCache(cache);
-  }
-
-  public double getCache() {
-    return cache;
-  }
-
-  public void setCache(double value) {
-    //Preconditions.checkArgument(!Double.isNaN(value), "NaN cache value");
-    this.cache = value;
-  }
-
-}
-
+        public void setCache(double value)
+        {
+            //Preconditions.checkArgument(!Double.isNaN(value), "NaN cache value");
+            this.cache = value;
+        }
+    }
 }

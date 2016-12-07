@@ -21,79 +21,84 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 
-namespace NReco.CF.Taste.Impl.Recommender.SVD {
+namespace NReco.CF.Taste.Impl.Recommender.SVD
+{
+    /// <summary>
+    /// Base class for <see cref="IFactorizer"/>s, provides ID to index mapping
+    /// </summary>
+    public abstract class AbstractFactorizer : IFactorizer
+    {
+        private IDataModel dataModel;
+        private FastByIDMap<int?> userIDMapping;
+        private FastByIDMap<int?> itemIDMapping;
+        private RefreshHelper refreshHelper;
 
-/// <summary>
-/// Base class for <see cref="IFactorizer"/>s, provides ID to index mapping
-/// </summary>
-public abstract class AbstractFactorizer : IFactorizer {
+        protected AbstractFactorizer(IDataModel dataModel)
+        {
+            this.dataModel = dataModel;
+            buildMappings();
+            refreshHelper = new RefreshHelper(() =>
+            {
+                buildMappings();
+            });
+            refreshHelper.AddDependency(dataModel);
+        }
 
-  private IDataModel dataModel;
-  private FastByIDMap<int?> userIDMapping;
-  private FastByIDMap<int?> itemIDMapping;
-  private RefreshHelper refreshHelper;
+        public abstract Factorization Factorize();
 
-  protected AbstractFactorizer(IDataModel dataModel) {
-    this.dataModel = dataModel;
-    buildMappings();
-    refreshHelper = new RefreshHelper( () => {
-        buildMappings();
-      });
-    refreshHelper.AddDependency(dataModel);
-  }
+        private void buildMappings()
+        {
+            userIDMapping = createIDMapping(dataModel.GetNumUsers(), dataModel.GetUserIDs());
+            itemIDMapping = createIDMapping(dataModel.GetNumItems(), dataModel.GetItemIDs());
+        }
 
-  public abstract Factorization Factorize();
+        protected Factorization createFactorization(double[][] userFeatures, double[][] itemFeatures)
+        {
+            return new Factorization(userIDMapping, itemIDMapping, userFeatures, itemFeatures);
+        }
 
-  private void buildMappings() {
-    userIDMapping = createIDMapping(dataModel.GetNumUsers(), dataModel.GetUserIDs());
-    itemIDMapping = createIDMapping(dataModel.GetNumItems(), dataModel.GetItemIDs());
-  }
+        protected int userIndex(long userID)
+        {
+            int? userIndex = userIDMapping.Get(userID);
+            if (userIndex == null)
+            {
+                userIndex = userIDMapping.Count();
+                userIDMapping.Put(userID, userIndex);
+            }
+            return userIndex.Value;
+        }
 
-  protected Factorization createFactorization(double[][] userFeatures, double[][] itemFeatures) {
-    return new Factorization(userIDMapping, itemIDMapping, userFeatures, itemFeatures);
-  }
+        protected int itemIndex(long itemID)
+        {
+            int? itemIndex = itemIDMapping.Get(itemID);
+            if (itemIndex == null)
+            {
+                itemIndex = itemIDMapping.Count();
+                itemIDMapping.Put(itemID, itemIndex);
+            }
+            return itemIndex.Value;
+        }
 
-  protected int userIndex(long userID) {
-    int? userIndex = userIDMapping.Get(userID);
-    if (userIndex == null) {
-      userIndex = userIDMapping.Count();
-      userIDMapping.Put(userID, userIndex);
+        private static FastByIDMap<int?> createIDMapping(int size, IEnumerator<long> idIterator)
+        {
+            var mapping = new FastByIDMap<int?>(size);
+            int index = 0;
+            while (idIterator.MoveNext())
+            {
+                mapping.Put(idIterator.Current, index++);
+            }
+            return mapping;
+        }
+
+        public void Refresh(IList<IRefreshable> alreadyRefreshed)
+        {
+            refreshHelper.Refresh(alreadyRefreshed);
+        }
     }
-    return userIndex.Value;
-  }
-
-  protected int itemIndex(long itemID) {
-    int? itemIndex = itemIDMapping.Get(itemID);
-    if (itemIndex == null) {
-      itemIndex = itemIDMapping.Count();
-      itemIDMapping.Put(itemID, itemIndex);
-    }
-    return itemIndex.Value;
-  }
-
-  private static FastByIDMap<int?> createIDMapping(int size, IEnumerator<long> idIterator) {
-    var mapping = new FastByIDMap<int?>(size);
-    int index = 0;
-    while (idIterator.MoveNext()) {
-      mapping.Put(idIterator.Current, index++);
-    }
-    return mapping;
-  }
-
-  public void Refresh(IList<IRefreshable> alreadyRefreshed) {
-    refreshHelper.Refresh(alreadyRefreshed);
-  }
-  
-}
-
 }

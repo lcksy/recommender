@@ -21,48 +21,45 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 using NReco.CF.Taste.Recommender;
 
-namespace NReco.CF.Taste.Impl.Recommender {
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// <summary>Defines a natural ordering from most-preferred item (highest value) to least-preferred.</summary>
+    public sealed class ByValueRecommendedItemComparator : IComparer<IRecommendedItem>
+    {
+        private static IComparer<IRecommendedItem> INSTANCE = new ByValueRecommendedItemComparator();
 
-/// <summary>Defines a natural ordering from most-preferred item (highest value) to least-preferred.</summary>
-public sealed class ByValueRecommendedItemComparator : IComparer<IRecommendedItem> {
+        public static IComparer<IRecommendedItem> getInstance()
+        {
+            return INSTANCE;
+        }
 
-	private static IComparer<IRecommendedItem> INSTANCE = new ByValueRecommendedItemComparator();
+        public static IComparer<IRecommendedItem> getReverseInstance()
+        {
+            return new ReverseComparer<IRecommendedItem>(INSTANCE);
+        }
 
-	public static IComparer<IRecommendedItem> getInstance() {
-	 return INSTANCE;
-  }
+        public int Compare(IRecommendedItem o1, IRecommendedItem o2)
+        {
+            float value1 = o1.GetValue();
+            float value2 = o2.GetValue();
+            return value1 > value2 ? -1 : value1 < value2 ? 1 : (o1.GetItemID().CompareTo(o2.GetItemID())); // SortedSet uses IComparer to find identical elements
+        }
 
-	public static IComparer<IRecommendedItem> getReverseInstance() {
-		return new ReverseComparer<IRecommendedItem>( INSTANCE );
-	}
-
-  public int Compare(IRecommendedItem o1, IRecommendedItem o2) {
-    float value1 = o1.GetValue();
-    float value2 = o2.GetValue();
-    return value1 > value2 ? -1 : value1 < value2 ? 1 : (o1.GetItemID().CompareTo(o2.GetItemID())); // SortedSet uses IComparer to find identical elements
-  }
-
-  internal class ReverseComparer<T> : IComparer<T> {
-		IComparer<T> comparer;
-		internal ReverseComparer(IComparer<T> comparer) {
-			this.comparer = comparer;
-		}
-	  public int Compare(T obj1, T obj2) {
-		  return -comparer.Compare(obj1, obj2);
-	  }
-  }
-
-}
-
-
-
-
+        internal class ReverseComparer<T> : IComparer<T>
+        {
+            IComparer<T> comparer;
+            internal ReverseComparer(IComparer<T> comparer)
+            {
+                this.comparer = comparer;
+            }
+            public int Compare(T obj1, T obj2)
+            {
+                return -comparer.Compare(obj1, obj2);
+            }
+        }
+    }
 }

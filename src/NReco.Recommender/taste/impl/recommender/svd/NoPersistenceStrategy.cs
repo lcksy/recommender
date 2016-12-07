@@ -21,24 +21,21 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-namespace NReco.CF.Taste.Impl.Recommender.SVD {
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 
-/// <summary>A <see cref="IPersistenceStrategy"/> which does nothing.</summary>
-public class NoPersistenceStrategy : IPersistenceStrategy {
+namespace NReco.CF.Taste.Impl.Recommender.SVD
+{
+    /// <summary>A <see cref="IPersistenceStrategy"/> which does nothing.</summary>
+    public class NoPersistenceStrategy : IPersistenceStrategy
+    {
 
-  public Factorization Load() {
-    return null;
-  }
+        public Factorization Load()
+        {
+            return null;
+        }
 
-  public void MaybePersist(Factorization factorization) {
-    // do nothing.
-  }
-
-}
-
+        public void MaybePersist(Factorization factorization)
+        {
+            // do nothing.
+        }
+    }
 }

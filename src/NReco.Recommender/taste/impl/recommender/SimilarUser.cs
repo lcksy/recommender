@@ -22,68 +22,73 @@
  */
 
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using NReco.CF;
 
-namespace NReco.CF.Taste.Impl.Recommender {
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// <summary>Simply encapsulates a user and a similarity value. </summary>
+    public sealed class SimilarUser : IComparable<SimilarUser>
+    {
+        private long userID;
+        private double similarity;
 
-/// <summary>Simply encapsulates a user and a similarity value. </summary>
-public sealed class SimilarUser : IComparable<SimilarUser> {
-  
-  private long userID;
-  private double similarity;
-  
-  public SimilarUser(long userID, double similarity) {
-    this.userID = userID;
-    this.similarity = similarity;
-  }
-  
-  public long getUserID() {
-    return userID;
-  }
-  
-  public double getSimilarity() {
-    return similarity;
-  }
-  
-  public override int GetHashCode() {
-    return (int) userID ^ RandomUtils.hashDouble(similarity);
-  }
-  
-  public override bool Equals(object o) {
-    if (!(o is SimilarUser)) {
-      return false;
-    }
-    SimilarUser other = (SimilarUser) o;
-    return userID == other.getUserID() && similarity == other.getSimilarity();
-  }
-  
-  public override string ToString() {
-    return "SimilarUser[user:" + userID + ", similarity:" + similarity + ']';
-  }
-  
-  /// Defines an ordering from most similar to least similar. 
-  public int CompareTo(SimilarUser other) {
-    double otherSimilarity = other.getSimilarity();
-    if (similarity > otherSimilarity) {
-      return -1;
-    }
-    if (similarity < otherSimilarity) {
-      return 1;
-    }
-    long otherUserID = other.getUserID();
-    if (userID < otherUserID) {
-      return -1;
-    }
-    if (userID > otherUserID) {
-      return 1;
-    }
-    return 0;
-  }
-  
-}
+        public SimilarUser(long userID, double similarity)
+        {
+            this.userID = userID;
+            this.similarity = similarity;
+        }
 
+        public long getUserID()
+        {
+            return userID;
+        }
+
+        public double getSimilarity()
+        {
+            return similarity;
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)userID ^ RandomUtils.hashDouble(similarity);
+        }
+
+        public override bool Equals(object o)
+        {
+            if (!(o is SimilarUser))
+            {
+                return false;
+            }
+            SimilarUser other = (SimilarUser)o;
+            return userID == other.getUserID() && similarity == other.getSimilarity();
+        }
+
+        public override string ToString()
+        {
+            return "SimilarUser[user:" + userID + ", similarity:" + similarity + ']';
+        }
+
+        /// Defines an ordering from most similar to least similar. 
+        public int CompareTo(SimilarUser other)
+        {
+            double otherSimilarity = other.getSimilarity();
+            if (similarity > otherSimilarity)
+            {
+                return -1;
+            }
+            if (similarity < otherSimilarity)
+            {
+                return 1;
+            }
+            long otherUserID = other.getUserID();
+            if (userID < otherUserID)
+            {
+                return -1;
+            }
+            if (userID > otherUserID)
+            {
+                return 1;
+            }
+            return 0;
+        }
+    }
 }

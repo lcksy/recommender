@@ -30,7 +30,6 @@ using System.IO;
 using NReco.CF.Taste.Recommender;
 using NReco.CF;
 
-
 namespace NReco.CF.Taste.Impl.Recommender
 {
     /// <summary>

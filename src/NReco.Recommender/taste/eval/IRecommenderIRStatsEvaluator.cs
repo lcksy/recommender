@@ -21,12 +21,6 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Model;
 using NReco.CF.Taste.Recommender;
 

@@ -21,39 +21,34 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-
-using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 using NReco.CF.Taste.Similarity;
 
-namespace NReco.CF.Taste.Impl.Recommender {
+namespace NReco.CF.Taste.Impl.Recommender
+{
+    /// <summary>
+    /// Returns the result of <see cref="IItemSimilarity.AllSimilarItemIDs"/> as candidate items
+    /// </summary>
+    public class AllSimilarItemsCandidateItemsStrategy : AbstractCandidateItemsStrategy
+    {
+        private IItemSimilarity similarity;
 
-/// <summary>
-/// Returns the result of <see cref="IItemSimilarity.AllSimilarItemIDs"/> as candidate items
-/// </summary>
-public class AllSimilarItemsCandidateItemsStrategy : AbstractCandidateItemsStrategy {
+        public AllSimilarItemsCandidateItemsStrategy(IItemSimilarity similarity)
+        {
+            //Preconditions.checkArgument(similarity != null, "similarity is null");
+            this.similarity = similarity;
+        }
 
-  private IItemSimilarity similarity;
-
-  public AllSimilarItemsCandidateItemsStrategy(IItemSimilarity similarity) {
-    //Preconditions.checkArgument(similarity != null, "similarity is null");
-    this.similarity = similarity;
-  }
-
-  protected override FastIDSet doGetCandidateItems(long[] preferredItemIDs, IDataModel dataModel) {
-    FastIDSet candidateItemIDs = new FastIDSet();
-    foreach (long itemID in preferredItemIDs) {
-      candidateItemIDs.AddAll(similarity.AllSimilarItemIDs(itemID));
+        protected override FastIDSet doGetCandidateItems(long[] preferredItemIDs, IDataModel dataModel)
+        {
+            FastIDSet candidateItemIDs = new FastIDSet();
+            foreach (long itemID in preferredItemIDs)
+            {
+                candidateItemIDs.AddAll(similarity.AllSimilarItemIDs(itemID));
+            }
+            candidateItemIDs.RemoveAll(preferredItemIDs);
+            return candidateItemIDs;
+        }
     }
-    candidateItemIDs.RemoveAll(preferredItemIDs);
-    return candidateItemIDs;
-  }
-}
-
 }

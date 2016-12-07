@@ -21,26 +21,20 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-namespace NReco.CF.Taste.Impl.Recommender.SVD {
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+namespace NReco.CF.Taste.Impl.Recommender.SVD
+{
+    /// <summary>
+    /// Provides storage for <see cref="Factorization"/>s
+    /// </summary>
+    public interface IPersistenceStrategy
+    {
 
-/// <summary>
-/// Provides storage for <see cref="Factorization"/>s
-/// </summary>
-public interface IPersistenceStrategy {
+        /// <summary>Load a factorization from a persistent store.</summary>
+        /// <returns>a Factorization or null if the persistent store is empty.</returns>
+        Factorization Load();
 
-	/// <summary>Load a factorization from a persistent store.</summary>
-	/// <returns>a Factorization or null if the persistent store is empty.</returns>
-	Factorization Load();
-
-	/// <summary>Write a factorization to a persistent store unless it already
-	/// contains an identical factorization.</summary>
-	void MaybePersist(Factorization factorization) ;
-
-}
-
+        /// <summary>Write a factorization to a persistent store unless it already
+        /// contains an identical factorization.</summary>
+        void MaybePersist(Factorization factorization);
+    }
 }

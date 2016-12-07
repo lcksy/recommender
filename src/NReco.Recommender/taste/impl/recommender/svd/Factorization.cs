@@ -21,124 +21,139 @@
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
 
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 
-namespace NReco.CF.Taste.Impl.Recommender.SVD {
+namespace NReco.CF.Taste.Impl.Recommender.SVD
+{
+    /// <summary>
+    /// A factorization of the rating matrix
+    /// </summary>
+    public class Factorization
+    {
+        /// used to find the rows in the user features matrix by userID 
+        private FastByIDMap<int?> userIDMapping;
+        /// used to find the rows in the item features matrix by itemID 
+        private FastByIDMap<int?> itemIDMapping;
 
-/// <summary>
-/// A factorization of the rating matrix
-/// </summary>
-public class Factorization {
+        /// user features matrix 
+        private double[][] userFeatures;
+        /// item features matrix 
+        private double[][] itemFeatures;
 
-  /// used to find the rows in the user features matrix by userID 
-  private FastByIDMap<int?> userIDMapping;
-  /// used to find the rows in the item features matrix by itemID 
-  private FastByIDMap<int?> itemIDMapping;
+        public Factorization(FastByIDMap<int?> userIDMapping, FastByIDMap<int?> itemIDMapping, double[][] userFeatures,
+            double[][] itemFeatures)
+        {
+            this.userIDMapping = userIDMapping; //Preconditions.checkNotNull(
+            this.itemIDMapping = itemIDMapping; //Preconditions.checkNotNull();
+            this.userFeatures = userFeatures;
+            this.itemFeatures = itemFeatures;
+        }
 
-  /// user features matrix 
-  private double[][] userFeatures;
-  /// item features matrix 
-  private double[][] itemFeatures;
+        public double[][] allUserFeatures()
+        {
+            return userFeatures;
+        }
 
-  public Factorization(FastByIDMap<int?> userIDMapping, FastByIDMap<int?> itemIDMapping, double[][] userFeatures,
-      double[][] itemFeatures) {
-    this.userIDMapping = userIDMapping; //Preconditions.checkNotNull(
-	this.itemIDMapping = itemIDMapping; //Preconditions.checkNotNull();
-    this.userFeatures = userFeatures;
-    this.itemFeatures = itemFeatures;
-  }
+        public virtual double[] getUserFeatures(long userID)
+        {
+            int? index = userIDMapping.Get(userID);
+            if (index == null)
+            {
+                throw new NoSuchUserException(userID);
+            }
+            return userFeatures[index.Value];
+        }
 
-  public double[][] allUserFeatures() {
-    return userFeatures;
-  }
+        public double[][] allItemFeatures()
+        {
+            return itemFeatures;
+        }
 
-  public virtual double[] getUserFeatures(long userID) {
-    int? index = userIDMapping.Get(userID);
-    if (index == null) {
-      throw new NoSuchUserException(userID);
+        public virtual double[] getItemFeatures(long itemID)
+        {
+            int? index = itemIDMapping.Get(itemID);
+            if (index == null)
+            {
+                throw new NoSuchItemException(itemID);
+            }
+            return itemFeatures[index.Value];
+        }
+
+        public int userIndex(long userID)
+        {
+            int? index = userIDMapping.Get(userID);
+            if (index == null)
+            {
+                throw new NoSuchUserException(userID);
+            }
+            return index.Value;
+        }
+
+        public IEnumerable<KeyValuePair<long, int?>> getUserIDMappings()
+        {
+            return userIDMapping.EntrySet();
+        }
+
+        public IEnumerator<long> getUserIDMappingKeys()
+        {
+            return userIDMapping.Keys.GetEnumerator();
+        }
+
+        public int itemIndex(long itemID)
+        {
+            int? index = itemIDMapping.Get(itemID);
+            if (index == null)
+            {
+                throw new NoSuchItemException(itemID);
+            }
+            return index.Value;
+        }
+
+        public IEnumerable<KeyValuePair<long, int?>> getItemIDMappings()
+        {
+            return itemIDMapping.EntrySet();
+        }
+
+        public IEnumerator<long> getItemIDMappingKeys()
+        {
+            return itemIDMapping.Keys.GetEnumerator();
+        }
+
+        public int numFeatures()
+        {
+            return userFeatures.Length > 0 ? userFeatures[0].Length : 0;
+        }
+
+        public int numUsers()
+        {
+            return userIDMapping.Count();
+        }
+
+        public int numItems()
+        {
+            return itemIDMapping.Count();
+        }
+
+        public override bool Equals(object o)
+        {
+            if (o is Factorization)
+            {
+                Factorization other = (Factorization)o;
+                return userIDMapping.Equals(other.userIDMapping) && itemIDMapping.Equals(other.itemIDMapping)
+                    && Utils.ArrayDeepEquals(userFeatures, other.userFeatures) && Utils.ArrayDeepEquals(itemFeatures, other.itemFeatures);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 31 * userIDMapping.GetHashCode() + itemIDMapping.GetHashCode();
+            hashCode = 31 * hashCode + Utils.GetArrayDeepHashCode(userFeatures);
+            hashCode = 31 * hashCode + Utils.GetArrayDeepHashCode(itemFeatures);
+            return hashCode;
+        }
     }
-    return userFeatures[index.Value];
-  }
-
-  public double[][] allItemFeatures() {
-    return itemFeatures;
-  }
-
-  public virtual double[] getItemFeatures(long itemID) {
-    int? index = itemIDMapping.Get(itemID);
-    if (index == null) {
-      throw new NoSuchItemException(itemID);
-    }
-    return itemFeatures[index.Value];
-  }
-
-  public int userIndex(long userID) {
-    int? index = userIDMapping.Get(userID);
-    if (index == null) {
-      throw new NoSuchUserException(userID);
-    }
-    return index.Value;
-  }
-
-  public IEnumerable<KeyValuePair<long,int?>> getUserIDMappings() {
-    return userIDMapping.EntrySet();
-  }
-
-  public IEnumerator<long> getUserIDMappingKeys() {
-	  return userIDMapping.Keys.GetEnumerator();
-  }
-
-
-  public int itemIndex(long itemID) {
-    int? index = itemIDMapping.Get(itemID);
-    if (index == null) {
-      throw new NoSuchItemException(itemID);
-    }
-    return index.Value;
-  }
-
-  public IEnumerable<KeyValuePair<long, int?>> getItemIDMappings() {
-    return itemIDMapping.EntrySet();
-  }
-
-  public IEnumerator<long> getItemIDMappingKeys() {
-	  return itemIDMapping.Keys.GetEnumerator();
-  }
-
-  public int numFeatures() {
-    return userFeatures.Length > 0 ? userFeatures[0].Length : 0;
-  }
-
-  public int numUsers() {
-    return userIDMapping.Count();
-  }
-
-  public int numItems() {
-    return itemIDMapping.Count();
-  }
-
-  public override bool Equals(object o) {
-    if (o is Factorization) {
-      Factorization other = (Factorization) o;
-      return userIDMapping.Equals(other.userIDMapping) && itemIDMapping.Equals(other.itemIDMapping)
-		  && Utils.ArrayDeepEquals(userFeatures, other.userFeatures) && Utils.ArrayDeepEquals(itemFeatures, other.itemFeatures);
-    }
-    return false;
-  }
-
-  public override int GetHashCode() {
-    int hashCode = 31 * userIDMapping.GetHashCode() + itemIDMapping.GetHashCode();
-    hashCode = 31 * hashCode + Utils.GetArrayDeepHashCode(userFeatures);
-    hashCode = 31 * hashCode + Utils.GetArrayDeepHashCode(itemFeatures);
-    return hashCode;
-  }
-}
-
 }

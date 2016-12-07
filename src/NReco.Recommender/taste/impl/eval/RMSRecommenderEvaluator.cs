@@ -22,41 +22,40 @@
  */
 
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 
-namespace NReco.CF.Taste.Impl.Eval {
+namespace NReco.CF.Taste.Impl.Eval
+{
+    /// <summary>
+    /// A <see cref="NReco.CF.Taste.Eval.IRecommenderEvaluator"/> which computes the "root mean squared"
+    /// difference between predicted and actual ratings for users. This is the square root of the average of this
+    /// difference, squared.
+    /// </summary>
+    public sealed class RMSRecommenderEvaluator : AbstractDifferenceRecommenderEvaluator
+    {
+        private IRunningAverage average;
 
-/// <summary>
-/// A <see cref="NReco.CF.Taste.Eval.IRecommenderEvaluator"/> which computes the "root mean squared"
-/// difference between predicted and actual ratings for users. This is the square root of the average of this
-/// difference, squared.
-/// </summary>
-public sealed class RMSRecommenderEvaluator : AbstractDifferenceRecommenderEvaluator {
-  
-  private IRunningAverage average;
-  
-  protected override void reset() {
-    average = new FullRunningAverage();
-  }
-  
-  protected override void processOneEstimate(float estimatedPreference, IPreference realPref) {
-    double diff = realPref.GetValue() - estimatedPreference;
-    average.AddDatum(diff * diff);
-  }
-  
-  protected override double computeFinalEvaluation() {
-    return Math.Sqrt(average.GetAverage());
-  }
-  
-  public override string ToString() {
-    return "RMSRecommenderEvaluator";
-  }
-  
-}
+        protected override void reset()
+        {
+            average = new FullRunningAverage();
+        }
 
+        protected override void processOneEstimate(float estimatedPreference, IPreference realPref)
+        {
+            double diff = realPref.GetValue() - estimatedPreference;
+            average.AddDatum(diff * diff);
+        }
+
+        protected override double computeFinalEvaluation()
+        {
+            return Math.Sqrt(average.GetAverage());
+        }
+
+        public override string ToString()
+        {
+            return "RMSRecommenderEvaluator";
+        }
+    }
 }
