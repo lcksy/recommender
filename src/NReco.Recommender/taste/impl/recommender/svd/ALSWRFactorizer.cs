@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -110,7 +87,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 while (itemIDsIterator.MoveNext())
                 {
                     long itemID = itemIDsIterator.Current;
-                    int itemIDIndex = factorizer.itemIndex(itemID);
+                    int itemIDIndex = factorizer.ItemIndex(itemID);
                     M[itemIDIndex] = new double[numFeatures];
                     M[itemIDIndex][0] = averateRating(itemID);
                     for (int feature = 1; feature < numFeatures; feature++)
@@ -216,14 +193,14 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                             while (itemIDsFromUser.MoveNext())
                             {
                                 long itemID = itemIDsFromUser.Current;
-                                featureVectors.Add(features.getItemFeatureColumn(itemIndex(itemID)));
+                                featureVectors.Add(features.getItemFeatureColumn(ItemIndex(itemID)));
                             }
 
                             var userFeatures = usesImplicitFeedback
                                 ? implicitFeedbackSolver.Solve(sparseUserRatingVector(userPrefs))
                                 : AlternatingLeastSquaresSolver.Solve(featureVectors, ratingVector(userPrefs), lambda, numFeatures);
 
-                            features.setFeatureColumnInU(userIndex(userID), userFeatures);
+                            features.setFeatureColumnInU(UserIndex(userID), userFeatures);
                         }
                           ));
                     }
@@ -266,14 +243,14 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                             foreach (IPreference pref in itemPrefs)
                             {
                                 long userID = pref.GetUserID();
-                                featureVectors.Add(features.getUserFeatureColumn(userIndex(userID)));
+                                featureVectors.Add(features.getUserFeatureColumn(UserIndex(userID)));
                             }
 
                             var itemFeatures = usesImplicitFeedback
                                 ? implicitFeedbackSolver.Solve(sparseItemRatingVector(itemPrefs))
                                 : AlternatingLeastSquaresSolver.Solve(featureVectors, ratingVector(itemPrefs), lambda, numFeatures);
 
-                            features.setFeatureColumnInM(itemIndex(itemID), itemFeatures);
+                            features.setFeatureColumnInM(ItemIndex(itemID), itemFeatures);
                         }));
                     }
                 }
@@ -294,7 +271,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             }
 
             log.Info("finished computation of the factorization...");
-            return createFactorization(features.getU(), features.getM());
+            return CreateFactorization(features.getU(), features.getM());
         }
 
         public static double[] ratingVector(IPreferenceArray prefs)
@@ -315,7 +292,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             while (itemIDs.MoveNext())
             {
                 long itemID = itemIDs.Current;
-                mapping[(int)itemID] = featureMatrix[itemIndex(itemID)];
+                mapping[(int)itemID] = featureMatrix[ItemIndex(itemID)];
             }
 
             return mapping;
@@ -329,7 +306,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             while (userIDs.MoveNext())
             {
                 long userID = userIDs.Current;
-                mapping[(int)userID] = featureMatrix[userIndex(userID)];
+                mapping[(int)userID] = featureMatrix[UserIndex(userID)];
             }
 
             return mapping;

@@ -187,7 +187,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 }
                 currentLearningRate *= learningRateDecay;
             }
-            return createFactorization(userVectors, itemVectors);
+            return CreateFactorization(userVectors, itemVectors);
         }
 
         double getAveragePreference()
@@ -206,8 +206,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
 
         protected void updateParameters(long userID, long itemID, float rating, double currentLearningRate)
         {
-            int userIdx = userIndex(userID);
-            int itemIdx = itemIndex(itemID);
+            int userIdx = UserIndex(userID);
+            int itemIdx = ItemIndex(itemID);
 
             double[] userVector = userVectors[userIdx];
             double[] itemVector = itemVectors[itemIdx];

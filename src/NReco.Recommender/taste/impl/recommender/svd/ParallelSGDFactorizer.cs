@@ -303,7 +303,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
 
             }
 
-            return createFactorization(userVectors, itemVectors);
+            return CreateFactorization(userVectors, itemVectors);
         }
 
         double getAveragePreference()
@@ -338,8 +338,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
         ///            "pseudorank?" (sum of singular values)-regularization 
         protected void update(IPreference preference, double mu)
         {
-            int userIdx = userIndex(preference.GetUserID());
-            int itemIdx = itemIndex(preference.GetItemID());
+            int userIdx = UserIndex(preference.GetUserID());
+            int itemIdx = ItemIndex(preference.GetItemID());
 
             double[] userVector = userVectors[userIdx];
             double[] itemVector = itemVectors[itemIdx];

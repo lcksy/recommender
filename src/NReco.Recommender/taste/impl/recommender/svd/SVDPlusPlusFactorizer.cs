@@ -95,13 +95,13 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             while (userIDs.MoveNext())
             {
                 long userId = userIDs.Current;
-                int userIdx = userIndex(userId);
+                int userIdx = UserIndex(userId);
                 FastIDSet itemIDsFromUser = dataModel.GetItemIDsFromUser(userId);
                 List<int> itemIndexes = new List<int>(itemIDsFromUser.Count());
                 itemsByUser[userIdx] = itemIndexes;
                 foreach (long itemID2 in itemIDsFromUser)
                 {
-                    int i2 = itemIndex(itemID2);
+                    int i2 = ItemIndex(itemID2);
                     itemIndexes.Add(i2);
                 }
             }
@@ -130,13 +130,13 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 }
             }
 
-            return createFactorization(userVectors, itemVectors);
+            return CreateFactorization(userVectors, itemVectors);
         }
 
         protected void updateParameters(long userID, long itemID, float rating, double currentLearningRate)
         {
-            int userIdx = userIndex(userID);
-            int itemIdx = itemIndex(itemID);
+            int userIdx = UserIndex(userID);
+            int itemIdx = ItemIndex(itemID);
 
             double[] userVector = p[userIdx];
             double[] itemVector = itemVectors[itemIdx];
