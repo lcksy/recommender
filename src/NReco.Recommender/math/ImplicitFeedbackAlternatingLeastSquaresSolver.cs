@@ -1,33 +1,6 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout and Apache Commons Mathematics Library that were licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-
-using NReco.Math3;
+using System.Linq;
 
 namespace NReco.Math3.Als
 {
@@ -48,32 +21,32 @@ namespace NReco.Math3.Als
             this.lambda = lambda;
             this.alpha = alpha;
             this.Y = Y;
-            YtransposeY = getYtransposeY(Y);
+            YtransposeY = GetYtransposeY(Y);
         }
 
-        public double[] solve(IList<Tuple<int, double>> ratings)
+        public double[] Solve(IList<Tuple<int, double>> ratings)
         {
-            var otherM = getYtransponseCuMinusIYPlusLambdaI(ratings);
+            var otherM = GetYtransponseCuMinusIYPlusLambdaI(ratings);
             var sumM = new double[YtransposeY.GetLength(0), YtransposeY.GetLength(1)];
             for (int i = 0; i < sumM.GetLength(0); i++)
                 for (int j = 0; j < sumM.GetLength(1); j++)
                     sumM[i, j] = YtransposeY[i, j] + otherM[i, j];
 
-            return solve(sumM, getYtransponseCuPu(ratings));
+            return Solve(sumM, GetYtransponseCuPu(ratings));
         }
 
-        private static double[] solve(double[,] A, double[,] y)
+        private static double[] Solve(double[,] A, double[,] y)
         {
-            return MatrixUtil.viewColumn(new QRDecomposition(A).solve(y), 0);
+            return MatrixUtil.ViewColumn(new QRDecomposition(A).Solve(y), 0);
         }
 
-        double confidence(double rating)
+        double Confidence(double rating)
         {
             return 1 + alpha * rating;
         }
 
         /// Y' Y 
-        private double[,] getYtransposeY(IDictionary<int, double[]> Y)
+        private double[,] GetYtransposeY(IDictionary<int, double[]> Y)
         {
 
             var indexes = Y.Keys.ToList();
@@ -104,7 +77,7 @@ namespace NReco.Math3.Als
         }
 
         /// Y' (Cu - I) Y + λ I 
-        private double[,] getYtransponseCuMinusIYPlusLambdaI(IList<Tuple<int, double>> userRatings)
+        private double[,] GetYtransponseCuMinusIYPlusLambdaI(IList<Tuple<int, double>> userRatings)
         {
             //Preconditions.checkArgument(userRatings.isSequentialAccess(), "need sequential access to ratings!");
 
@@ -112,7 +85,7 @@ namespace NReco.Math3.Als
             var CuMinusIY = new Dictionary<int, double[]>(userRatings.Count);
             foreach (var e in userRatings)
             {
-                CuMinusIY[e.Item1] = MatrixUtil.times(Y[e.Item1], confidence(e.Item2) - 1);
+                CuMinusIY[e.Item1] = MatrixUtil.Times(Y[e.Item1], Confidence(e.Item2) - 1);
             }
 
             var YtransponseCuMinusIY = new double[numFeatures, numFeatures];
@@ -125,7 +98,7 @@ namespace NReco.Math3.Als
                 foreach (var feature in Y[currentEIdx])
                 {
                     var currentFeatIdx = featureIdx++;
-                    var partial = MatrixUtil.times(CuMinusIY[currentEIdx], feature);
+                    var partial = MatrixUtil.Times(CuMinusIY[currentEIdx], feature);
 
                     for (int i = 0; i < YtransponseCuMinusIY.GetLength(1); i++)
                     {
@@ -145,7 +118,7 @@ namespace NReco.Math3.Als
         }
 
         /// Y' Cu p(u) 
-        private double[,] getYtransponseCuPu(IList<Tuple<int, double>> userRatings)
+        private double[,] GetYtransponseCuPu(IList<Tuple<int, double>> userRatings)
         {
             //Preconditions.checkArgument(userRatings.isSequentialAccess(), "need sequential access to ratings!");
 
@@ -155,16 +128,16 @@ namespace NReco.Math3.Als
             {
                 //YtransponseCuPu.assign(Y.get(e.index()).times(confidence(e.get())), Functions.PLUS);
                 //	Y.get(e.index()).times(confidence(e.get()))
-                var other = MatrixUtil.times(Y[e.Item1], confidence(e.Item2));
+                var other = MatrixUtil.Times(Y[e.Item1], Confidence(e.Item2));
 
                 for (int i = 0; i < YtransponseCuPu.Length; i++)
                     YtransponseCuPu[i] += other[i];
             }
 
-            return columnVectorAsMatrix(YtransponseCuPu);
+            return ColumnVectorAsMatrix(YtransponseCuPu);
         }
 
-        private double[,] columnVectorAsMatrix(double[] v)
+        private double[,] ColumnVectorAsMatrix(double[] v)
         {
             double[,] matrix = new double[numFeatures, 1];
             for (int i = 0; i < v.Length; i++)

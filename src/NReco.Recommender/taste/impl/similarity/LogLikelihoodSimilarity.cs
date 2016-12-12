@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 using System.Collections.Generic;
 
@@ -57,7 +34,7 @@ namespace NReco.CF.Taste.Impl.Similarity
 
         public double UserSimilarity(long userID1, long userID2)
         {
-            IDataModel dataModel = getDataModel();
+            IDataModel dataModel = GetDataModel();
             FastIDSet prefs1 = dataModel.GetItemIDsFromUser(userID1);
             FastIDSet prefs2 = dataModel.GetItemIDsFromUser(userID2);
 
@@ -70,7 +47,7 @@ namespace NReco.CF.Taste.Impl.Similarity
             }
             long numItems = dataModel.GetNumItems();
             double logLikelihood =
-                LogLikelihood.logLikelihoodRatio(intersectionSize,
+                LogLikelihood.LogLikelihoodRatio(intersectionSize,
                                                  prefs2Size - intersectionSize,
                                                  prefs1Size - intersectionSize,
                                                  numItems - prefs1Size - prefs2Size + intersectionSize);
@@ -79,29 +56,29 @@ namespace NReco.CF.Taste.Impl.Similarity
 
         public override double ItemSimilarity(long itemID1, long itemID2)
         {
-            IDataModel dataModel = getDataModel();
+            IDataModel dataModel = GetDataModel();
             long preferring1 = dataModel.GetNumUsersWithPreferenceFor(itemID1);
             long numUsers = dataModel.GetNumUsers();
-            return doItemSimilarity(itemID1, itemID2, preferring1, numUsers);
+            return DoItemSimilarity(itemID1, itemID2, preferring1, numUsers);
         }
 
         public override double[] ItemSimilarities(long itemID1, long[] itemID2s)
         {
-            IDataModel dataModel = getDataModel();
+            IDataModel dataModel = GetDataModel();
             long preferring1 = dataModel.GetNumUsersWithPreferenceFor(itemID1);
             long numUsers = dataModel.GetNumUsers();
             int length = itemID2s.Length;
             double[] result = new double[length];
             for (int i = 0; i < length; i++)
             {
-                result[i] = doItemSimilarity(itemID1, itemID2s[i], preferring1, numUsers);
+                result[i] = DoItemSimilarity(itemID1, itemID2s[i], preferring1, numUsers);
             }
             return result;
         }
 
-        private double doItemSimilarity(long itemID1, long itemID2, long preferring1, long numUsers)
+        private double DoItemSimilarity(long itemID1, long itemID2, long preferring1, long numUsers)
         {
-            IDataModel dataModel = getDataModel();
+            IDataModel dataModel = GetDataModel();
             long preferring1and2 = dataModel.GetNumUsersWithPreferenceFor(itemID1, itemID2);
             if (preferring1and2 == 0)
             {
@@ -109,7 +86,7 @@ namespace NReco.CF.Taste.Impl.Similarity
             }
             long preferring2 = dataModel.GetNumUsersWithPreferenceFor(itemID2);
             double logLikelihood =
-                LogLikelihood.logLikelihoodRatio(preferring1and2,
+                LogLikelihood.LogLikelihoodRatio(preferring1and2,
                                                  preferring2 - preferring1and2,
                                                  preferring1 - preferring1and2,
                                                  numUsers - preferring1 - preferring2 + preferring1and2);
@@ -119,12 +96,12 @@ namespace NReco.CF.Taste.Impl.Similarity
         public void Refresh(IList<IRefreshable> alreadyRefreshed)
         {
             alreadyRefreshed = RefreshHelper.BuildRefreshed(alreadyRefreshed);
-            RefreshHelper.MaybeRefresh(alreadyRefreshed, getDataModel());
+            RefreshHelper.MaybeRefresh(alreadyRefreshed, GetDataModel());
         }
 
         public override string ToString()
         {
-            return "LogLikelihoodSimilarity[dataModel:" + getDataModel() + ']';
+            return "LogLikelihoodSimilarity[dataModel:" + GetDataModel() + ']';
         }
     }
 }

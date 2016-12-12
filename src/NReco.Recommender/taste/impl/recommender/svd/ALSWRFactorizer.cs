@@ -220,8 +220,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                             }
 
                             var userFeatures = usesImplicitFeedback
-                                ? implicitFeedbackSolver.solve(sparseUserRatingVector(userPrefs))
-                                : AlternatingLeastSquaresSolver.solve(featureVectors, ratingVector(userPrefs), lambda, numFeatures);
+                                ? implicitFeedbackSolver.Solve(sparseUserRatingVector(userPrefs))
+                                : AlternatingLeastSquaresSolver.Solve(featureVectors, ratingVector(userPrefs), lambda, numFeatures);
 
                             features.setFeatureColumnInU(userIndex(userID), userFeatures);
                         }
@@ -270,8 +270,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                             }
 
                             var itemFeatures = usesImplicitFeedback
-                                ? implicitFeedbackSolver.solve(sparseItemRatingVector(itemPrefs))
-                                : AlternatingLeastSquaresSolver.solve(featureVectors, ratingVector(itemPrefs), lambda, numFeatures);
+                                ? implicitFeedbackSolver.Solve(sparseItemRatingVector(itemPrefs))
+                                : AlternatingLeastSquaresSolver.Solve(featureVectors, ratingVector(itemPrefs), lambda, numFeatures);
 
                             features.setFeatureColumnInM(itemIndex(itemID), itemFeatures);
                         }));

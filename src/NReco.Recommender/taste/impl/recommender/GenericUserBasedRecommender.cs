@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 using System.Collections.Generic;
 
@@ -54,15 +31,15 @@ namespace NReco.CF.Taste.Impl.Recommender
             this.similarity = similarity;
             this.refreshHelper = new RefreshHelper(() =>
             {
-                capper = buildCapper();
+                capper = BuildCapper();
             });
             refreshHelper.AddDependency(dataModel);
             refreshHelper.AddDependency(similarity);
             refreshHelper.AddDependency(neighborhood);
-            capper = buildCapper();
+            capper = BuildCapper();
         }
 
-        public IUserSimilarity getSimilarity()
+        public IUserSimilarity GetSimilarity()
         {
             return similarity;
         }
@@ -80,7 +57,7 @@ namespace NReco.CF.Taste.Impl.Recommender
                 return new List<IRecommendedItem>();
             }
 
-            FastIDSet allItemIDs = getAllOtherItems(theNeighborhood, userID);
+            FastIDSet allItemIDs = GetAllOtherItems(theNeighborhood, userID);
             TopItems.IEstimator<long> estimator = new Estimator(this, userID, theNeighborhood);
 
             List<IRecommendedItem> topItems = TopItems
@@ -99,7 +76,7 @@ namespace NReco.CF.Taste.Impl.Recommender
                 return actualPref.Value;
             }
             long[] theNeighborhood = neighborhood.GetUserNeighborhood(userID);
-            return doEstimatePreference(userID, theNeighborhood, itemID);
+            return DoEstimatePreference(userID, theNeighborhood, itemID);
         }
 
         public virtual long[] MostSimilarUserIDs(long userID, int howMany)
@@ -110,16 +87,16 @@ namespace NReco.CF.Taste.Impl.Recommender
         public virtual long[] MostSimilarUserIDs(long userID, int howMany, IRescorer<Tuple<long, long>> rescorer)
         {
             TopItems.IEstimator<long> estimator = new MostSimilarEstimator(userID, similarity, rescorer);
-            return doMostSimilarUsers(howMany, estimator);
+            return DoMostSimilarUsers(howMany, estimator);
         }
 
-        private long[] doMostSimilarUsers(int howMany, TopItems.IEstimator<long> estimator)
+        private long[] DoMostSimilarUsers(int howMany, TopItems.IEstimator<long> estimator)
         {
             IDataModel model = GetDataModel();
             return TopItems.GetTopUsers(howMany, model.GetUserIDs(), null, estimator);
         }
 
-        protected virtual float doEstimatePreference(long theUserID, long[] theNeighborhood, long itemID)
+        protected virtual float DoEstimatePreference(long theUserID, long[] theNeighborhood, long itemID)
         {
             if (theNeighborhood.Length == 0)
             {
@@ -159,12 +136,12 @@ namespace NReco.CF.Taste.Impl.Recommender
             float estimate = (float)(preference / totalSimilarity);
             if (capper != null)
             {
-                estimate = capper.capEstimate(estimate);
+                estimate = capper.CapEstimate(estimate);
             }
             return estimate;
         }
 
-        protected FastIDSet getAllOtherItems(long[] theNeighborhood, long theUserID)
+        protected FastIDSet GetAllOtherItems(long[] theNeighborhood, long theUserID)
         {
             IDataModel dataModel = GetDataModel();
             FastIDSet possibleItemIDs = new FastIDSet();
@@ -186,7 +163,7 @@ namespace NReco.CF.Taste.Impl.Recommender
             return "GenericUserBasedRecommender[neighborhood:" + neighborhood + ']';
         }
 
-        private EstimatedPreferenceCapper buildCapper()
+        private EstimatedPreferenceCapper BuildCapper()
         {
             IDataModel dataModel = GetDataModel();
             if (float.IsNaN(dataModel.GetMinPreference()) && float.IsNaN(dataModel.GetMaxPreference()))
@@ -252,7 +229,7 @@ namespace NReco.CF.Taste.Impl.Recommender
 
             public double Estimate(long itemID)
             {
-                return r.doEstimatePreference(theUserID, theNeighborhood, itemID);
+                return r.DoEstimatePreference(theUserID, theNeighborhood, itemID);
             }
         }
     }

@@ -1,31 +1,4 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout and Apache Commons Mathematics Library that were licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 
 namespace NReco.Math3.Random
 {
@@ -109,7 +82,7 @@ namespace NReco.Math3.Random
         public MersenneTwister()
         {
             mt = new int[N];
-            setSeed(Environment.TickCount + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this));
+            SetSeed(Environment.TickCount + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this));
         }
 
         /// Creates a new random number generator using a single int seed.
@@ -117,7 +90,7 @@ namespace NReco.Math3.Random
         public MersenneTwister(int seed)
         {
             mt = new int[N];
-            setSeed(seed);
+            SetSeed(seed);
         }
 
         /// Creates a new random number generator using an int array seed.
@@ -126,7 +99,7 @@ namespace NReco.Math3.Random
         public MersenneTwister(int[] seed)
         {
             mt = new int[N];
-            setSeed(seed);
+            SetSeed(seed);
         }
 
         /// Creates a new random number generator using a single long seed.
@@ -134,14 +107,14 @@ namespace NReco.Math3.Random
         public MersenneTwister(long seed)
         {
             mt = new int[N];
-            setSeed(seed);
+            SetSeed(seed);
         }
 
         /// Reinitialize the generator as if just built with the given int seed.
         /// <p>The state of the generator is exactly the same as a new
         /// generator built with the same seed.</p>
         /// @param seed the initial seed (32 bits integer)
-        public override void setSeed(int seed)
+        public override void SetSeed(int seed)
         {
             // we use a long masked by 0xffffffffL as a poor man unsigned int
             long longMT = seed;
@@ -151,11 +124,11 @@ namespace NReco.Math3.Random
             {
                 // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
                 // initializer from the 2002-01-09 C version by Makoto Matsumoto
-                longMT = (1812433253l * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL;
+                longMT = (1812433253L * (longMT ^ (longMT >> 30)) + mti) & 0xffffffffL;
                 mt[mti] = (int)longMT;
             }
 
-            clear(); // Clear normal deviate cache
+            Clear(); // Clear normal deviate cache
         }
 
         /// Reinitialize the generator as if just built with the given int array seed.
@@ -164,22 +137,22 @@ namespace NReco.Math3.Random
         /// @param seed the initial seed (32 bits integers array), if null
         /// the seed of the generator will be the current system time plus the
         /// system identity hash code of this instance
-        public override void setSeed(int[] seed)
+        public override void SetSeed(int[] seed)
         {
             if (seed == null)
             {
-                setSeed(Environment.TickCount + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this));
+                SetSeed(Environment.TickCount + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this));
                 return;
             }
 
-            setSeed(19650218);
+            SetSeed(19650218);
             int i = 1;
             int j = 0;
 
             for (int k = Math.Max(N, seed.Length); k != 0; k--)
             {
-                long l0 = (mt[i] & 0x7fffffffL) | ((mt[i] < 0) ? 0x80000000L : 0x0l);
-                long l1 = (mt[i - 1] & 0x7fffffffL) | ((mt[i - 1] < 0) ? 0x80000000L : 0x0l);
+                long l0 = (mt[i] & 0x7fffffffL) | ((mt[i] < 0) ? 0x80000000L : 0x0L);
+                long l1 = (mt[i - 1] & 0x7fffffffL) | ((mt[i - 1] < 0) ? 0x80000000L : 0x0L);
                 long l = (l0 ^ ((l1 ^ (l1 >> 30)) * 1664525L)) + seed[j] + j; // non linear
                 mt[i] = (int)(l & 0xffffffffL);
                 i++; j++;
@@ -210,7 +183,7 @@ namespace NReco.Math3.Random
 
             mt[0] = unchecked((int)0x80000000); // MSB is 1; assuring non-zero initial array
 
-            clear(); // Clear normal deviate cache
+            Clear(); // Clear normal deviate cache
 
         }
 
@@ -218,9 +191,9 @@ namespace NReco.Math3.Random
         /// <p>The state of the generator is exactly the same as a new
         /// generator built with the same seed.</p>
         /// @param seed the initial seed (64 bits integer)
-        public override void setSeed(long seed)
+        public override void SetSeed(long seed)
         {
-            setSeed(new int[] { (int)((uint)seed >> 32), (int)(seed & 0xffffffffL) });
+            SetSeed(new int[] { (int)((uint)seed >> 32), (int)(seed & 0xffffffffL) });
         }
 
         /// Generate next pseudorandom number.
@@ -231,7 +204,7 @@ namespace NReco.Math3.Random
         /// {@link #next(int)} and {@link #nextlong()}.</p>
         /// @param bits number of random bits to produce
         /// @return random bits generated
-        protected override int next(int bits)
+        protected override int Next(int bits)
         {
             int y;
 

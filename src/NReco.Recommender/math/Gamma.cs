@@ -1,35 +1,6 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout and Apache Commons Mathematics Library that were licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using NReco.Math3.Exception;
-using NReco.Math3.Util;
 
-using NReco.CF.Taste;
+using NReco.Math3.Util;
 
 namespace NReco.Math3.Special
 {
@@ -241,7 +212,7 @@ namespace NReco.Math3.Special
         /// @param x Argument.
         /// @return the value of {@code log(Gamma(x))}, {@code Double.NaN} if
         /// {@code x <= 0.0}.
-        public static double logGamma(double x)
+        public static double LogGamma(double x)
         {
             double ret;
 
@@ -251,11 +222,11 @@ namespace NReco.Math3.Special
             }
             else if (x < 0.5)
             {
-                return logGamma1p(x) - MathUtil.Log(x);
+                return LogGamma1p(x) - MathUtil.Log(x);
             }
             else if (x <= 2.5)
             {
-                return logGamma1p((x - 0.5) - 0.5);
+                return LogGamma1p((x - 0.5) - 0.5);
             }
             else if (x <= 8.0)
             {
@@ -265,11 +236,11 @@ namespace NReco.Math3.Special
                 {
                     prod *= x - i;
                 }
-                return logGamma1p(x - (n + 1)) + MathUtil.Log(prod);
+                return LogGamma1p(x - (n + 1)) + MathUtil.Log(prod);
             }
             else
             {
-                double sum = lanczos(x);
+                double sum = Lanczos(x);
                 double tmp = x + LANCZOS_G + .5;
                 ret = ((x + .5) * MathUtil.Log(tmp)) - tmp +
                     HALF_LOG_2_PI + MathUtil.Log(sum / x);
@@ -284,9 +255,9 @@ namespace NReco.Math3.Special
         /// @param x Value.
         /// @return the regularized gamma function P(a, x).
         /// @throws MaxCountExceededException if the algorithm fails to converge.
-        public static double regularizedGammaP(double a, double x)
+        public static double RegularizedGammaP(double a, double x)
         {
-            return regularizedGammaP(a, x, DEFAULT_EPSILON, Int32.MaxValue);
+            return RegularizedGammaP(a, x, DEFAULT_EPSILON, Int32.MaxValue);
         }
 
         /// Returns the regularized gamma function P(a, x).
@@ -315,7 +286,7 @@ namespace NReco.Math3.Special
         /// @param maxIterations Maximum number of "iterations" to complete.
         /// @return the regularized gamma function P(a, x)
         /// @throws MaxCountExceededException if the algorithm fails to converge.
-        public static double regularizedGammaP(double a, double x, double epsilon, int maxIterations)
+        public static double RegularizedGammaP(double a, double x, double epsilon, int maxIterations)
         {
             double ret;
 
@@ -331,7 +302,7 @@ namespace NReco.Math3.Special
             {
                 // use regularizedGammaQ because it should converge faster in this
                 // case.
-                ret = 1.0 - regularizedGammaQ(a, x, epsilon, maxIterations);
+                ret = 1.0 - RegularizedGammaQ(a, x, epsilon, maxIterations);
             }
             else
             {
@@ -360,7 +331,7 @@ namespace NReco.Math3.Special
                 }
                 else
                 {
-                    ret = Math.Exp(-x + (a * MathUtil.Log(x)) - logGamma(a)) * sum;
+                    ret = Math.Exp(-x + (a * MathUtil.Log(x)) - LogGamma(a)) * sum;
                 }
             }
 
@@ -373,9 +344,9 @@ namespace NReco.Math3.Special
         /// @param x the value.
         /// @return the regularized gamma function Q(a, x)
         /// @throws MaxCountExceededException if the algorithm fails to converge.
-        public static double regularizedGammaQ(double a, double x)
+        public static double RegularizedGammaQ(double a, double x)
         {
-            return regularizedGammaQ(a, x, DEFAULT_EPSILON, Int32.MaxValue);
+            return RegularizedGammaQ(a, x, DEFAULT_EPSILON, Int32.MaxValue);
         }
 
         /// Returns the regularized gamma function Q(a, x) = 1 - P(a, x).
@@ -401,7 +372,7 @@ namespace NReco.Math3.Special
         /// @param maxIterations Maximum number of "iterations" to complete.
         /// @return the regularized gamma function P(a, x)
         /// @throws MaxCountExceededException if the algorithm fails to converge.
-        public static double regularizedGammaQ(double a, double x, double epsilon, int maxIterations)
+        public static double RegularizedGammaQ(double a, double x, double epsilon, int maxIterations)
         {
             double ret;
 
@@ -417,15 +388,15 @@ namespace NReco.Math3.Special
             {
                 // use regularizedGammaP because it should converge faster in this
                 // case.
-                ret = 1.0 - regularizedGammaP(a, x, epsilon, maxIterations);
+                ret = 1.0 - RegularizedGammaP(a, x, epsilon, maxIterations);
             }
             else
             {
                 // create continued fraction
                 ContinuedFraction cf = new GammaContinuedFraction(a);
 
-                ret = 1.0 / cf.evaluate(x, epsilon, maxIterations);
-                ret = Math.Exp(-x + (a * MathUtil.Log(x)) - logGamma(a)) * ret;
+                ret = 1.0 / cf.Evaluate(x, epsilon, maxIterations);
+                ret = Math.Exp(-x + (a * MathUtil.Log(x)) - LogGamma(a)) * ret;
             }
 
             return ret;
@@ -439,12 +410,12 @@ namespace NReco.Math3.Special
                 this.a = a;
             }
 
-            protected override double getA(int n, double x)
+            protected override double GetA(int n, double x)
             {
                 return ((2.0 * n) + 1.0) - a + x;
             }
 
-            protected override double getB(int n, double x)
+            protected override double GetB(int n, double x)
             {
                 return n * (a - n);
             }
@@ -468,7 +439,7 @@ namespace NReco.Math3.Special
         /// @see <a href="http://en.wikipedia.org/wiki/Digamma_function">Digamma</a>
         /// @see <a href="http://www.uv.es/~bernardo/1976AppStatist.pdf">Bernardo&apos;s original article </a>
         /// @since 2.0
-        public static double digamma(double x)
+        public static double Digamma(double x)
         {
             if (x > 0 && x <= S_LIMIT)
             {
@@ -487,7 +458,7 @@ namespace NReco.Math3.Special
                 return MathUtil.Log(x) - 0.5 / x - inv * ((1.0 / 12) + inv * (1.0 / 120 - inv / 252));
             }
 
-            return digamma(x + 1) - 1 / x;
+            return Digamma(x + 1) - 1 / x;
         }
 
         /// Computes the trigamma function of x.
@@ -499,7 +470,7 @@ namespace NReco.Math3.Special
         /// @see <a href="http://en.wikipedia.org/wiki/Trigamma_function">Trigamma</a>
         /// @see Gamma#digamma(double)
         /// @since 2.0
-        public static double trigamma(double x)
+        public static double Trigamma(double x)
         {
             if (x > 0 && x <= S_LIMIT)
             {
@@ -516,7 +487,7 @@ namespace NReco.Math3.Special
                 return 1 / x + inv / 2 + inv / x * (1.0 / 6 - inv * (1.0 / 30 + inv / 42));
             }
 
-            return trigamma(x + 1) + 1 / (x * x);
+            return Trigamma(x + 1) + 1 / (x * x);
         }
 
         /// <p>
@@ -537,7 +508,7 @@ namespace NReco.Math3.Special
         /// <a href="http://my.fit.edu/~gabdo/gamma.txt">Note on the computation
         /// of the convergent Lanczos complex Gamma approximation</a>
         /// @since 3.1
-        public static double lanczos(double x)
+        public static double Lanczos(double x)
         {
             double sum = 0.0;
             for (int i = LANCZOS.Length - 1; i > 0; --i)
@@ -557,7 +528,7 @@ namespace NReco.Math3.Special
         /// @{@code x < -0.5}
         /// @{@code x > 1.5}
         /// @since 3.1
-        public static double invGamma1pm1(double x)
+        public static double InvGamma1pm1(double x)
         {
             if (x < -0.5)
             {
@@ -659,7 +630,7 @@ namespace NReco.Math3.Special
         /// @{@code x < -0.5}.
         /// @{@code x > 1.5}.
         /// @since 3.1
-        public static double logGamma1p(double x)
+        public static double LogGamma1p(double x)
         {
             if (x < -0.5)
             {
@@ -670,7 +641,7 @@ namespace NReco.Math3.Special
                 throw new ArgumentException(); // NumberIsTooLargeException(x, 1.5, true);
             }
 
-            return -MathUtil.Log1p(invGamma1pm1(x)); //-FastMath.log1p(invGamma1pm1(x));
+            return -MathUtil.Log1p(InvGamma1pm1(x)); //-FastMath.log1p(invGamma1pm1(x));
         }
 
 
@@ -678,7 +649,7 @@ namespace NReco.Math3.Special
          * @param x number from which nearest whole number is requested
          * @return a double number r such that r is an integer r - 0.5 <= x <= r + 0.5
          */
-        public static double rint(double x)
+        public static double Rint(double x)
         {
             double y = Math.Floor(x);
             double d = x - y;
@@ -711,8 +682,7 @@ namespace NReco.Math3.Special
         /// @since 3.1
         public static double gamma(double x)
         {
-
-            if ((x == rint(x)) && (x <= 0.0))
+            if ((x == Rint(x)) && (x <= 0.0))
             {
                 return Double.NaN;
             }
@@ -737,7 +707,7 @@ namespace NReco.Math3.Special
                         t -= 1.0;
                         prod *= t;
                     }
-                    ret = prod / (1.0 + invGamma1pm1(t - 1.0));
+                    ret = prod / (1.0 + InvGamma1pm1(t - 1.0));
                 }
                 else
                 {
@@ -754,13 +724,13 @@ namespace NReco.Math3.Special
                         t += 1.0;
                         prod *= t;
                     }
-                    ret = 1.0 / (prod * (1.0 + invGamma1pm1(t)));
+                    ret = 1.0 / (prod * (1.0 + InvGamma1pm1(t)));
                 }
             }
             else
             {
                 double y = absX + LANCZOS_G + 0.5;
-                double gammaAbs = SQRT_TWO_PI / x * Math.Pow(y, absX + 0.5) * Math.Exp(-y) * lanczos(absX);
+                double gammaAbs = SQRT_TWO_PI / x * Math.Pow(y, absX + 0.5) * Math.Exp(-y) * Lanczos(absX);
                 if (x > 0.0)
                 {
                     ret = gammaAbs;

@@ -39,7 +39,7 @@ namespace NReco.CF
         public RandomWrapper()
         {
             random = new MersenneTwister();
-            random.setSeed(Environment.TickCount + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this));
+            random.SetSeed(Environment.TickCount + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this));
         }
 
         public RandomWrapper(long seed)
@@ -54,7 +54,7 @@ namespace NReco.CF
             // purpose:
             if (random != null)
             {
-                random.setSeed(seed);
+                random.SetSeed(seed);
             }
         }
 
@@ -77,42 +77,42 @@ namespace NReco.CF
 
         public void nextBytes(byte[] bytes)
         {
-            random.nextBytes(bytes);
+            random.NextBytes(bytes);
         }
 
         public int nextInt()
         {
-            return random.nextInt();
+            return random.NextInt();
         }
 
         public int nextInt(int n)
         {
-            return random.nextInt(n);
+            return random.NextInt(n);
         }
 
         public long nextlong()
         {
-            return random.nextlong();
+            return random.Nextlong();
         }
 
         public bool nextBoolean()
         {
-            return random.nextBoolean();
+            return random.NextBoolean();
         }
 
         public float nextFloat()
         {
-            return random.nextFloat();
+            return random.NextFloat();
         }
 
         public double nextDouble()
         {
-            return random.nextDouble();
+            return random.NextDouble();
         }
 
         public double nextGaussian()
         {
-            return random.nextGaussian();
+            return random.NextGaussian();
         }
     }
 }

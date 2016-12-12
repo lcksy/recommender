@@ -1,53 +1,18 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout and Apache Commons Mathematics Library that were licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  
- * Copyright 1999 CERN - European Organization for Nuclear Research.
- * Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose
- * is hereby granted without fee, provided that the above copyright notice appear in all copies and
- * that both that copyright notice and this permission notice appear in supporting documentation.
- * CERN makes no representations about the suitability of this software for any purpose.
- * It is provided "as is" without expressed or implied warranty. * 
- */
-
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 
 namespace NReco.Math3
 {
-    /*
-
-     For an <tt>m x n</tt> matrix <tt>A</tt> with <tt>m >= n</tt>, the QR decomposition is an <tt>m x n</tt>
-     orthogonal matrix <tt>Q</tt> and an <tt>n x n</tt> upper triangular matrix <tt>R</tt> so that
-     <tt>A = Q*R</tt>.
-     <P>
-     The QR decomposition always exists, even if the matrix does not have
-     full rank, so the constructor will never fail.  The primary use of the
-     QR decomposition is in the least squares solution of non-square systems
-     of simultaneous linear equations.  This will fail if <tt>isFullRank()</tt>
-     returns <tt>false</tt>.
-    */
+    /// <summary>
+    /// For an <tt>m x n</tt> matrix <tt>A</tt> with <tt>m >= n</tt>, the QR decomposition is an <tt>m x n</tt>
+    /// orthogonal matrix <tt>Q</tt> and an <tt>n x n</tt> upper triangular matrix <tt>R</tt> so that
+    /// <tt>A = Q*R</tt>.
+    /// <P>
+    /// The QR decomposition always exists, even if the matrix does not have
+    /// full rank, so the constructor will never fail.  The primary use of the
+    /// QR decomposition is in the least squares solution of non-square systems
+    /// of simultaneous linear equations.  This will fail if <tt>isFullRank()</tt>
+    /// returns <tt>false</tt>.
+    /// </summary>
     public class QRDecomposition
     {
         private double[,] q;
@@ -76,9 +41,9 @@ namespace NReco.Math3
 
             for (int i = 0; i < min; i++)
             {
-                var qi = MatrixUtil.viewColumn(qTmp, i); // qTmp.viewColumn(i);
+                var qi = MatrixUtil.ViewColumn(qTmp, i); // qTmp.viewColumn(i);
 
-                double alpha = MatrixUtil.norm2(qi); //qi.norm(2);
+                double alpha = MatrixUtil.Norm2(qi); //qi.norm(2);
                 if (Math.Abs(alpha) > Double.Epsilon)
                 {  // java Double.MIN_VALUE -> C# Double.Epsilon (hrr)
                     //qi.assign(Functions.div(alpha));
@@ -99,12 +64,12 @@ namespace NReco.Math3
 
                 for (int j = i + 1; j < columns; j++)
                 {
-                    var qj = MatrixUtil.viewColumn(qTmp, j); // qTmp.viewColumn(j);
+                    var qj = MatrixUtil.ViewColumn(qTmp, j); // qTmp.viewColumn(j);
 
-                    double norm = MatrixUtil.norm2(qj); // qj.norm(2);
+                    double norm = MatrixUtil.Norm2(qj); // qj.norm(2);
                     if (Math.Abs(norm) > Double.Epsilon)
                     { // java Double.MIN_VALUE -> C# Double.Epsilon (hrr)
-                        double beta = MatrixUtil.vectorDot(qi, qj);
+                        double beta = MatrixUtil.VectorDot(qi, qj);
                         r[i, j] = beta;
                         if (j < min)
                         {
@@ -127,7 +92,7 @@ namespace NReco.Math3
             if (columns > min)
             {
 
-                q = MatrixUtil.viewPart(qTmp, 0, rows, 0, min); // qTmp.viewPart(0, rows, 0, min).clone();
+                q = MatrixUtil.ViewPart(qTmp, 0, rows, 0, min); // qTmp.viewPart(0, rows, 0, min).clone();
             }
             else
             {
@@ -139,7 +104,7 @@ namespace NReco.Math3
         /// Generates and returns the (economy-sized) orthogonal factor <tt>Q</tt>.
         ///
         /// @return <tt>Q</tt>
-        public double[,] getQ()
+        public double[,] GetQ()
         {
             return q;
         }
@@ -147,7 +112,7 @@ namespace NReco.Math3
         /// Returns the upper triangular factor, <tt>R</tt>.
         ///
         /// @return <tt>R</tt>
-        public double[,] getR()
+        public double[,] GetR()
         {
             return r;
         }
@@ -155,7 +120,7 @@ namespace NReco.Math3
         /// Returns whether the matrix <tt>A</tt> has full rank.
         ///
         /// @return true if <tt>R</tt>, and hence <tt>A</tt>, has full rank.
-        public bool hasFullRank()
+        public bool HasFullRank()
         {
             return fullRank;
         }
@@ -165,7 +130,7 @@ namespace NReco.Math3
         /// @param B A matrix with as many rows as <tt>A</tt> and any number of columns.
         /// @return <tt>X</tt> that minimizes the two norm of <tt>Q*R*X - B</tt>.
         /// @throws IllegalArgumentException if <tt>B.rows() != A.rows()</tt>.
-        public double[,] solve(double[,] B)
+        public double[,] Solve(double[,] B)
         {
             if (B.GetLength(0)/*B.numRows()*/ != rows)
             {
@@ -178,10 +143,10 @@ namespace NReco.Math3
             // this can all be done a bit more efficiently if we don't actually
             // form explicit versions of Q^T and R but this code isn't so bad
             // and it is much easier to understand
-            var qt = MatrixUtil.transpose(getQ());
-            var y = MatrixUtil.times(qt, B);
+            var qt = MatrixUtil.Transpose(GetQ());
+            var y = MatrixUtil.Times(qt, B);
 
-            var r = getR();
+            var r = GetR();
             for (int k = Math.Min(columns, rows) - 1; k >= 0; k--)
             {
                 // X[k,] = Y[k,] / R[k,k], note that X[k,] starts with 0 so += is same as =
@@ -192,7 +157,7 @@ namespace NReco.Math3
 
 
                 // Y[0:(k-1),] -= R[0:(k-1),k] * X[k,]
-                var rColumn = MatrixUtil.viewColumn(r, k); //.viewPart(0, k);
+                var rColumn = MatrixUtil.ViewColumn(r, k); //.viewPart(0, k);
                 for (int c = 0; c < cols; c++)
                 {
                     //y.viewColumn(c).viewPart(0, k).assign(rColumn, Functions.plusMult(-x.get(k, c)));
@@ -208,7 +173,7 @@ namespace NReco.Math3
         /// Returns a rough string rendition of a QR.
         public override string ToString()
         {
-            return String.Format("QR({0} x {1},fullRank={2})", rows, columns, hasFullRank());
+            return String.Format("QR({0} x {1},fullRank={2})", rows, columns, HasFullRank());
         }
     }
 }

@@ -1,39 +1,9 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout and Apache Commons Mathematics Library that were licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using NReco.Math3.Exception;
-using NReco.Math3.Util;
 
-using NReco.CF.Taste;
+using NReco.Math3.Util;
 
 namespace NReco.Math3.Special
 {
-
     /// <p>
     /// This is a utility class that provides computation methods related to the
     /// Beta family of functions.
@@ -119,9 +89,9 @@ namespace NReco.Math3.Special
         /// @return the regularized beta function I(x, a, b).
         /// @throws NReco.Math3.Exception.MaxCountExceededException
         /// if the algorithm fails to converge.
-        public static double regularizedBeta(double x, double a, double b)
+        public static double RegularizedBeta(double x, double a, double b)
         {
-            return regularizedBeta(x, a, b, DEFAULT_EPSILON, Int32.MaxValue);
+            return RegularizedBeta(x, a, b, DEFAULT_EPSILON, Int32.MaxValue);
         }
 
         /// Returns the
@@ -137,9 +107,9 @@ namespace NReco.Math3.Special
         /// @return the regularized beta function I(x, a, b)
         /// @throws NReco.Math3.Exception.MaxCountExceededException
         /// if the algorithm fails to converge.
-        public static double regularizedBeta(double x, double a, double b, double epsilon)
+        public static double RegularizedBeta(double x, double a, double b, double epsilon)
         {
-            return regularizedBeta(x, a, b, epsilon, Int32.MaxValue);
+            return RegularizedBeta(x, a, b, epsilon, Int32.MaxValue);
         }
 
         /// Returns the regularized beta function I(x, a, b).
@@ -151,9 +121,9 @@ namespace NReco.Math3.Special
         /// @return the regularized beta function I(x, a, b)
         /// @throws NReco.Math3.Exception.MaxCountExceededException
         /// if the algorithm fails to converge.
-        public static double regularizedBeta(double x, double a, double b, int maxIterations)
+        public static double RegularizedBeta(double x, double a, double b, int maxIterations)
         {
-            return regularizedBeta(x, a, b, DEFAULT_EPSILON, maxIterations);
+            return RegularizedBeta(x, a, b, DEFAULT_EPSILON, maxIterations);
         }
 
         /// Returns the regularized beta function I(x, a, b).
@@ -178,7 +148,7 @@ namespace NReco.Math3.Special
         /// @return the regularized beta function I(x, a, b)
         /// @throws NReco.Math3.Exception.MaxCountExceededException
         /// if the algorithm fails to converge.
-        public static double regularizedBeta(double x, double a, double b, double epsilon, int maxIterations)
+        public static double RegularizedBeta(double x, double a, double b, double epsilon, int maxIterations)
         {
             double ret;
 
@@ -195,14 +165,14 @@ namespace NReco.Math3.Special
             else if (x > (a + 1) / (2 + b + a) &&
                      1 - x <= (b + 1) / (2 + b + a))
             {
-                ret = 1 - regularizedBeta(1 - x, b, a, epsilon, maxIterations);
+                ret = 1 - RegularizedBeta(1 - x, b, a, epsilon, maxIterations);
             }
             else
             {
                 ContinuedFraction fraction = new BetaContinuedFraction(a, b);
                 ret = Math.Exp((a * MathUtil.Log(x)) + (b * MathUtil.Log1p(-x)) -  //(b * Math.log1p(-x))
-                    MathUtil.Log(a) - logBeta(a, b)) *
-                    1.0 / fraction.evaluate(x, epsilon, maxIterations);
+                    MathUtil.Log(a) - LogBeta(a, b)) *
+                    1.0 / fraction.Evaluate(x, epsilon, maxIterations);
             }
 
             return ret;
@@ -210,34 +180,32 @@ namespace NReco.Math3.Special
 
         private class BetaContinuedFraction : ContinuedFraction
         {
-            double a, b;
+            private double a, b;
             internal BetaContinuedFraction(double a, double b)
             {
                 this.a = a;
                 this.b = b;
             }
 
-            protected override double getB(int n, double x)
+            protected override double GetB(int n, double x)
             {
                 double ret;
                 double m;
                 if (n % 2 == 0)
                 { // even
                     m = n / 2.0;
-                    ret = (m * (b - m) * x) /
-                        ((a + (2 * m) - 1) * (a + (2 * m)));
+                    ret = (m * (b - m) * x) / ((a + (2 * m) - 1) * (a + (2 * m)));
                 }
                 else
                 {
                     m = (n - 1.0) / 2.0;
-                    ret = -((a + m) * (a + b + m) * x) /
-                            ((a + (2 * m)) * (a + (2 * m) + 1.0));
+                    ret = -((a + m) * (a + b + m) * x) / ((a + (2 * m)) * (a + (2 * m) + 1.0));
                 }
                 return ret;
             }
 
 
-            protected override double getA(int n, double x)
+            protected override double GetA(int n, double x)
             {
                 return 1.0;
             }
@@ -260,9 +228,9 @@ namespace NReco.Math3.Special
         /// computation of the beta function is no longer iterative; it will be
         /// removed in version 4.0. Current implementation of this method
         /// internally calls {@link #logBeta(double, double)}.
-        public static double logBeta(double a, double b, double epsilon, int maxIterations)
+        public static double LogBeta(double a, double b, double epsilon, int maxIterations)
         {
-            return logBeta(a, b);
+            return LogBeta(a, b);
         }
 
         /// Returns the value of log Γ(a + b) for 1 ≤ a, b ≤ 2. Based on the
@@ -275,7 +243,7 @@ namespace NReco.Math3.Special
         /// @return the value of {@code log(Gamma(a + b))}.
         /// @{@code a} or {@code b} is lower than
         /// {@code 1.0} or greater than {@code 2.0}.
-        private static double logGammaSum(double a, double b)
+        private static double LogGammaSum(double a, double b)
         {
             if ((a < 1.0) || (a > 2.0))
             {
@@ -289,15 +257,15 @@ namespace NReco.Math3.Special
             double x = (a - 1.0) + (b - 1.0);
             if (x <= 0.5)
             {
-                return Gamma.logGamma1p(1.0 + x);
+                return Gamma.LogGamma1p(1.0 + x);
             }
             else if (x <= 1.5)
             {
-                return Gamma.logGamma1p(x) + MathUtil.Log1p(x); //FastMath.log1p(x);
+                return Gamma.LogGamma1p(x) + MathUtil.Log1p(x); //FastMath.log1p(x);
             }
             else
             {
-                return Gamma.logGamma1p(x - 1.0) + MathUtil.Log(x * (1.0 + x));
+                return Gamma.LogGamma1p(x - 1.0) + MathUtil.Log(x * (1.0 + x));
             }
         }
 
@@ -311,7 +279,7 @@ namespace NReco.Math3.Special
         /// @param b Second argument.
         /// @return the value of {@code log(Gamma(b) / Gamma(a + b))}.
         /// @{@code a < 0.0} or {@code b < 10.0}.
-        private static double logGammaMinusLogGammaSum(double a, double b)
+        private static double LogGammaMinusLogGammaSum(double a, double b)
         {
             if (a < 0.0)
             {
@@ -329,12 +297,12 @@ namespace NReco.Math3.Special
             if (a <= b)
             {
                 d = b + (a - 0.5);
-                w = deltaMinusDeltaSum(a, b);
+                w = DeltaMinusDeltaSum(a, b);
             }
             else
             {
                 d = a + (b - 0.5);
-                w = deltaMinusDeltaSum(b, a);
+                w = DeltaMinusDeltaSum(b, a);
             }
 
             double u = d * MathUtil.Log1p(a / b); //FastMath.log1p(a / b);
@@ -351,7 +319,7 @@ namespace NReco.Math3.Special
         /// @return the value of {@code Delta(b) - Delta(a + b)}
         /// @{@code a < 0} or {@code a > b}
         /// @{@code b < 10}
-        private static double deltaMinusDeltaSum(double a, double b)
+        private static double DeltaMinusDeltaSum(double a, double b)
         {
             if ((a < 0) || (a > b))
             {
@@ -396,7 +364,7 @@ namespace NReco.Math3.Special
         /// @param q Second argument.
         /// @return the value of {@code Delta(p) + Delta(q) - Delta(p + q)}.
         /// @{@code p < 10.0} or {@code q < 10.0}.
-        private static double sumDeltaMinusDeltaSum(double p, double q)
+        private static double SumDeltaMinusDeltaSum(double p, double q)
         {
 
             if (p < 10.0)
@@ -419,7 +387,7 @@ namespace NReco.Math3.Special
             {
                 z = t * z + DELTA[i];
             }
-            return z / a + deltaMinusDeltaSum(a, b);
+            return z / a + DeltaMinusDeltaSum(a, b);
         }
 
         /// Returns the value of log B(p, q) for 0 ≤ x ≤ 1 and p, q > 0. Based on the
@@ -430,7 +398,7 @@ namespace NReco.Math3.Special
         /// @param q Second argument.
         /// @return the value of {@code log(Beta(p, q))}, {@code NaN} if
         /// {@code p <= 0} or {@code q <= 0}.
-        public static double logBeta(double p, double q)
+        public static double LogBeta(double p, double q)
         {
             if (Double.IsNaN(p) || Double.IsNaN(q) || (p <= 0.0) || (q <= 0.0))
             {
@@ -441,7 +409,7 @@ namespace NReco.Math3.Special
             double b = Math.Max(p, q);
             if (a >= 10.0)
             {
-                double w = sumDeltaMinusDeltaSum(a, b);
+                double w = SumDeltaMinusDeltaSum(a, b);
                 double h = a / b;
                 double c = h / (1.0 + h);
                 double u = -(a - 0.5) * MathUtil.Log(c);
@@ -468,8 +436,8 @@ namespace NReco.Math3.Special
                         prod *= ared / (1.0 + ared / b);
                     }
                     return (MathUtil.Log(prod) - n * MathUtil.Log(b)) +
-                            (Gamma.logGamma(ared) +
-                             logGammaMinusLogGammaSum(ared, b));
+                            (Gamma.LogGamma(ared) +
+                             LogGammaMinusLogGammaSum(ared, b));
                 }
                 else
                 {
@@ -492,15 +460,15 @@ namespace NReco.Math3.Special
                         }
                         return MathUtil.Log(prod1) +
                                MathUtil.Log(prod2) +
-                               (Gamma.logGamma(ared) +
-                               (Gamma.logGamma(bred) -
-                                logGammaSum(ared, bred)));
+                               (Gamma.LogGamma(ared) +
+                               (Gamma.LogGamma(bred) -
+                                LogGammaSum(ared, bred)));
                     }
                     else
                     {
                         return MathUtil.Log(prod1) +
-                               Gamma.logGamma(ared) +
-                               logGammaMinusLogGammaSum(ared, b);
+                               Gamma.LogGamma(ared) +
+                               LogGammaMinusLogGammaSum(ared, b);
                     }
                 }
             }
@@ -518,29 +486,29 @@ namespace NReco.Math3.Special
                             prod *= bred / (a + bred);
                         }
                         return MathUtil.Log(prod) +
-                               (Gamma.logGamma(a) +
-                                (Gamma.logGamma(bred) -
-                                 logGammaSum(a, bred)));
+                               (Gamma.LogGamma(a) +
+                                (Gamma.LogGamma(bred) -
+                                 LogGammaSum(a, bred)));
                     }
                     else
                     {
-                        return Gamma.logGamma(a) +
-                               logGammaMinusLogGammaSum(a, b);
+                        return Gamma.LogGamma(a) +
+                               LogGammaMinusLogGammaSum(a, b);
                     }
                 }
                 else
                 {
-                    return Gamma.logGamma(a) +
-                           Gamma.logGamma(b) -
-                           logGammaSum(a, b);
+                    return Gamma.LogGamma(a) +
+                           Gamma.LogGamma(b) -
+                           LogGammaSum(a, b);
                 }
             }
             else
             {
                 if (b >= 10.0)
                 {
-                    return Gamma.logGamma(a) +
-                           logGammaMinusLogGammaSum(a, b);
+                    return Gamma.LogGamma(a) +
+                           LogGammaMinusLogGammaSum(a, b);
                 }
                 else
                 {

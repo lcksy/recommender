@@ -1,44 +1,32 @@
-﻿/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout and Apache Commons Mathematics Library that were licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NReco.Math3
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class MatrixUtil
     {
-        public static IEnumerable<double> nonZeroes(double[] vector)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vector"></param>
+        /// <returns></returns>
+        public static IEnumerable<double> NonZeroes(double[] vector)
         {
             for (int i = 0; i < vector.Length; i++)
                 if (vector[i] != 0.0)
                     yield return vector[i];
         }
 
-        public static double vectorDot(double[] v1, double[] v2)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static double VectorDot(double[] v1, double[] v2)
         {
             double r = 0d;
             for (int i = 0; i < v1.Length; i++)
@@ -48,6 +36,11 @@ namespace NReco.Math3
             return r;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="v"></param>
         public static void WriteVector(string msg, double[] v)
         {
             Console.Write("{0}: ", msg);
@@ -56,7 +49,13 @@ namespace NReco.Math3
             Console.WriteLine();
         }
 
-        public static double[] viewColumn(double[,] m, int column)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        public static double[] ViewColumn(double[,] m, int column)
         {
             var v = new double[m.GetLength(0)];
             for (int i = 0; i < v.Length; i++)
@@ -66,7 +65,13 @@ namespace NReco.Math3
             return v;
         }
 
-        public static double[] viewRow(double[,] m, int row)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public static double[] ViewRow(double[,] m, int row)
         {
             var v = new double[m.GetLength(1)];
             for (int i = 0; i < v.Length; i++)
@@ -76,7 +81,12 @@ namespace NReco.Math3
             return v;
         }
 
-        public static double[] viewDiagonal(double[,] m)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public static double[] ViewDiagonal(double[,] m)
         {
             var v = new double[Math.Min(m.GetLength(0), m.GetLength(1))];
             for (int i = 0; i < v.Length; i++)
@@ -84,12 +94,22 @@ namespace NReco.Math3
             return v;
         }
 
-        public static double norm2(double[] v)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static double Norm2(double[] v)
         {
-            return Math.Sqrt(vectorDot(v, v));
+            return Math.Sqrt(VectorDot(v, v));
         }
 
-        public static double norm1(double[] v)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static double Norm1(double[] v)
         {
             double res = 0;
             for (int i = 0; i < v.Length; i++)
@@ -97,7 +117,16 @@ namespace NReco.Math3
             return res;
         }
 
-        public static double[,] viewPart(double[,] m, int rowOff, int rowRequested, int colOff, int colRequested)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="rowOff"></param>
+        /// <param name="rowRequested"></param>
+        /// <param name="colOff"></param>
+        /// <param name="colRequested"></param>
+        /// <returns></returns>
+        public static double[,] ViewPart(double[,] m, int rowOff, int rowRequested, int colOff, int colRequested)
         {
             var r = new double[rowRequested - rowOff, colRequested - colOff];
             for (int i = rowOff; i < rowRequested; i++)
@@ -106,7 +135,12 @@ namespace NReco.Math3
             return r;
         }
 
-        public static double[,] transpose(double[,] m)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public static double[,] Transpose(double[,] m)
         {
             int rows = m.GetLength(0); //rowSize();
             int columns = m.GetLength(1); //columnSize();
@@ -121,7 +155,12 @@ namespace NReco.Math3
             return result;
         }
 
-        public static void assign(double[,] m, Func<double, double> f)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="f"></param>
+        public static void Assign(double[,] m, Func<double, double> f)
         {
             var rLen = m.GetLength(0);
             var cLen = m.GetLength(1);
@@ -130,13 +169,24 @@ namespace NReco.Math3
                     m[i, j] = f(m[i, j]);
         }
 
-        public static void assign(double[] v, Func<double, double> f)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="f"></param>
+        public static void Assign(double[] v, Func<double, double> f)
         {
             for (int i = 0; i < v.Length; i++)
                 v[i] = f(v[i]);
         }
 
-        public static double[,] times(double[,] m, double[,] other)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public static double[,] Times(double[,] m, double[,] other)
         {
             int columns = m.GetLength(1); //columnSize();
             if (columns != other.GetLength(0))
@@ -161,7 +211,13 @@ namespace NReco.Math3
             return result;
         }
 
-        public static double[] times(double[] v, double x)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static double[] Times(double[] v, double x)
         {
             var vCopy = new double[v.Length];
             for (int i = 0; i < v.Length; i++)

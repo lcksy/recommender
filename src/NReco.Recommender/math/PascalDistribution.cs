@@ -1,37 +1,9 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout and Apache Commons Mathematics Library that were licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+
 using NReco.Math3.Exception;
+using NReco.Math3.Random;
 using NReco.Math3.Special;
 using NReco.Math3.Util;
-using NReco.Math3.Random;
-
-using NReco.CF.Taste;
 
 namespace NReco.Math3.Distribution
 {
@@ -72,7 +44,7 @@ namespace NReco.Math3.Distribution
     public class PascalDistribution : AbstractIntegerDistribution
     {
         /// Serializable version identifier. */
-        private static long serialVersionUID = 6751309484392813623L;
+        private static long SERIALVERSIONUID = 6751309484392813623L;
         /// The number of successes. */
         private int numberOfSuccesses;
         /// The probability of success. */
@@ -131,7 +103,7 @@ namespace NReco.Math3.Distribution
         /// Access the number of successes for this distribution.
         ///
         /// @return the number of successes.
-        public int getNumberOfSuccesses()
+        public int GetNumberOfSuccesses()
         {
             return numberOfSuccesses;
         }
@@ -139,13 +111,13 @@ namespace NReco.Math3.Distribution
         /// Access the probability of success for this distribution.
         ///
         /// @return the probability of success.
-        public double getProbabilityOfSuccess()
+        public double GetProbabilityOfSuccess()
         {
             return probabilityOfSuccess;
         }
 
         /** {@inheritDoc} */
-        public override double probability(int x)
+        public override double Probability(int x)
         {
             double ret;
             if (x < 0)
@@ -154,7 +126,7 @@ namespace NReco.Math3.Distribution
             }
             else
             {
-                ret = binomialCoefficientDouble(x +
+                ret = BinomialCoefficientDouble(x +
                       numberOfSuccesses - 1, numberOfSuccesses - 1) *
                       Math.Pow(probabilityOfSuccess, numberOfSuccesses) *
                       Math.Pow(1.0 - probabilityOfSuccess, x);
@@ -163,7 +135,7 @@ namespace NReco.Math3.Distribution
         }
 
         /** {@inheritDoc} */
-        public override double logProbability(int x)
+        public override double LogProbability(int x)
         {
             double ret;
             if (x < 0)
@@ -172,7 +144,7 @@ namespace NReco.Math3.Distribution
             }
             else
             {
-                ret = binomialCoefficientLog(x +
+                ret = BinomialCoefficientLog(x +
                       numberOfSuccesses - 1, numberOfSuccesses - 1) +
                       logProbabilityOfSuccess * numberOfSuccesses +
                       log1mProbabilityOfSuccess * x;
@@ -181,18 +153,13 @@ namespace NReco.Math3.Distribution
         }
 
         /// {@inheritDoc} */
-        public override double cumulativeProbability(int x)
+        public override double CumulativeProbability(int x)
         {
             double ret;
             if (x < 0)
-            {
                 ret = 0.0;
-            }
             else
-            {
-                ret = Beta.regularizedBeta(probabilityOfSuccess,
-                        numberOfSuccesses, x + 1.0);
-            }
+                ret = Beta.RegularizedBeta(probabilityOfSuccess, numberOfSuccesses, x + 1.0);
             return ret;
         }
 
@@ -200,10 +167,10 @@ namespace NReco.Math3.Distribution
         ///
         /// For number of successes {@code r} and probability of success {@code p},
         /// the mean is {@code r * (1 - p) / p}.
-        public override double getNumericalMean()
+        public override double GetNumericalMean()
         {
-            double p = getProbabilityOfSuccess();
-            double r = getNumberOfSuccesses();
+            double p = GetProbabilityOfSuccess();
+            double r = GetNumberOfSuccesses();
             return (r * (1 - p)) / p;
         }
 
@@ -211,10 +178,10 @@ namespace NReco.Math3.Distribution
         ///
         /// For number of successes {@code r} and probability of success {@code p},
         /// the variance is {@code r * (1 - p) / p^2}.
-        public override double getNumericalVariance()
+        public override double GetNumericalVariance()
         {
-            double p = getProbabilityOfSuccess();
-            double r = getNumberOfSuccesses();
+            double p = GetProbabilityOfSuccess();
+            double r = GetNumberOfSuccesses();
             return r * (1 - p) / (p * p);
         }
 
@@ -223,7 +190,7 @@ namespace NReco.Math3.Distribution
         /// The lower bound of the support is always 0 no matter the parameters.
         ///
         /// @return lower bound of the support (always 0)
-        public override int getSupportLowerBound()
+        public override int GetSupportLowerBound()
         {
             return 0;
         }
@@ -235,7 +202,7 @@ namespace NReco.Math3.Distribution
         ///
         /// @return upper bound of the support (always {@code Integer.MAX_VALUE}
         /// for positive infinity)
-        public override int getSupportUpperBound()
+        public override int GetSupportUpperBound()
         {
             return Int32.MaxValue;
         }
@@ -245,7 +212,7 @@ namespace NReco.Math3.Distribution
         /// The support of this distribution is connected.
         ///
         /// @return {@code true}
-        public bool isSupportConnected()
+        public bool IsSupportConnected()
         {
             return true;
         }
@@ -272,7 +239,7 @@ namespace NReco.Math3.Distribution
           * @throws MathArithmeticException if the result is too large to be
           * represented by a long integer.
           */
-        public double binomialCoefficientLog(int n, int k)
+        public double BinomialCoefficientLog(int n, int k)
         {
             //CombinatoricsUtils.checkBinomial(n, k);
             if ((n == k) || (k == 0))
@@ -290,7 +257,7 @@ namespace NReco.Math3.Distribution
              */
             if (n < 67)
             {
-                return MathUtil.Log(binomialCoefficient(n, k));
+                return MathUtil.Log(BinomialCoefficient(n, k));
             }
 
             /*
@@ -299,12 +266,12 @@ namespace NReco.Math3.Distribution
              */
             if (n < 1030)
             {
-                return MathUtil.Log(binomialCoefficientDouble(n, k));
+                return MathUtil.Log(BinomialCoefficientDouble(n, k));
             }
 
             if (k > n / 2)
             {
-                return binomialCoefficientLog(n, n - k);
+                return BinomialCoefficientLog(n, n - k);
             }
 
             /*
@@ -354,7 +321,7 @@ namespace NReco.Math3.Distribution
          * @throws MathArithmeticException if the result is too large to be
          * represented by a long integer.
          */
-        public long binomialCoefficient(int n, int k)
+        public long BinomialCoefficient(int n, int k)
         {
             //CombinatoricsUtils.checkBinomial(n, k);
             if ((n == k) || (k == 0))
@@ -368,7 +335,7 @@ namespace NReco.Math3.Distribution
             // Use symmetry for large k
             if (k > n / 2)
             {
-                return binomialCoefficient(n, n - k);
+                return BinomialCoefficient(n, n - k);
             }
 
             // We use the formula
@@ -400,7 +367,7 @@ namespace NReco.Math3.Distribution
                     // result is divisible by (j/d) because (j/d)
                     // is relative prime to (i/d) and is a divisor of
                     // result * (i/d).
-                    long d = gcd(i, j);
+                    long d = Gcd(i, j);
                     result = (result / (j / d)) * (i / d);
                     i++;
                 }
@@ -413,16 +380,21 @@ namespace NReco.Math3.Distribution
                 int i = n - k + 1;
                 for (int j = 1; j <= k; j++)
                 {
-                    long d = gcd(i, j);
-                    result = mulAndCheck((int)(result / (j / d)), (int)(i / d));
+                    long d = Gcd(i, j);
+                    result = MulAndCheck((int)(result / (j / d)), (int)(i / d));
                     i++;
                 }
             }
             return result;
         }
 
-
-        public double binomialCoefficientDouble(int n, int k)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="k"></param>
+        /// <returns></returns>
+        public double BinomialCoefficientDouble(int n, int k)
         {
             //CombinatoricsUtils.checkBinomial(n, k);
             if ((n == k) || (k == 0))
@@ -435,11 +407,11 @@ namespace NReco.Math3.Distribution
             }
             if (k > n / 2)
             {
-                return binomialCoefficientDouble(n, n - k);
+                return BinomialCoefficientDouble(n, n - k);
             }
             if (n < 67)
             {
-                return binomialCoefficient(n, k);
+                return BinomialCoefficient(n, k);
             }
 
             double result = 1d;
@@ -480,7 +452,7 @@ namespace NReco.Math3.Distribution
          * a non-negative {@code int} value.
          * @since 1.1
          */
-        public int gcd(int p, int q)
+        public int Gcd(int p, int q)
         {
             int a = p;
             int b = q;
@@ -546,7 +518,7 @@ namespace NReco.Math3.Distribution
                 a = (int)(blbu % al);
             }
 
-            return gcdPositive(a, b);
+            return GcdPositive(a, b);
         }
 
         /**
@@ -569,7 +541,7 @@ namespace NReco.Math3.Distribution
          * @param b Positive number.
          * @return the greatest common divisor.
          */
-        private int gcdPositive(int a, int b)
+        private int GcdPositive(int a, int b)
         {
             if (a == 0)
             {
@@ -617,7 +589,7 @@ namespace NReco.Math3.Distribution
          * represented as an {@code int}.
          * @since 1.1
          */
-        public static int mulAndCheck(int x, int y)
+        public static int MulAndCheck(int x, int y)
         {
             long m = ((long)x) * ((long)y);
             if (m < Int32.MinValue || m > Int32.MaxValue)

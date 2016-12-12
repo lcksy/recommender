@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 using System.Collections.Generic;
 
@@ -59,7 +36,7 @@ namespace NReco.CF.Taste.Impl.Similarity
             );
         }
 
-        IPreferenceInferrer getPreferenceInferrer()
+        IPreferenceInferrer GetPreferenceInferrer()
         {
             return inferrer;
         }
@@ -101,11 +78,11 @@ namespace NReco.CF.Taste.Impl.Similarity
         ///          sum of squares of differences in X and Y values
         /// @return similarity value between -1.0 and 1.0, inclusive, or {@link Double#NaN} if no similarity can be
         ///         computed (e.g. when no items have been rated by both users
-        protected abstract double computeResult(int n, double sumXY, double sumX2, double sumY2, double sumXYdiff2);
+        protected abstract double ComputeResult(int n, double sumXY, double sumX2, double sumY2, double sumXYdiff2);
 
         public double UserSimilarity(long userID1, long userID2)
         {
-            IDataModel dataModel = getDataModel();
+            IDataModel dataModel = GetDataModel();
             IPreferenceArray xPrefs = dataModel.GetPreferencesFromUser(userID1);
             IPreferenceArray yPrefs = dataModel.GetPreferencesFromUser(userID2);
             int xLength = xPrefs.Length();
@@ -233,11 +210,11 @@ namespace NReco.CF.Taste.Impl.Similarity
                 double centeredSumX2 = sumX2 - meanX * sumX;
                 // double centeredSumY2 = sumY2 - 2.0 * meanY * sumY + n * meanY * meanY;
                 double centeredSumY2 = sumY2 - meanY * sumY;
-                result = computeResult(count, centeredSumXY, centeredSumX2, centeredSumY2, sumXYdiff2);
+                result = ComputeResult(count, centeredSumXY, centeredSumX2, centeredSumY2, sumXYdiff2);
             }
             else
             {
-                result = computeResult(count, sumXY, sumX2, sumY2, sumXYdiff2);
+                result = ComputeResult(count, sumXY, sumX2, sumY2, sumXYdiff2);
             }
 
             if (!Double.IsNaN(result))
@@ -249,7 +226,7 @@ namespace NReco.CF.Taste.Impl.Similarity
 
         public override double ItemSimilarity(long itemID1, long itemID2)
         {
-            IDataModel dataModel = getDataModel();
+            IDataModel dataModel = GetDataModel();
             IPreferenceArray xPrefs = dataModel.GetPreferencesForItem(itemID1);
             IPreferenceArray yPrefs = dataModel.GetPreferencesForItem(itemID2);
             int xLength = xPrefs.Length();
@@ -323,11 +300,11 @@ namespace NReco.CF.Taste.Impl.Similarity
                 double centeredSumX2 = sumX2 - meanX * sumX;
                 // double centeredSumY2 = sumY2 - 2.0 * meanY * sumY + n * meanY * meanY;
                 double centeredSumY2 = sumY2 - meanY * sumY;
-                result = computeResult(count, centeredSumXY, centeredSumX2, centeredSumY2, sumXYdiff2);
+                result = ComputeResult(count, centeredSumXY, centeredSumX2, centeredSumY2, sumXYdiff2);
             }
             else
             {
-                result = computeResult(count, sumXY, sumX2, sumY2, sumXYdiff2);
+                result = ComputeResult(count, sumXY, sumX2, sumY2, sumXYdiff2);
             }
 
             if (!Double.IsNaN(result))
@@ -383,7 +360,7 @@ namespace NReco.CF.Taste.Impl.Similarity
 
         public override string ToString()
         {
-            return GetType().Name + "[dataModel:" + getDataModel() + ",inferrer:" + inferrer + ']';
+            return GetType().Name + "[dataModel:" + GetDataModel() + ",inferrer:" + inferrer + ']';
         }
     }
 }

@@ -1,32 +1,4 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout and Apache Commons Mathematics Library that were licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using NReco.Math3.Exception;
 
 namespace NReco.Math3.Util
 {
@@ -57,22 +29,22 @@ namespace NReco.Math3.Util
         /// @param n the coefficient index to retrieve.
         /// @param x the evaluation point.
         /// @return the n-th a coefficient.
-        protected abstract double getA(int n, double x);
+        protected abstract double GetA(int n, double x);
 
         /// Access the n-th b coefficient of the continued fraction.  Since b can be
         /// a function of the evaluation point, x, that is passed in as well.
         /// @param n the coefficient index to retrieve.
         /// @param x the evaluation point.
         /// @return the n-th b coefficient.
-        protected abstract double getB(int n, double x);
+        protected abstract double GetB(int n, double x);
 
         /// Evaluates the continued fraction at the value x.
         /// @param x the evaluation point.
         /// @return the value of the continued fraction evaluated at x.
         /// @throws ConvergenceException if the algorithm fails to converge.
-        public double evaluate(double x)
+        public double Evaluate(double x)
         {
-            return evaluate(x, DEFAULT_EPSILON, Int32.MaxValue);
+            return Evaluate(x, DEFAULT_EPSILON, Int32.MaxValue);
         }
 
         /// Evaluates the continued fraction at the value x.
@@ -80,9 +52,9 @@ namespace NReco.Math3.Util
         /// @param epsilon maximum error allowed.
         /// @return the value of the continued fraction evaluated at x.
         /// @throws ConvergenceException if the algorithm fails to converge.
-        public double evaluate(double x, double epsilon)
+        public double Evaluate(double x, double epsilon)
         {
-            return evaluate(x, epsilon, Int32.MaxValue);
+            return Evaluate(x, epsilon, Int32.MaxValue);
         }
 
         /// Evaluates the continued fraction at the value x.
@@ -91,9 +63,9 @@ namespace NReco.Math3.Util
         /// @return the value of the continued fraction evaluated at x.
         /// @throws ConvergenceException if the algorithm fails to converge.
         /// @throws MaxCountExceededException if maximal number of iterations is reached
-        public double evaluate(double x, int maxIterations)
+        public double Evaluate(double x, int maxIterations)
         {
-            return evaluate(x, DEFAULT_EPSILON, maxIterations);
+            return Evaluate(x, DEFAULT_EPSILON, maxIterations);
         }
 
         protected bool PrecisionEquals(double x, double y, double eps)
@@ -122,10 +94,10 @@ namespace NReco.Math3.Util
         /// @return the value of the continued fraction evaluated at x.
         /// @throws ConvergenceException if the algorithm fails to converge.
         /// @throws MaxCountExceededException if maximal number of iterations is reached
-        public double evaluate(double x, double epsilon, int maxIterations)
+        public double Evaluate(double x, double epsilon, int maxIterations)
         {
             double small = 1e-50;
-            double hPrev = getA(0, x);
+            double hPrev = GetA(0, x);
 
             // use the value of small as epsilon criteria for zero checks
             if (PrecisionEquals(hPrev, 0.0, small))
@@ -140,8 +112,8 @@ namespace NReco.Math3.Util
 
             while (n < maxIterations)
             {
-                double a = getA(n, x);
-                double b = getB(n, x);
+                double a = GetA(n, x);
+                double b = GetB(n, x);
 
                 double dN = a + b * dPrev;
                 if (PrecisionEquals(dN, 0.0, small))

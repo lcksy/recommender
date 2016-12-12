@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 
 using NReco.CF.Taste.Common;
@@ -107,7 +84,7 @@ namespace NReco.CF.Taste.Impl.Eval
                 IPreferenceArray prefs = dataModel.GetPreferencesFromUser(userID);
 
                 // List some most-preferred items that would count as (most) "relevant" results
-                double theRelevanceThreshold = Double.IsNaN(relevanceThreshold) ? computeThreshold(prefs) : relevanceThreshold;
+                double theRelevanceThreshold = Double.IsNaN(relevanceThreshold) ? ComputeThreshold(prefs) : relevanceThreshold;
                 FastIDSet relevantItemIDs = dataSplitter.GetRelevantItemsIDs(userID, at, theRelevanceThreshold, dataModel);
 
                 int numRelevantItems = relevantItemIDs.Count();
@@ -129,7 +106,7 @@ namespace NReco.CF.Taste.Impl.Eval
                 {
                     trainingModel.GetPreferencesFromUser(userID);
                 }
-                catch (NoSuchUserException nsee)
+                catch (NoSuchUserException)
                 {
                     continue; // Oops we excluded all prefs for the user -- just move on
                 }
@@ -178,7 +155,7 @@ namespace NReco.CF.Taste.Impl.Eval
                 for (int i = 0; i < numRecommendedItems; i++)
                 {
                     IRecommendedItem item = recommendedItems[i];
-                    double discount = 1.0 / log2(i + 2.0); // Classical formulation says log(i+1), but i is 0-based here
+                    double discount = 1.0 / Log2(i + 2.0); // Classical formulation says log(i+1), but i is 0-based here
                     if (relevantItemIDs.Contains(item.GetItemID()))
                     {
                         cumulativeGain += discount;
@@ -220,7 +197,7 @@ namespace NReco.CF.Taste.Impl.Eval
                 (double)numUsersWithRecommendations / (double)numUsersRecommendedFor);
         }
 
-        private static double computeThreshold(IPreferenceArray prefs)
+        private static double ComputeThreshold(IPreferenceArray prefs)
         {
             if (prefs.Length() < 2)
             {
@@ -236,7 +213,7 @@ namespace NReco.CF.Taste.Impl.Eval
             return stdDev.GetAverage() + stdDev.GetStandardDeviation();
         }
 
-        private static double log2(double value)
+        private static double Log2(double value)
         {
             return MathUtil.Log(value) / LOG2;
         }

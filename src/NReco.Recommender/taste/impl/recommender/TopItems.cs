@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,24 +25,24 @@ namespace NReco.CF.Taste.Impl.Recommender
             //Preconditions.checkArgument(possibleItemIDs != null, "possibleItemIDs is null");
             //Preconditions.checkArgument(estimator != null, "estimator is null");
 
-            var topItems = new SortedSet<IRecommendedItem>(ByValueRecommendedItemComparator.getReverseInstance());
+            var topItems = new SortedSet<IRecommendedItem>(ByValueRecommendedItemComparator.GetReverseInstance());
             bool full = false;
             double lowestTopValue = Double.NegativeInfinity;
             while (possibleItemIDs.MoveNext())
             {
                 long itemID = possibleItemIDs.Current;
-                if (rescorer == null || !rescorer.isFiltered(itemID))
+                if (rescorer == null || !rescorer.IsFiltered(itemID))
                 {
                     double preference;
                     try
                     {
                         preference = estimator.Estimate(itemID);
                     }
-                    catch (NoSuchItemException nsie)
+                    catch (NoSuchItemException)
                     {
                         continue;
                     }
-                    double rescoredPref = rescorer == null ? preference : rescorer.rescore(itemID, preference);
+                    double rescoredPref = rescorer == null ? preference : rescorer.Rescore(itemID, preference);
                     if (!Double.IsNaN(rescoredPref) && (!full || rescoredPref > lowestTopValue))
                     {
                         topItems.Add(new GenericRecommendedItem(itemID, (float)rescoredPref));
@@ -105,7 +82,7 @@ namespace NReco.CF.Taste.Impl.Recommender
             while (allUserIDs.MoveNext())
             {
                 long userID = allUserIDs.Current;
-                if (rescorer != null && rescorer.isFiltered(userID))
+                if (rescorer != null && rescorer.IsFiltered(userID))
                 {
                     continue;
                 }
@@ -114,11 +91,11 @@ namespace NReco.CF.Taste.Impl.Recommender
                 {
                     similarity = estimator.Estimate(userID);
                 }
-                catch (NoSuchUserException nsue)
+                catch (NoSuchUserException)
                 {
                     continue;
                 }
-                double rescoredSimilarity = rescorer == null ? similarity : rescorer.rescore(userID, similarity);
+                double rescoredSimilarity = rescorer == null ? similarity : rescorer.Rescore(userID, similarity);
                 if (!Double.IsNaN(rescoredSimilarity) && (!full || rescoredSimilarity > lowestTopValue))
                 {
                     topUsers.Add(new SimilarUser(userID, rescoredSimilarity));
@@ -131,7 +108,7 @@ namespace NReco.CF.Taste.Impl.Recommender
                         full = true;
                         topUsers.Remove(topUsers.Max); // topUsers.poll();
                     }
-                    lowestTopValue = topUsers.Max.getSimilarity();
+                    lowestTopValue = topUsers.Max.GetSimilarity();
                 }
             }
             int size = topUsers.Count;
@@ -140,7 +117,7 @@ namespace NReco.CF.Taste.Impl.Recommender
                 return NO_IDS;
             }
             List<SimilarUser> sorted = new List<SimilarUser>(size);
-            return topUsers.Select(s => s.getUserID()).ToArray();
+            return topUsers.Select(s => s.GetUserID()).ToArray();
         }
 
         /// <p>
@@ -161,7 +138,7 @@ namespace NReco.CF.Taste.Impl.Recommender
             while (allSimilarities.MoveNext())
             {
                 GenericItemSimilarity.ItemItemSimilarity similarity = allSimilarities.Current;
-                double value = similarity.getValue();
+                double value = similarity.GetValue();
                 if (!Double.IsNaN(value) && (!full || value > lowestTopValue))
                 {
                     topSimilarities.Add(similarity);
@@ -174,7 +151,7 @@ namespace NReco.CF.Taste.Impl.Recommender
                         full = true;
                         topSimilarities.Remove(topSimilarities.Max);//topSimilarities.poll();
                     }
-                    lowestTopValue = topSimilarities.Max.getValue();
+                    lowestTopValue = topSimilarities.Max.GetValue();
                 }
             }
             int size = topSimilarities.Count;

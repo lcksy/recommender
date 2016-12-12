@@ -1,33 +1,6 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-
-using NReco.CF;
 
 namespace NReco.CF.Taste.Impl.Common
 {
@@ -90,7 +63,7 @@ namespace NReco.CF.Taste.Impl.Common
         }
 
         /// @see #findForAdd(long)
-        private int find(long key)
+        private int Find(long key)
         {
             int theHashCode = (int)key & 0x7FFFFFFF; // make sure it's positive
             long[] keys = this.keys;
@@ -107,7 +80,7 @@ namespace NReco.CF.Taste.Impl.Common
         }
 
         /// @see #find(long)
-        private int findForAdd(long key)
+        private int FindForAdd(long key)
         {
             int theHashCode = (int)key & 0x7FFFFFFF; // make sure it's positive
             long[] keys = this.keys;
@@ -146,7 +119,7 @@ namespace NReco.CF.Taste.Impl.Common
 
         public bool Contains(long key)
         {
-            return key != NULL && key != REMOVED && keys[find(key)] != NULL;
+            return key != NULL && key != REMOVED && keys[Find(key)] != NULL;
         }
 
         public bool Add(long key)
@@ -161,7 +134,7 @@ namespace NReco.CF.Taste.Impl.Common
                 // If over half the slots used are actual entries, let's grow
                 if (numEntries * loadFactor >= numSlotsUsed)
                 {
-                    growAndRehash();
+                    GrowAndRehash();
                 }
                 else
                 {
@@ -170,7 +143,7 @@ namespace NReco.CF.Taste.Impl.Common
                 }
             }
             // Here we may later consider implementing Brent's variation described on page 532
-            int index = findForAdd(key);
+            int index = FindForAdd(key);
             long keyIndex = keys[index];
             if (keyIndex != key)
             {
@@ -220,7 +193,7 @@ namespace NReco.CF.Taste.Impl.Common
             {
                 return false;
             }
-            int index = find(key);
+            int index = Find(key);
             if (keys[index] == NULL)
             {
                 return false;
@@ -308,21 +281,21 @@ namespace NReco.CF.Taste.Impl.Common
             ArrayFill(keys, NULL);
         }
 
-        private void growAndRehash()
+        private void GrowAndRehash()
         {
             if (keys.Length * loadFactor >= RandomUtils.MAX_INT_SMALLER_TWIN_PRIME)
             {
                 throw new InvalidOperationException("Can't grow any more");
             }
-            rehash(RandomUtils.nextTwinPrime((int)(loadFactor * keys.Length)));
+            Rehash(RandomUtils.nextTwinPrime((int)(loadFactor * keys.Length)));
         }
 
         public void Rehash()
         {
-            rehash(RandomUtils.nextTwinPrime((int)(loadFactor * numEntries)));
+            Rehash(RandomUtils.nextTwinPrime((int)(loadFactor * numEntries)));
         }
 
-        private void rehash(int newHashSize)
+        private void Rehash(int newHashSize)
         {
             long[] oldKeys = keys;
             numEntries = 0;
@@ -348,7 +321,7 @@ namespace NReco.CF.Taste.Impl.Common
             int count = 0;
             foreach (long key in other.keys)
             {
-                if (key != NULL && key != REMOVED && keys[find(key)] != NULL)
+                if (key != NULL && key != REMOVED && keys[Find(key)] != NULL)
                 {
                     count++;
                 }

@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -55,7 +32,7 @@ namespace NReco.CF.Taste.Impl.Model.File
     /// <para>
     /// The preference value is assumed to be parseable as a <code>double</code>. The user IDs and item IDs are
     /// read parsed as <code>long</code>s. The timestamp, if present, is assumed to be parseable as a
-    /// <code>long</code>, though this can be overridden via <see cref="FileDataModel.readTimestampFromString"/>.
+    /// <code>long</code>, though this can be overridden via <see cref="FileDataModel.ReadTimestampFromString"/>.
     /// The preference value may be empty, to indicate "no preference value", but cannot be empty. That is,
     /// this is legal:
     /// </para>
@@ -167,7 +144,7 @@ namespace NReco.CF.Taste.Impl.Model.File
             log.Info("Creating FileDataModel for file {0}", dataFile);
 
             this.lastModified = System.IO.File.GetLastWriteTime(dataFile);
-            this.lastUpdateFileModified = readLastUpdateFileModified();
+            this.lastUpdateFileModified = ReadLastUpdateFileModified();
 
             var rdr = new StreamReader(dataFile);
             string firstLine = rdr.ReadLine();
@@ -195,7 +172,7 @@ namespace NReco.CF.Taste.Impl.Model.File
             this.minReloadIntervalMS = minReloadIntervalMS;
             this.uniqueUserItemCheck = uniqueUserItemCheck;
 
-            reload();
+            Reload();
         }
 
         private string[] SplitLine(string line)
@@ -225,13 +202,13 @@ namespace NReco.CF.Taste.Impl.Model.File
             return _delegate;
         }
 
-        protected void reload()
+        protected void Reload()
         {
             if (Monitor.TryEnter(this))
             {
                 try
                 {
-                    _delegate = buildModel();
+                    _delegate = BuildModel();
                 }
                 catch (IOException ioe)
                 {
@@ -244,11 +221,11 @@ namespace NReco.CF.Taste.Impl.Model.File
             }
         }
 
-        protected IDataModel buildModel()
+        protected IDataModel BuildModel()
         {
 
             var newLastModified = System.IO.File.GetLastWriteTime(dataFile); //.lastModified(
-            var newLastUpdateFileModified = readLastUpdateFileModified();
+            var newLastUpdateFileModified = ReadLastUpdateFileModified();
 
             bool loadFreshData = _delegate == null || newLastModified > lastModified.AddMilliseconds(minReloadIntervalMS);
 
@@ -267,14 +244,14 @@ namespace NReco.CF.Taste.Impl.Model.File
                     FastByIDMap<IList<IPreference>> data = new FastByIDMap<IList<IPreference>>();
                     using (var iterator = new StreamReader(dataFile))
                     {
-                        processFile(iterator, data, timestamps, false);
+                        ProcessFile(iterator, data, timestamps, false);
                     }
 
-                    foreach (var updateFile in findUpdateFilesAfter(newLastModified))
+                    foreach (var updateFile in FindUpdateFilesAfter(newLastModified))
                     {
                         using (var updFileIterator = new StreamReader(updateFile))
                         {
-                            processFile(updFileIterator, data, timestamps, false);
+                            ProcessFile(updFileIterator, data, timestamps, false);
                         }
                     }
 
@@ -288,11 +265,11 @@ namespace NReco.CF.Taste.Impl.Model.File
 
                     var maxLastMod = oldLastUpdateFileModifieid > newLastModified ? oldLastUpdateFileModifieid : newLastModified;
 
-                    foreach (var updateFile in findUpdateFilesAfter(maxLastMod))
+                    foreach (var updateFile in FindUpdateFilesAfter(maxLastMod))
                     {
                         using (var updFileIterator = new StreamReader(updateFile))
                         {
-                            processFile(updFileIterator, rawData, timestamps, true);
+                            ProcessFile(updFileIterator, rawData, timestamps, true);
                         }
                     }
 
@@ -310,14 +287,14 @@ namespace NReco.CF.Taste.Impl.Model.File
                     FastByIDMap<FastIDSet> data = new FastByIDMap<FastIDSet>();
                     using (var iterator = new StreamReader(dataFile))
                     {
-                        processFileWithoutID(iterator, data, timestamps);
+                        ProcessFileWithoutID(iterator, data, timestamps);
                     }
 
-                    foreach (var updateFile in findUpdateFilesAfter(newLastModified))
+                    foreach (var updateFile in FindUpdateFilesAfter(newLastModified))
                     {
                         using (var updFileIterator = new StreamReader(updateFile))
                         {
-                            processFileWithoutID(updFileIterator, data, timestamps);
+                            ProcessFileWithoutID(updFileIterator, data, timestamps);
                         }
                     }
 
@@ -327,14 +304,14 @@ namespace NReco.CF.Taste.Impl.Model.File
                 else
                 {
 
-                    FastByIDMap<FastIDSet> rawData = ((GenericBooleanPrefDataModel)_delegate).getRawUserData();
+                    FastByIDMap<FastIDSet> rawData = ((GenericBooleanPrefDataModel)_delegate).GetRawUserData();
                     var maxLastModified = oldLastUpdateFileModifieid > newLastModified ? oldLastUpdateFileModifieid : newLastModified;
 
-                    foreach (var updateFile in findUpdateFilesAfter(maxLastModified))
+                    foreach (var updateFile in FindUpdateFilesAfter(maxLastModified))
                     {
                         using (var iterator = new StreamReader(updateFile))
                         {
-                            processFileWithoutID(iterator, rawData, timestamps);
+                            ProcessFileWithoutID(iterator, rawData, timestamps);
                         }
                     }
 
@@ -349,7 +326,7 @@ namespace NReco.CF.Taste.Impl.Model.File
         /// the same way as the data file (up to first period) but isn't the data file itself. For example, if the
         /// data file is /foo/data.txt.gz, you might place update files at /foo/data.1.txt.gz, /foo/data.2.txt.gz,
         /// etc.
-        private IList<string> findUpdateFilesAfter(DateTime minimumLastModified)
+        private IList<string> FindUpdateFilesAfter(DateTime minimumLastModified)
         {
             var dataFileName = Path.GetFileName(dataFile); //.getName();
             int period = dataFileName.IndexOf('.');
@@ -374,10 +351,10 @@ namespace NReco.CF.Taste.Impl.Model.File
             return modTimeToUpdateFile.Values.ToList();
         }
 
-        private DateTime readLastUpdateFileModified()
+        private DateTime ReadLastUpdateFileModified()
         {
             var mostRecentModification = DateTime.MinValue;
-            foreach (var updateFile in findUpdateFilesAfter(DateTime.MinValue))
+            foreach (var updateFile in FindUpdateFilesAfter(DateTime.MinValue))
             {
                 var updFileLastModified = System.IO.File.GetLastWriteTime(updateFile); // updateFile.lastModified()
                 if (updFileLastModified > mostRecentModification)
@@ -398,7 +375,7 @@ namespace NReco.CF.Taste.Impl.Model.File
             throw new ArgumentException("Did not find a delimiter in first line");
         }
 
-        protected void processFile<T>(TextReader dataOrUpdateFileIterator,
+        protected void ProcessFile<T>(TextReader dataOrUpdateFileIterator,
                                    FastByIDMap<T> data,
                                    FastByIDMap<FastByIDMap<DateTime?>> timestamps,
                                    bool fromPriorData)
@@ -410,7 +387,7 @@ namespace NReco.CF.Taste.Impl.Model.File
             {
                 if (!String.IsNullOrWhiteSpace(line))
                 {
-                    processLine(line, data, timestamps, fromPriorData);
+                    ProcessLine(line, data, timestamps, fromPriorData);
                     if (++count % 1000000 == 0)
                     {
                         log.Info("Processed {0} lines", count);
@@ -441,7 +418,7 @@ namespace NReco.CF.Taste.Impl.Model.File
         ///  data that is already in memory. Otherwise it maps to {@link Collection}s of
         ///  {@link Preference}s, since it's reading fresh data. Subclasses must be prepared
         ///  to handle this wrinkle.
-        protected void processLine<T>(string line,
+        protected void ProcessLine<T>(string line,
                                    FastByIDMap<T> data,
                                    FastByIDMap<FastByIDMap<DateTime?>> timestamps,
                                    bool fromPriorData)
@@ -460,8 +437,8 @@ namespace NReco.CF.Taste.Impl.Model.File
             bool hasTimestamp = tokens.Length > 3;
             string timestampString = hasTimestamp ? tokens[3] : null;
 
-            long userID = readUserIDFromString(userIDString);
-            long itemID = readItemIDFromString(itemIDString);
+            long userID = ReadUserIDFromString(userIDString);
+            long itemID = ReadItemIDFromString(itemIDString);
 
             if (transpose)
             {
@@ -517,7 +494,7 @@ namespace NReco.CF.Taste.Impl.Model.File
                         }
                     }
 
-                    removeTimestamp(userID, itemID, timestamps);
+                    RemoveTimestamp(userID, itemID, timestamps);
 
                 }
                 else
@@ -561,7 +538,7 @@ namespace NReco.CF.Taste.Impl.Model.File
                     }
                 }
 
-                addTimestamp(userID, itemID, timestampString, timestamps);
+                AddTimestamp(userID, itemID, timestampString, timestamps);
 
             }
             else
@@ -591,7 +568,7 @@ namespace NReco.CF.Taste.Impl.Model.File
                         }
                     }
 
-                    removeTimestamp(userID, itemID, timestamps);
+                    RemoveTimestamp(userID, itemID, timestamps);
 
                 }
                 else
@@ -625,14 +602,14 @@ namespace NReco.CF.Taste.Impl.Model.File
                             ((IList<IPreference>)prefs).Add(new GenericPreference(userID, itemID, preferenceValue));
                     }
 
-                    addTimestamp(userID, itemID, timestampString, timestamps);
+                    AddTimestamp(userID, itemID, timestampString, timestamps);
 
                 }
 
             }
         }
 
-        protected void processFileWithoutID(TextReader dataOrUpdateFileIterator,
+        protected void ProcessFileWithoutID(TextReader dataOrUpdateFileIterator,
                                             FastByIDMap<FastIDSet> data,
                                             FastByIDMap<FastByIDMap<DateTime?>> timestamps)
         {
@@ -643,7 +620,7 @@ namespace NReco.CF.Taste.Impl.Model.File
             {
                 if (!String.IsNullOrWhiteSpace(line))
                 {
-                    processLineWithoutID(line, data, timestamps);
+                    ProcessLineWithoutID(line, data, timestamps);
                     if (++count % 100000 == 0)
                     {
                         log.Info("Processed {0} lines", count);
@@ -653,7 +630,7 @@ namespace NReco.CF.Taste.Impl.Model.File
             log.Info("Read lines: {0}", count);
         }
 
-        protected void processLineWithoutID(String line,
+        protected void ProcessLineWithoutID(String line,
                                             FastByIDMap<FastIDSet> data,
                                             FastByIDMap<FastByIDMap<DateTime?>> timestamps)
         {
@@ -671,8 +648,8 @@ namespace NReco.CF.Taste.Impl.Model.File
             bool hasTimestamp = tokens.Length > 3;
             string timestampString = hasTimestamp ? tokens[3] : null;
 
-            long userID = readUserIDFromString(userIDString);
-            long itemID = readItemIDFromString(itemIDString);
+            long userID = ReadUserIDFromString(userIDString);
+            long itemID = ReadItemIDFromString(itemIDString);
 
             if (transpose)
             {
@@ -691,7 +668,7 @@ namespace NReco.CF.Taste.Impl.Model.File
                     itemIDs.Remove(itemID);
                 }
 
-                removeTimestamp(userID, itemID, timestamps);
+                RemoveTimestamp(userID, itemID, timestamps);
 
             }
             else
@@ -705,12 +682,12 @@ namespace NReco.CF.Taste.Impl.Model.File
                 }
                 itemIDs.Add(itemID);
 
-                addTimestamp(userID, itemID, timestampString, timestamps);
+                AddTimestamp(userID, itemID, timestampString, timestamps);
 
             }
         }
 
-        private void addTimestamp(long userID,
+        private void AddTimestamp(long userID,
                                   long itemID,
                                   string timestampString,
                                   FastByIDMap<FastByIDMap<DateTime?>> timestamps)
@@ -723,12 +700,12 @@ namespace NReco.CF.Taste.Impl.Model.File
                     itemTimestamps = new FastByIDMap<DateTime?>();
                     timestamps.Put(userID, itemTimestamps);
                 }
-                var timestamp = readTimestampFromString(timestampString);
+                var timestamp = ReadTimestampFromString(timestampString);
                 itemTimestamps.Put(itemID, timestamp);
             }
         }
 
-        private static void removeTimestamp(long userID,
+        private static void RemoveTimestamp(long userID,
                                             long itemID,
                                             FastByIDMap<FastByIDMap<DateTime?>> timestamps)
         {
@@ -742,7 +719,7 @@ namespace NReco.CF.Taste.Impl.Model.File
         /// Subclasses may wish to override this if ID values in the file are not numeric. This provides a hook by
         /// which subclasses can inject an {@link NReco.CF.Taste.Model.IDMigrator} to perform
         /// translation.
-        protected long readUserIDFromString(String value)
+        protected long ReadUserIDFromString(String value)
         {
             return long.Parse(value, CultureInfo.InvariantCulture);
         }
@@ -750,18 +727,18 @@ namespace NReco.CF.Taste.Impl.Model.File
         /// Subclasses may wish to override this if ID values in the file are not numeric. This provides a hook by
         /// which subclasses can inject an {@link NReco.CF.Taste.Model.IDMigrator} to perform
         /// translation.
-        protected long readItemIDFromString(String value)
+        protected long ReadItemIDFromString(String value)
         {
             return long.Parse(value, CultureInfo.InvariantCulture);
         }
 
         /// Subclasses may wish to override this to change how time values in the input file are parsed.
         /// By default they are expected to be numeric, expressing a time as milliseconds since the epoch.
-        static DateTime unixTimestampEpochStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
-        protected DateTime readTimestampFromString(string value)
+        static DateTime UnixTimestampEpochStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
+        protected DateTime ReadTimestampFromString(string value)
         {
             var unixTimestamp = long.Parse(value, CultureInfo.InvariantCulture);
-            return unixTimestampEpochStart.AddMilliseconds(unixTimestamp);
+            return UnixTimestampEpochStart.AddMilliseconds(unixTimestamp);
         }
 
         public override IEnumerator<long> GetUserIDs()
@@ -837,10 +814,10 @@ namespace NReco.CF.Taste.Impl.Model.File
         public override void Refresh(IList<IRefreshable> alreadyRefreshed)
         {
             if (System.IO.File.GetLastWriteTime(dataFile) > lastModified.AddMilliseconds(minReloadIntervalMS)
-                || readLastUpdateFileModified() > lastUpdateFileModified.AddMilliseconds(minReloadIntervalMS))
+                || ReadLastUpdateFileModified() > lastUpdateFileModified.AddMilliseconds(minReloadIntervalMS))
             {
                 log.Debug("File has changed; reloading...");
-                reload();
+                Reload();
             }
         }
 

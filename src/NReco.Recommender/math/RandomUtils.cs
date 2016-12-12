@@ -103,10 +103,10 @@ namespace NReco.CF
             {
                 return 5;
             }
-            int next = Primes.nextPrime(n);
-            while (!Primes.isPrime(next + 2))
+            int next = Primes.NextPrime(n);
+            while (!Primes.IsPrime(next + 2))
             {
-                next = Primes.nextPrime(next + 4);
+                next = Primes.NextPrime(next + 4);
             }
             return next + 2;
         }

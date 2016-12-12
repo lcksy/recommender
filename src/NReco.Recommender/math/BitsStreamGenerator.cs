@@ -1,31 +1,4 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout and Apache Commons Mathematics Library that were licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 
 using NReco.Math3.Exception;
 using NReco.Math3.Util;
@@ -38,9 +11,9 @@ namespace NReco.Math3.Random
     /// @since 2.0
     public abstract class BitsStreamGenerator : IRandomGenerator
     {
-        /// Serializable version identifier */
-        private static long serialVersionUID = 20130104L;
-        /// Next gaussian. */
+        // Serializable version identifier */
+        //private static long SERIALVERSIONUID = 20130104L;
+        // Next gaussian. */
         private double _nextGaussian;
 
         /// Creates a new random number generator.
@@ -50,13 +23,13 @@ namespace NReco.Math3.Random
         }
 
         /// {@inheritDoc} */
-        public abstract void setSeed(int seed);
+        public abstract void SetSeed(int seed);
 
         /// {@inheritDoc} */
-        public abstract void setSeed(int[] seed);
+        public abstract void SetSeed(int[] seed);
 
         /// {@inheritDoc} */
-        public abstract void setSeed(long seed);
+        public abstract void SetSeed(long seed);
 
         /// Generate next pseudorandom number.
         /// <p>This method is the core generation algorithm. It is used by all the
@@ -66,30 +39,30 @@ namespace NReco.Math3.Random
         /// {@link #next(int)} and {@link #nextlong()}.</p>
         /// @param bits number of random bits to produce
         /// @return random bits generated
-        protected abstract int next(int bits);
+        protected abstract int Next(int bits);
 
         /// {@inheritDoc} */
-        public bool nextBoolean()
+        public bool NextBoolean()
         {
-            return next(1) != 0;
+            return Next(1) != 0;
         }
 
         /// {@inheritDoc} */
-        public void nextBytes(byte[] bytes)
+        public void NextBytes(byte[] bytes)
         {
             int i = 0;
             int iEnd = bytes.Length - 3;
             int random;
             while (i < iEnd)
             {
-                random = next(32);
+                random = Next(32);
                 bytes[i] = (byte)(random & 0xff);
                 bytes[i + 1] = (byte)((random >> 8) & 0xff);
                 bytes[i + 2] = (byte)((random >> 16) & 0xff);
                 bytes[i + 3] = (byte)((random >> 24) & 0xff);
                 i += 4;
             }
-            random = next(32);
+            random = Next(32);
             while (i < bytes.Length)
             {
                 bytes[i++] = (byte)(random & 0xff);
@@ -100,28 +73,28 @@ namespace NReco.Math3.Random
         /// {@inheritDoc} */
         static readonly double minNonZeroDouble = Math.Pow(2, -52);
 
-        public double nextDouble()
+        public double NextDouble()
         {
-            long high = ((long)next(26)) << 26;
-            long low = next(26);
+            long high = ((long)Next(26)) << 26;
+            long low = Next(26);
             return (high | low) * minNonZeroDouble; // * 0x1.0p-52d
         }
 
         /// {@inheritDoc} */
-        public float nextFloat()
+        public float NextFloat()
         {
-            return next(23) * 1E-23f;
+            return Next(23) * 1E-23f;
         }
 
         /// {@inheritDoc} */
-        public double nextGaussian()
+        public double NextGaussian()
         {
             double random;
             if (Double.IsNaN(_nextGaussian))
             {
                 // generate a new pair of gaussian numbers
-                double x = nextDouble();
-                double y = nextDouble();
+                double x = NextDouble();
+                double y = NextDouble();
                 double alpha = 2 * Math.PI * x;
                 double r = Math.Sqrt(-2 * MathUtil.Log(y));
                 random = r * Math.Cos(alpha);
@@ -138,9 +111,9 @@ namespace NReco.Math3.Random
         }
 
         /// {@inheritDoc} */
-        public int nextInt()
+        public int NextInt()
         {
-            return next(32);
+            return Next(32);
         }
 
         /// {@inheritDoc}
@@ -156,19 +129,19 @@ namespace NReco.Math3.Random
         /// value that is larger than the remainder of {@code Integer.MAX_VALUE / n}
         /// is generated. Rejection of this initial segment is necessary to ensure
         /// a uniform distribution.</li></ul></p>
-        public int nextInt(int n)
+        public int NextInt(int n)
         {
             if (n > 0)
             {
                 if ((n & -n) == n)
                 {
-                    return (int)((n * (long)next(31)) >> 31);
+                    return (int)((n * (long)Next(31)) >> 31);
                 }
                 int bits;
                 int val;
                 do
                 {
-                    bits = next(31);
+                    bits = Next(31);
                     val = bits % n;
                 } while (bits - val + (n - 1) < 0);
                 return val;
@@ -177,10 +150,10 @@ namespace NReco.Math3.Random
         }
 
         /// {@inheritDoc} */
-        public long nextlong()
+        public long Nextlong()
         {
-            long high = ((long)next(32)) << 32;
-            long low = ((long)next(32)) & 0xffffffffL;
+            long high = ((long)Next(32)) << 32;
+            long low = ((long)Next(32)) & 0xffffffffL;
             return high | low;
         }
 
@@ -193,7 +166,7 @@ namespace NReco.Math3.Random
         /// @return  a pseudorandom, uniformly distributed <tt>long</tt>
         /// value between 0 (inclusive) and n (exclusive).
         /// @throws IllegalArgumentException  if n is not positive.
-        public long nextlong(long n)
+        public long Nextlong(long n)
         {
             if (n > 0)
             {
@@ -201,8 +174,8 @@ namespace NReco.Math3.Random
                 long val;
                 do
                 {
-                    bits = ((long)next(31)) << 32;
-                    bits |= ((long)next(32)) & 0xffffffffL;
+                    bits = ((long)Next(31)) << 32;
+                    bits |= ((long)Next(32)) & 0xffffffffL;
                     val = bits % n;
                 } while (bits - val + (n - 1) < 0);
                 return val;
@@ -212,7 +185,7 @@ namespace NReco.Math3.Random
 
         /// Clears the cache used by the default implementation of
         /// {@link #nextGaussian}.
-        public void clear()
+        public void Clear()
         {
             _nextGaussian = Double.NaN;
         }

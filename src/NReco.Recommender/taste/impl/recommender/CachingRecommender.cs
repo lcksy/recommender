@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 using System.Collections.Generic;
 
@@ -59,19 +36,19 @@ namespace NReco.CF.Taste.Impl.Recommender
             estimatedPrefCache = new Cache<Tuple<long, long>, float>(new EstimatedPrefRetriever(this), numUsers);
             refreshHelper = new RefreshHelper(() =>
             {
-                clear();
+                Clear();
             });
             refreshHelper.AddDependency(recommender);
         }
 
-        private void setCurrentRescorer(IDRescorer rescorer)
+        private void SetCurrentRescorer(IDRescorer rescorer)
         {
             if (rescorer == null)
             {
                 if (currentRescorer != null)
                 {
                     currentRescorer = null;
-                    clear();
+                    Clear();
                 }
             }
             else
@@ -79,7 +56,7 @@ namespace NReco.CF.Taste.Impl.Recommender
                 if (!rescorer.Equals(currentRescorer))
                 {
                     currentRescorer = rescorer;
-                    clear();
+                    Clear();
                 }
             }
         }
@@ -103,23 +80,23 @@ namespace NReco.CF.Taste.Impl.Recommender
             // Special case, avoid caching an anonymous user
             if (userID == PlusAnonymousUserDataModel.TEMP_USER_ID)
             {
-                return recommendationsRetriever.Get(PlusAnonymousUserDataModel.TEMP_USER_ID).getItems();
+                return recommendationsRetriever.Get(PlusAnonymousUserDataModel.TEMP_USER_ID).GetItems();
             }
 
-            setCurrentRescorer(rescorer);
+            SetCurrentRescorer(rescorer);
 
             Recommendations recommendations = recommendationCache.Get(userID);
-            if (recommendations.getItems().Count < howMany && !recommendations.isNoMoreRecommendableItems())
+            if (recommendations.GetItems().Count < howMany && !recommendations.IsNoMoreRecommendableItems())
             {
-                clear(userID);
+                Clear(userID);
                 recommendations = recommendationCache.Get(userID);
-                if (recommendations.getItems().Count < howMany)
+                if (recommendations.GetItems().Count < howMany)
                 {
-                    recommendations.setNoMoreRecommendableItems(true);
+                    recommendations.SetNoMoreRecommendableItems(true);
                 }
             }
 
-            List<IRecommendedItem> recommendedItems = recommendations.getItems();
+            List<IRecommendedItem> recommendedItems = recommendations.GetItems();
             return recommendedItems.Count > howMany ? recommendedItems.GetRange(0, howMany) : recommendedItems;
         }
 
@@ -131,13 +108,13 @@ namespace NReco.CF.Taste.Impl.Recommender
         public void SetPreference(long userID, long itemID, float value)
         {
             recommender.SetPreference(userID, itemID, value);
-            clear(userID);
+            Clear(userID);
         }
 
         public void RemovePreference(long userID, long itemID)
         {
             recommender.RemovePreference(userID, itemID);
-            clear(userID);
+            Clear(userID);
         }
 
         public IDataModel GetDataModel()
@@ -156,7 +133,7 @@ namespace NReco.CF.Taste.Impl.Recommender
         /// 
         /// @param userID
         ///          clear cached data associated with this user ID
-        public void clear(long userID)
+        public void Clear(long userID)
         {
             log.Debug("Clearing recommendations for user ID '{}'", userID);
             recommendationCache.Remove(userID);
@@ -169,7 +146,7 @@ namespace NReco.CF.Taste.Impl.Recommender
         /// <p>
         /// Clears all cached recommendations.
         /// </p>
-        public void clear()
+        public void Clear()
         {
             log.Debug("Clearing all recommendations...");
             recommendationCache.Clear();
@@ -228,17 +205,17 @@ namespace NReco.CF.Taste.Impl.Recommender
                 this.items = items;
             }
 
-            public List<IRecommendedItem> getItems()
+            public List<IRecommendedItem> GetItems()
             {
                 return items;
             }
 
-            public bool isNoMoreRecommendableItems()
+            public bool IsNoMoreRecommendableItems()
             {
                 return noMoreRecommendableItems;
             }
 
-            public void setNoMoreRecommendableItems(bool noMoreRecommendableItems)
+            public void SetNoMoreRecommendableItems(bool noMoreRecommendableItems)
             {
                 this.noMoreRecommendableItems = noMoreRecommendableItems;
             }

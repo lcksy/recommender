@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 using System.Linq;
 using System.Collections;
@@ -122,7 +99,7 @@ namespace NReco.CF.Taste.Impl.Model
         /// Note that this method will actually set the user ID for <em>all</em> preferences.
         public void SetUserID(int i, long userID)
         {
-            id = userID;
+            this.id = userID;
         }
 
         public long GetItemID(int i)
@@ -202,16 +179,16 @@ namespace NReco.CF.Taste.Impl.Model
                 for (int i = 0; i < max; i++)
                 {
                     int other = i + gap;
-                    if (isLess(other, i, type))
+                    if (IsLess(other, i, type))
                     {
-                        swap(i, other);
+                        Swap(i, other);
                         swapped = true;
                     }
                 }
             }
         }
 
-        private bool isLess(int i, int j, int type)
+        private bool IsLess(int i, int j, int type)
         {
             switch (type)
             {
@@ -226,7 +203,7 @@ namespace NReco.CF.Taste.Impl.Model
             }
         }
 
-        private void swap(int i, int j)
+        private void Swap(int i, int j)
         {
             long temp1 = ids[i];
             float temp2 = values[i];

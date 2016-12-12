@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -66,7 +43,7 @@ namespace NReco.CF.Taste.Impl.Similarity
         ///          set of {@link ItemItemSimilarity}s on which to base this instance
         public GenericItemSimilarity(IEnumerable<ItemItemSimilarity> similarities)
         {
-            initSimilarityMaps(similarities.GetEnumerator());
+            InitSimilarityMaps(similarities.GetEnumerator());
         }
 
         /// <p>
@@ -87,7 +64,7 @@ namespace NReco.CF.Taste.Impl.Similarity
         {
             var keptSimilarities =
                 TopItems.GetTopItemItemSimilarities(maxToKeep, similarities.GetEnumerator());
-            initSimilarityMaps(keptSimilarities.GetEnumerator());
+            InitSimilarityMaps(keptSimilarities.GetEnumerator());
         }
 
         /// <p>
@@ -110,8 +87,8 @@ namespace NReco.CF.Taste.Impl.Similarity
         ///           if an error occurs while accessing the {@link DataModel} items
         public GenericItemSimilarity(IItemSimilarity otherSimilarity, IDataModel dataModel)
         {
-            long[] itemIDs = GenericUserSimilarity.longIteratorToList(dataModel.GetItemIDs());
-            initSimilarityMaps(new DataModelSimilaritiesIterator(otherSimilarity, itemIDs));
+            long[] itemIDs = GenericUserSimilarity.LongIteratorToList(dataModel.GetItemIDs());
+            InitSimilarityMaps(new DataModelSimilaritiesIterator(otherSimilarity, itemIDs));
         }
 
         /// <p>
@@ -136,19 +113,19 @@ namespace NReco.CF.Taste.Impl.Similarity
                                      IDataModel dataModel,
                                      int maxToKeep)
         {
-            long[] itemIDs = GenericUserSimilarity.longIteratorToList(dataModel.GetItemIDs());
+            long[] itemIDs = GenericUserSimilarity.LongIteratorToList(dataModel.GetItemIDs());
             var it = new DataModelSimilaritiesIterator(otherSimilarity, itemIDs);
             var keptSimilarities = TopItems.GetTopItemItemSimilarities(maxToKeep, it);
-            initSimilarityMaps(keptSimilarities.GetEnumerator());
+            InitSimilarityMaps(keptSimilarities.GetEnumerator());
         }
 
-        private void initSimilarityMaps(IEnumerator<ItemItemSimilarity> similarities)
+        private void InitSimilarityMaps(IEnumerator<ItemItemSimilarity> similarities)
         {
             while (similarities.MoveNext())
             {
                 ItemItemSimilarity iic = similarities.Current;
-                long similarityItemID1 = iic.getItemID1();
-                long similarityItemID2 = iic.getItemID2();
+                long similarityItemID1 = iic.GetItemID1();
+                long similarityItemID2 = iic.GetItemID2();
                 if (similarityItemID1 != similarityItemID2)
                 {
                     // Order them -- first key should be the "smaller" one
@@ -170,16 +147,16 @@ namespace NReco.CF.Taste.Impl.Similarity
                         map = new FastByIDMap<double?>();
                         similarityMaps.Put(itemID1, map);
                     }
-                    map.Put(itemID2, iic.getValue());
+                    map.Put(itemID2, iic.GetValue());
 
-                    doIndex(itemID1, itemID2);
-                    doIndex(itemID2, itemID1);
+                    DoIndex(itemID1, itemID2);
+                    DoIndex(itemID2, itemID1);
                 }
                 // else similarity between item and itself already assumed to be 1.0
             }
         }
 
-        private void doIndex(long fromItemID, long toItemID)
+        private void DoIndex(long fromItemID, long toItemID)
         {
             FastIDSet similarItemIDs = similarItemIDsIndex.Get(fromItemID);
             if (similarItemIDs == null)
@@ -273,17 +250,17 @@ namespace NReco.CF.Taste.Impl.Similarity
                 this.value = value;
             }
 
-            public long getItemID1()
+            public long GetItemID1()
             {
                 return itemID1;
             }
 
-            public long getItemID2()
+            public long GetItemID2()
             {
                 return itemID2;
             }
 
-            public double getValue()
+            public double GetValue()
             {
                 return value;
             }
@@ -296,7 +273,7 @@ namespace NReco.CF.Taste.Impl.Similarity
             /// Defines an ordering from highest similarity to lowest. 
             public int CompareTo(ItemItemSimilarity other)
             {
-                double otherValue = other.getValue();
+                double otherValue = other.GetValue();
                 return value > otherValue ? -1 : value < otherValue ? 1 : 0;
             }
 
@@ -307,16 +284,15 @@ namespace NReco.CF.Taste.Impl.Similarity
                     return false;
                 }
                 ItemItemSimilarity otherSimilarity = (ItemItemSimilarity)other;
-                return otherSimilarity.getItemID1() == itemID1
-                    && otherSimilarity.getItemID2() == itemID2
-                    && otherSimilarity.getValue() == value;
+                return otherSimilarity.GetItemID1() == itemID1
+                    && otherSimilarity.GetItemID2() == itemID2
+                    && otherSimilarity.GetValue() == value;
             }
 
             public override int GetHashCode()
             {
                 return (int)itemID1 ^ (int)itemID2 ^ RandomUtils.hashDouble(value);
             }
-
         }
 
         private sealed class DataModelSimilaritiesIterator : IEnumerator<ItemItemSimilarity>

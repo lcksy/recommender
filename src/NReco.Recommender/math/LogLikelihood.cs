@@ -1,31 +1,4 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout and Apache Commons Mathematics Library that were licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 
 using NReco.Math3.Util;
 
@@ -49,36 +22,36 @@ namespace NReco.Math3.Stats
         /// counts and computing the LLR easier.
         ///
         /// @return The entropy value for the elements
-        public static double entropy(params long[] elements)
+        public static double Entropy(params long[] elements)
         {
             long sum = 0;
             double result = 0.0;
             foreach (long element in elements)
             {
                 //Preconditions.checkArgument(element >= 0);
-                result += xLogX(element);
+                result += XLogX(element);
                 sum += element;
             }
-            return xLogX(sum) - result;
+            return XLogX(sum) - result;
         }
 
-        private static double xLogX(long x)
+        private static double XLogX(long x)
         {
             return x == 0 ? 0.0 : x * MathUtil.Log(x);
         }
 
         /// Merely an optimization for the common two argument case of {@link #entropy(long...)}
         /// @see #logLikelihoodRatio(long, long, long, long)
-        private static double entropy(long a, long b)
+        private static double Entropy(long a, long b)
         {
-            return xLogX(a + b) - xLogX(a) - xLogX(b);
+            return XLogX(a + b) - XLogX(a) - XLogX(b);
         }
 
         /// Merely an optimization for the common four argument case of {@link #entropy(long...)}
         /// @see #logLikelihoodRatio(long, long, long, long)
-        private static double entropy(long a, long b, long c, long d)
+        private static double Entropy(long a, long b, long c, long d)
         {
-            return xLogX(a + b + c + d) - xLogX(a) - xLogX(b) - xLogX(c) - xLogX(d);
+            return XLogX(a + b + c + d) - XLogX(a) - XLogX(b) - XLogX(c) - XLogX(d);
         }
 
         /// Calculates the Raw Log-likelihood ratio for two events, call them A and B.  Then we have:
@@ -97,13 +70,13 @@ namespace NReco.Math3.Stats
         ///
         /// <p/>
         /// Credit to http://tdunning.blogspot.com/2008/03/surprise-and-coincidence.html for the table and the descriptions.
-        public static double logLikelihoodRatio(long k11, long k12, long k21, long k22)
+        public static double LogLikelihoodRatio(long k11, long k12, long k21, long k22)
         {
             //Preconditions.checkArgument(k11 >= 0 && k12 >= 0 && k21 >= 0 && k22 >= 0);
             // note that we have counts here, not probabilities, and that the entropy is not normalized.
-            double rowEntropy = entropy(k11 + k12, k21 + k22);
-            double columnEntropy = entropy(k11 + k21, k12 + k22);
-            double matrixEntropy = entropy(k11, k12, k21, k22);
+            double rowEntropy = Entropy(k11 + k12, k21 + k22);
+            double columnEntropy = Entropy(k11 + k21, k12 + k22);
+            double matrixEntropy = Entropy(k11, k12, k21, k22);
             if (rowEntropy + columnEntropy < matrixEntropy)
             {
                 // round off error
@@ -126,9 +99,9 @@ namespace NReco.Math3.Stats
         ///
         /// And see the response to Wataru's comment here:
         /// http://tdunning.blogspot.com/2008/03/surprise-and-coincidence.html
-        public static double rootLogLikelihoodRatio(long k11, long k12, long k21, long k22)
+        public static double RootLogLikelihoodRatio(long k11, long k12, long k21, long k22)
         {
-            double llr = logLikelihoodRatio(k11, k12, k21, k22);
+            double llr = LogLikelihoodRatio(k11, k12, k21, k22);
             double sqrt = Math.Sqrt(llr);
             if ((double)k11 / (k11 + k12) < (double)k21 / (k21 + k22))
             {
