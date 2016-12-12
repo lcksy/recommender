@@ -44,12 +44,12 @@ namespace NReco.CF.Taste.Impl.Recommender
             return false;
         }
 
-        public double rescore(long ID, double originalScore)
+        public double Rescore(long ID, double originalScore)
         {
             return -originalScore;
         }
 
-        public bool isFiltered(long ID)
+        public bool IsFiltered(long ID)
         {
             return false;
         }

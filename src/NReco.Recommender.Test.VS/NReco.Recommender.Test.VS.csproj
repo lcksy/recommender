@@ -62,10 +62,9 @@
       <Name>NReco.Recommender</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Comment\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="Comment\Readme.txt" />
     <Content Include="Sql Server\Recommender.sql" />
   </ItemGroup>
   <Choose>
