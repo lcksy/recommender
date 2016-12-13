@@ -8,7 +8,6 @@ using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 using NReco.Math3.Als;
-
 //using NReco.Math3.map;
 
 namespace NReco.CF.Taste.Impl.Recommender.SVD
@@ -70,7 +69,6 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
 
         public class Features
         {
-
             private IDataModel dataModel;
             private int numFeatures;
 
@@ -89,7 +87,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                     long itemID = itemIDsIterator.Current;
                     int itemIDIndex = factorizer.ItemIndex(itemID);
                     M[itemIDIndex] = new double[numFeatures];
-                    M[itemIDIndex][0] = averateRating(itemID);
+                    M[itemIDIndex][0] = AverateRating(itemID);
                     for (int feature = 1; feature < numFeatures; feature++)
                     {
                         M[itemIDIndex][feature] = random.nextDouble() * 0.1;
@@ -101,37 +99,37 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                     U[i] = new double[numFeatures];
             }
 
-            public double[][] getM()
+            public double[][] GetM()
             {
                 return M;
             }
 
-            public double[][] getU()
+            public double[][] GetU()
             {
                 return U;
             }
 
-            public double[] getUserFeatureColumn(int index)
+            public double[] GetUserFeatureColumn(int index)
             {
                 return U[index]; //new DenseVector(
             }
 
-            public double[] getItemFeatureColumn(int index)
+            public double[] GetItemFeatureColumn(int index)
             {
                 return M[index];
             }
 
-            public void setFeatureColumnInU(int idIndex, double[] vector)
+            public void SetFeatureColumnInU(int idIndex, double[] vector)
             {
-                setFeatureColumn(U, idIndex, vector);
+                SetFeatureColumn(U, idIndex, vector);
             }
 
-            public void setFeatureColumnInM(int idIndex, double[] vector)
+            public void SetFeatureColumnInM(int idIndex, double[] vector)
             {
-                setFeatureColumn(M, idIndex, vector);
+                SetFeatureColumn(M, idIndex, vector);
             }
 
-            protected void setFeatureColumn(double[][] matrix, int idIndex, double[] vector)
+            protected void SetFeatureColumn(double[][] matrix, int idIndex, double[] vector)
             {
                 for (int feature = 0; feature < numFeatures; feature++)
                 {
@@ -139,7 +137,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 }
             }
 
-            public double averateRating(long itemID)
+            public double AverateRating(long itemID)
             {
                 IPreferenceArray prefs = dataModel.GetPreferencesForItem(itemID);
                 IRunningAverage avg = new FullRunningAverage();
@@ -162,8 +160,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
 
             if (usesImplicitFeedback)
             {
-                userY = userFeaturesMapping(dataModel.GetUserIDs(), dataModel.GetNumUsers(), features.getU());
-                itemY = itemFeaturesMapping(dataModel.GetItemIDs(), dataModel.GetNumItems(), features.getM());
+                userY = UserFeaturesMapping(dataModel.GetUserIDs(), dataModel.GetNumUsers(), features.GetU());
+                itemY = ItemFeaturesMapping(dataModel.GetItemIDs(), dataModel.GetNumItems(), features.GetM());
             }
 
             IList<Task> tasks;
@@ -193,14 +191,14 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                             while (itemIDsFromUser.MoveNext())
                             {
                                 long itemID = itemIDsFromUser.Current;
-                                featureVectors.Add(features.getItemFeatureColumn(ItemIndex(itemID)));
+                                featureVectors.Add(features.GetItemFeatureColumn(ItemIndex(itemID)));
                             }
 
                             var userFeatures = usesImplicitFeedback
-                                ? implicitFeedbackSolver.Solve(sparseUserRatingVector(userPrefs))
-                                : AlternatingLeastSquaresSolver.Solve(featureVectors, ratingVector(userPrefs), lambda, numFeatures);
+                                ? implicitFeedbackSolver.Solve(SparseUserRatingVector(userPrefs))
+                                : AlternatingLeastSquaresSolver.Solve(featureVectors, RatingVector(userPrefs), lambda, numFeatures);
 
-                            features.setFeatureColumnInU(UserIndex(userID), userFeatures);
+                            features.SetFeatureColumnInU(UserIndex(userID), userFeatures);
                         }
                           ));
                     }
@@ -243,14 +241,14 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                             foreach (IPreference pref in itemPrefs)
                             {
                                 long userID = pref.GetUserID();
-                                featureVectors.Add(features.getUserFeatureColumn(UserIndex(userID)));
+                                featureVectors.Add(features.GetUserFeatureColumn(UserIndex(userID)));
                             }
 
                             var itemFeatures = usesImplicitFeedback
-                                ? implicitFeedbackSolver.Solve(sparseItemRatingVector(itemPrefs))
-                                : AlternatingLeastSquaresSolver.Solve(featureVectors, ratingVector(itemPrefs), lambda, numFeatures);
+                                ? implicitFeedbackSolver.Solve(SparseItemRatingVector(itemPrefs))
+                                : AlternatingLeastSquaresSolver.Solve(featureVectors, RatingVector(itemPrefs), lambda, numFeatures);
 
-                            features.setFeatureColumnInM(ItemIndex(itemID), itemFeatures);
+                            features.SetFeatureColumnInM(ItemIndex(itemID), itemFeatures);
                         }));
                     }
                 }
@@ -271,10 +269,10 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             }
 
             log.Info("finished computation of the factorization...");
-            return CreateFactorization(features.getU(), features.getM());
+            return CreateFactorization(features.GetU(), features.GetM());
         }
 
-        public static double[] ratingVector(IPreferenceArray prefs)
+        public static double[] RatingVector(IPreferenceArray prefs)
         {
             double[] ratings = new double[prefs.Length()];
             for (int n = 0; n < prefs.Length(); n++)
@@ -285,7 +283,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
         }
 
         //TODO find a way to get rid of the object overhead here
-        protected IDictionary<int, double[]> itemFeaturesMapping(IEnumerator<long> itemIDs, int numItems,
+        protected IDictionary<int, double[]> ItemFeaturesMapping(IEnumerator<long> itemIDs, int numItems,
             double[][] featureMatrix)
         {
             var mapping = new Dictionary<int, double[]>(numItems);
@@ -298,7 +296,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             return mapping;
         }
 
-        protected IDictionary<int, double[]> userFeaturesMapping(IEnumerator<long> userIDs, int numUsers,
+        protected IDictionary<int, double[]> UserFeaturesMapping(IEnumerator<long> userIDs, int numUsers,
             double[][] featureMatrix)
         {
             var mapping = new Dictionary<int, double[]>(numUsers);
@@ -312,7 +310,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             return mapping;
         }
 
-        protected IList<Tuple<int, double>> sparseItemRatingVector(IPreferenceArray prefs)
+        protected IList<Tuple<int, double>> SparseItemRatingVector(IPreferenceArray prefs)
         {
             var ratings = new List<Tuple<int, double>>(prefs.Length());
             foreach (IPreference preference in prefs)
@@ -322,7 +320,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             return ratings;
         }
 
-        protected IList<Tuple<int, double>> sparseUserRatingVector(IPreferenceArray prefs)
+        protected IList<Tuple<int, double>> SparseUserRatingVector(IPreferenceArray prefs)
         {
             var ratings = new List<Tuple<int, double>>(prefs.Length());
             foreach (IPreference preference in prefs)

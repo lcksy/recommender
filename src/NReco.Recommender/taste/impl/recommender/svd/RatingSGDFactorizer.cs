@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using NReco.CF.Taste.Impl.Common;
 using NReco.CF.Taste.Model;
 
@@ -78,13 +55,13 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             this.randomNoise = randomNoise;
         }
 
-        protected virtual void prepareTraining()
+        protected virtual void PrepareTraining()
         {
             RandomWrapper random = RandomUtils.getRandom();
             userVectors = new double[dataModel.GetNumUsers()][]; //numFeatures
             itemVectors = new double[dataModel.GetNumItems()][];
 
-            double globalAverage = getAveragePreference();
+            double globalAverage = GetAveragePreference();
             for (int userIndex = 0; userIndex < userVectors.Length; userIndex++)
             {
                 userVectors[userIndex] = new double[numFeatures];
@@ -110,11 +87,11 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 }
             }
 
-            cachePreferences();
-            shufflePreferences();
+            CachePreferences();
+            ShufflePreferences();
         }
 
-        private int countPreferences()
+        private int CountPreferences()
         {
             int numPreferences = 0;
             var userIDs = dataModel.GetUserIDs();
@@ -126,9 +103,9 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             return numPreferences;
         }
 
-        private void cachePreferences()
+        private void CachePreferences()
         {
-            int numPreferences = countPreferences();
+            int numPreferences = CountPreferences();
             cachedUserIDs = new long[numPreferences];
             cachedItemIDs = new long[numPreferences];
 
@@ -147,18 +124,18 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             }
         }
 
-        protected void shufflePreferences()
+        protected void ShufflePreferences()
         {
             RandomWrapper random = RandomUtils.getRandom();
             /// Durstenfeld shuffle 
             for (int currentPos = cachedUserIDs.Length - 1; currentPos > 0; currentPos--)
             {
                 int swapPos = random.nextInt(currentPos + 1);
-                swapCachedPreferences(currentPos, swapPos);
+                SwapCachedPreferences(currentPos, swapPos);
             }
         }
 
-        private void swapCachedPreferences(int posA, int posB)
+        private void SwapCachedPreferences(int posA, int posB)
         {
             long tmpUserIndex = cachedUserIDs[posA];
             long tmpItemIndex = cachedItemIDs[posA];
@@ -172,7 +149,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
 
         public override Factorization Factorize()
         {
-            prepareTraining();
+            PrepareTraining();
             double currentLearningRate = learningRate;
 
 
@@ -183,14 +160,14 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                     long userId = cachedUserIDs[index];
                     long itemId = cachedItemIDs[index];
                     float? rating = dataModel.GetPreferenceValue(userId, itemId);
-                    updateParameters(userId, itemId, rating.Value, currentLearningRate);
+                    UpdateParameters(userId, itemId, rating.Value, currentLearningRate);
                 }
                 currentLearningRate *= learningRateDecay;
             }
             return CreateFactorization(userVectors, itemVectors);
         }
 
-        double getAveragePreference()
+        double GetAveragePreference()
         {
             IRunningAverage average = new FullRunningAverage();
             var it = dataModel.GetUserIDs();
@@ -204,14 +181,14 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             return average.GetAverage();
         }
 
-        protected void updateParameters(long userID, long itemID, float rating, double currentLearningRate)
+        protected virtual void UpdateParameters(long userID, long itemID, float rating, double currentLearningRate)
         {
             int userIdx = UserIndex(userID);
             int itemIdx = ItemIndex(itemID);
 
             double[] userVector = userVectors[userIdx];
             double[] itemVector = itemVectors[itemIdx];
-            double prediction = predictRating(userIdx, itemIdx);
+            double prediction = PredictRating(userIdx, itemIdx);
             double err = rating - prediction;
 
             // adjust user bias
@@ -236,7 +213,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             }
         }
 
-        private double predictRating(int userID, int itemID)
+        private double PredictRating(int userID, int itemID)
         {
             double sum = 0;
             for (int feature = 0; feature < numFeatures; feature++)

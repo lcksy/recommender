@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System;
 using System.Threading.Tasks;
 
@@ -91,12 +68,12 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
 
             public PreferenceShuffler(IDataModel dataModel)
             {
-                cachePreferences(dataModel);
-                shuffle();
-                stage();
+                CachePreferences(dataModel);
+                Shuffle();
+                Stage();
             }
 
-            private int countPreferences(IDataModel dataModel)
+            private int CountPreferences(IDataModel dataModel)
             {
                 int numPreferences = 0;
                 var userIDs = dataModel.GetUserIDs();
@@ -108,9 +85,9 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 return numPreferences;
             }
 
-            private void cachePreferences(IDataModel dataModel)
+            private void CachePreferences(IDataModel dataModel)
             {
-                int numPreferences = countPreferences(dataModel);
+                int numPreferences = CountPreferences(dataModel);
                 preferences = new IPreference[numPreferences];
 
                 var userIDs = dataModel.GetUserIDs();
@@ -126,19 +103,19 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 }
             }
 
-            public void shuffle()
+            public void Shuffle()
             {
                 unstagedPreferences = (IPreference[])preferences.Clone();
                 /// Durstenfeld shuffle 
                 for (int i = unstagedPreferences.Length - 1; i > 0; i--)
                 {
                     int rand = random.nextInt(i + 1);
-                    swapCachedPreferences(i, rand);
+                    SwapCachedPreferences(i, rand);
                 }
             }
 
             //merge this part into shuffle() will make compiler-optimizer do some real absurd stuff, test on OpenJDK7
-            private void swapCachedPreferences(int x, int y)
+            private void SwapCachedPreferences(int x, int y)
             {
                 IPreference p = unstagedPreferences[x];
 
@@ -146,21 +123,20 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 unstagedPreferences[y] = p;
             }
 
-            public void stage()
+            public void Stage()
             {
                 preferences = unstagedPreferences;
             }
 
-            public IPreference get(int i)
+            public IPreference Get(int i)
             {
                 return preferences[i];
             }
 
-            public int size()
+            public int Size()
             {
                 return preferences.Length;
             }
-
         }
 
         public ParallelSGDFactorizer(IDataModel dataModel, int numFeatures, double lambda, int numEpochs)
@@ -174,7 +150,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             shuffler = new PreferenceShuffler(dataModel);
 
             //max thread num set to n^0.25 as suggested by hogwild! paper
-            numThreads = Math.Min(Environment.ProcessorCount, (int)Math.Pow((double)shuffler.size(), 0.25));
+            numThreads = Math.Min(Environment.ProcessorCount, (int)Math.Pow((double)shuffler.Size(), 0.25));
         }
 
         public ParallelSGDFactorizer(IDataModel dataModel, int numFeatures, double lambda, int numIterations,
@@ -216,13 +192,13 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             this.numThreads = numThreads;
         }
 
-        protected void initialize()
+        protected void Initialize()
         {
             RandomWrapper random = RandomUtils.getRandom();
             userVectors = new double[dataModel.GetNumUsers()][];
             itemVectors = new double[dataModel.GetNumItems()][];
 
-            double globalAverage = getAveragePreference();
+            double globalAverage = GetAveragePreference();
             for (int userIndex = 0; userIndex < userVectors.Length; userIndex++)
             {
                 userVectors[userIndex] = new double[rank];
@@ -250,22 +226,22 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
         }
 
         //TODO: needs optimization
-        private double getMu(int i)
+        private double GetMu(int i)
         {
             return mu0 * Math.Pow(decayFactor, i - 1) * Math.Pow(i + stepOffset, forgettingExponent);
         }
 
         public override Factorization Factorize()
         {
-            initialize();
+            Initialize();
 
             logger.Info("starting to compute the factorization...");
             for (epoch = 1; epoch <= numEpochs; epoch++)
             {
-                shuffler.stage();
+                shuffler.Stage();
 
-                double mu = getMu(epoch);
-                int subSize = shuffler.size() / numThreads + 1;
+                double mu = GetMu(epoch);
+                int subSize = shuffler.Size() / numThreads + 1;
 
                 Task[] tasks = new Task[numThreads];
 
@@ -274,13 +250,13 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                     for (int t = 0; t < numThreads; t++)
                     {
                         int iStart = t * subSize;
-                        int iEnd = Math.Min((t + 1) * subSize, shuffler.size());
+                        int iEnd = Math.Min((t + 1) * subSize, shuffler.Size());
 
                         tasks[t] = Task.Factory.StartNew(() =>
                         {
                             for (int i = iStart; i < iEnd; i++)
                             {
-                                update(shuffler.get(i), mu);
+                                Update(shuffler.Get(i), mu);
                             }
                         });
 
@@ -288,8 +264,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 }
                 finally
                 {
-                    Task.WaitAll(tasks, numEpochs * shuffler.size());
-                    shuffler.shuffle();
+                    Task.WaitAll(tasks, numEpochs * shuffler.Size());
+                    shuffler.Shuffle();
 
                     /*try {
                       bool terminated = executor.awaitTermination(numEpochs * shuffler.size(), TimeUnit.MICROSECONDS);
@@ -306,7 +282,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             return CreateFactorization(userVectors, itemVectors);
         }
 
-        double getAveragePreference()
+        double GetAveragePreference()
         {
             IRunningAverage average = new FullRunningAverage();
             var it = dataModel.GetUserIDs();
@@ -336,7 +312,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
         ///            so it's impact on accuracy may still be unknown.
         /// BAD SIDE3: don't know how to make it work for L1-regularization or
         ///            "pseudorank?" (sum of singular values)-regularization 
-        protected void update(IPreference preference, double mu)
+        protected void Update(IPreference preference, double mu)
         {
             int userIdx = UserIndex(preference.GetUserID());
             int itemIdx = ItemIndex(preference.GetItemID());
@@ -344,7 +320,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             double[] userVector = userVectors[userIdx];
             double[] itemVector = itemVectors[itemIdx];
 
-            double prediction = dot(userVector, itemVector);
+            double prediction = Dot(userVector, itemVector);
             double err = preference.GetValue() - prediction;
 
             // adjust features
@@ -362,7 +338,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             itemVector[ITEM_BIAS_INDEX] += biasMuRatio * mu * (err - biasLambdaRatio * lambda * itemVector[ITEM_BIAS_INDEX]);
         }
 
-        private double dot(double[] userVector, double[] itemVector)
+        private double Dot(double[] userVector, double[] itemVector)
         {
             double sum = 0;
             for (int k = 0; k < rank; k++)

@@ -1,26 +1,3 @@
-/*
- *  Copyright 2013-2015 Vitalii Fedorchenko (nrecosite.com)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License version 3
- *  as published by the Free Software Foundation
- *  You can be released from the requirements of the license by purchasing
- *  a commercial license. Buying such a license is mandatory as soon as you
- *  develop commercial activities involving the NReco Recommender software without
- *  disclosing the source code of your own applications.
- *  These activities include: offering paid services to customers as an ASP,
- *  making recommendations in a web application, shipping NReco Recommender with a closed
- *  source product.
- *
- *  For more information, please contact: support@nrecosite.com 
- *  
- *  Parts of this code are based on Apache Mahout ("Taste") that was licensed under the
- *  Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
- *
- *  Unless required by applicable law or agreed to in writing, software distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- */
-
 using System.IO;
 
 using NReco.CF.Taste.Common;
@@ -53,7 +30,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             {
                 log.Info("Reading factorization from {0}...", file);
                 inFile = new FileStream(file, FileMode.Open, FileAccess.Read);
-                return readBinary(inFile);
+                return ReadBinary(inFile);
             }
             finally
             {
@@ -68,7 +45,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             {
                 log.Info("Writing factorization to {0}...", file);
                 outFile = new FileStream(file, FileMode.OpenOrCreate, FileAccess.Write);
-                writeBinary(factorization, outFile);
+                WriteBinary(factorization, outFile);
             }
             finally
             {
@@ -76,14 +53,14 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             }
         }
 
-        protected static void writeBinary(Factorization factorization, Stream outFile)
+        protected static void WriteBinary(Factorization factorization, Stream outFile)
         {
             var binWr = new BinaryWriter(outFile);
-            binWr.Write(factorization.numFeatures());
-            binWr.Write(factorization.numUsers());
-            binWr.Write(factorization.numItems());
+            binWr.Write(factorization.NumFeatures());
+            binWr.Write(factorization.NumUsers());
+            binWr.Write(factorization.NumItems());
 
-            foreach (var mappingEntry in factorization.getUserIDMappings())
+            foreach (var mappingEntry in factorization.GetUserIDMappings())
             {
                 if (!mappingEntry.Value.HasValue)
                     continue; //?correct?
@@ -93,8 +70,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 binWr.Write(userID);
                 try
                 {
-                    double[] userFeatures = factorization.getUserFeatures(userID);
-                    for (int feature = 0; feature < factorization.numFeatures(); feature++)
+                    double[] userFeatures = factorization.GetUserFeatures(userID);
+                    for (int feature = 0; feature < factorization.NumFeatures(); feature++)
                     {
                         binWr.Write(userFeatures[feature]);
                     }
@@ -105,7 +82,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 }
             }
 
-            foreach (var entry in factorization.getItemIDMappings())
+            foreach (var entry in factorization.GetItemIDMappings())
             {
                 if (!entry.Value.HasValue)
                     continue; //?correct?
@@ -115,8 +92,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 binWr.Write(itemID);
                 try
                 {
-                    double[] itemFeatures = factorization.getItemFeatures(itemID);
-                    for (int feature = 0; feature < factorization.numFeatures(); feature++)
+                    double[] itemFeatures = factorization.GetItemFeatures(itemID);
+                    for (int feature = 0; feature < factorization.NumFeatures(); feature++)
                     {
                         binWr.Write(itemFeatures[feature]);
                     }
@@ -128,7 +105,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             }
         }
 
-        public static Factorization readBinary(Stream inFile)
+        public static Factorization ReadBinary(Stream inFile)
         {
             var binRdr = new BinaryReader(inFile);
 
