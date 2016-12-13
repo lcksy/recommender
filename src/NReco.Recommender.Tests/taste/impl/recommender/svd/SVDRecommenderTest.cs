@@ -73,14 +73,14 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
 
             }
 
-            public override double[] getItemFeatures(long itemID)
+            public override double[] GetItemFeatures(long itemID)
             {
                 getItemFeaturesCallCount++;
                 if (itemID == 5L)
                     return new double[] { 1, 0.3 };
                 throw new Exception();
             }
-            public override double[] getUserFeatures(long userID)
+            public override double[] GetUserFeatures(long userID)
             {
                 getUserFeaturesCallCount++;
                 if (userID == 1L)
@@ -144,7 +144,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
 
             }
 
-            public override double[] getItemFeatures(long itemID)
+            public override double[] GetItemFeatures(long itemID)
             {
                 getItemFeaturesCallCount++;
                 if (itemID == 5L)
@@ -153,7 +153,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                     return new double[] { 2, 0.6 };
                 throw new Exception();
             }
-            public override double[] getUserFeatures(long userID)
+            public override double[] GetUserFeatures(long userID)
             {
                 getUserFeaturesCallCount++;
                 if (userID == 1L)

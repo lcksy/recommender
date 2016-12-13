@@ -98,7 +98,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
 
         public double[,] times(double[,] m, double[,] other)
         {
-            return MatrixUtil.times(m, other);
+            return MatrixUtil.Times(m, other);
         }
 
         public void setUpSyntheticData()
@@ -174,14 +174,14 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             setUpSyntheticData();
 
             ParallelSGDFactorizer.PreferenceShuffler shuffler = new ParallelSGDFactorizer.PreferenceShuffler(dataModel);
-            shuffler.shuffle();
-            shuffler.stage();
+            shuffler.Shuffle();
+            shuffler.Stage();
 
             FastByIDMap<FastByIDMap<bool?>> checkedLst = new FastByIDMap<FastByIDMap<bool?>>();
 
-            for (int i = 0; i < shuffler.size(); i++)
+            for (int i = 0; i < shuffler.Size(); i++)
             {
-                IPreference pref = shuffler.get(i);
+                IPreference pref = shuffler.Get(i);
 
                 float? value = dataModel.GetPreferenceValue(pref.GetUserID(), pref.GetItemID());
                 Assert.AreEqual(pref.GetValue(), value.Value, 0.0);
@@ -207,12 +207,12 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                     index++;
                 }
             }
-            Assert.AreEqual(index, shuffler.size());
+            Assert.AreEqual(index, shuffler.Size());
         }
 
         double vectorDot(double[] v1, double[] v2)
         {
-            return MatrixUtil.vectorDot(v1, v2);
+            return MatrixUtil.VectorDot(v1, v2);
         }
 
         [Test]
@@ -242,8 +242,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 foreach (IPreference pref in dataModel.GetPreferencesFromUser(userID))
                 {
                     double rating = pref.GetValue();
-                    var userVector = factorization.getUserFeatures(userID);
-                    var itemVector = factorization.getItemFeatures(pref.GetItemID());
+                    var userVector = factorization.GetUserFeatures(userID);
+                    var itemVector = factorization.GetItemFeatures(pref.GetItemID());
                     double estimate = vectorDot(userVector, itemVector); //userVector.dot(itemVector);
 
                     double err = rating - estimate;
@@ -258,7 +258,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             while (userIDs.MoveNext())
             {
                 long userID = userIDs.Current;
-                var userVector = factorization.getUserFeatures(userID);
+                var userVector = factorization.GetUserFeatures(userID);
                 double regularization = vectorDot(userVector, userVector);
                 sum += regularization;
             }
@@ -267,7 +267,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             while (itemIDs.MoveNext())
             {
                 long itemID = itemIDs.Current;
-                var itemVector = factorization.getUserFeatures(itemID);
+                var itemVector = factorization.GetUserFeatures(itemID);
                 double regularization = vectorDot(itemVector, itemVector);
                 sum += regularization;
             }
@@ -334,8 +334,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
                 foreach (IPreference pref in dataModel.GetPreferencesFromUser(userID))
                 {
                     double rating = pref.GetValue();
-                    var userVector = factorization.getUserFeatures(userID);
-                    var itemVector = factorization.getItemFeatures(pref.GetItemID());
+                    var userVector = factorization.GetUserFeatures(userID);
+                    var itemVector = factorization.GetItemFeatures(pref.GetItemID());
                     double estimate = vectorDot(userVector, itemVector);
                     double err = rating - estimate;
 
@@ -349,7 +349,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             while (userIDs.MoveNext())
             {
                 long userID = userIDs.Current;
-                var userVector = factorization.getUserFeatures(userID);
+                var userVector = factorization.GetUserFeatures(userID);
                 double regularization = vectorDot(userVector, userVector);
                 sum += regularization;
             }
@@ -358,7 +358,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             while (itemIDs.MoveNext())
             {
                 long itemID = itemIDs.Current;
-                var itemVector = factorization.getUserFeatures(itemID);
+                var itemVector = factorization.GetUserFeatures(itemID);
                 double regularization = vectorDot(itemVector, itemVector);
                 sum += regularization;
             }

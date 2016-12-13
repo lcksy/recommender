@@ -137,12 +137,12 @@ namespace NReco.Math3.Distribution
             PascalDistribution dist;
 
             dist = new PascalDistribution(10, 0.5);
-            Assert.AreEqual(dist.getNumericalMean(), (10d * 0.5d) / 0.5d, tol);
-            Assert.AreEqual(dist.getNumericalVariance(), (10d * 0.5d) / (0.5d * 0.5d), tol);
+            Assert.AreEqual(dist.GetNumericalMean(), (10d * 0.5d) / 0.5d, tol);
+            Assert.AreEqual(dist.GetNumericalVariance(), (10d * 0.5d) / (0.5d * 0.5d), tol);
 
             dist = new PascalDistribution(25, 0.7);
-            Assert.AreEqual(dist.getNumericalMean(), (25d * 0.3d) / 0.7d, tol);
-            Assert.AreEqual(dist.getNumericalVariance(), (25d * 0.3d) / (0.7d * 0.7d), tol);
+            Assert.AreEqual(dist.GetNumericalMean(), (25d * 0.3d) / 0.7d, tol);
+            Assert.AreEqual(dist.GetNumericalVariance(), (25d * 0.3d) / (0.7d * 0.7d), tol);
         }
     }
 }

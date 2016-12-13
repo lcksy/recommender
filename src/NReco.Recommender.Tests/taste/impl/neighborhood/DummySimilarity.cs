@@ -44,7 +44,7 @@ namespace NReco.CF.Taste.Impl.Neighborhood
 
         public double UserSimilarity(long userID1, long userID2)
         {
-            IDataModel dataModel = getDataModel();
+            IDataModel dataModel = GetDataModel();
             return 1.0 / (1.0 + Math.Abs(dataModel.GetPreferencesFromUser(userID1).Get(0).GetValue()
                                          - dataModel.GetPreferencesFromUser(userID2).Get(0).GetValue()));
         }

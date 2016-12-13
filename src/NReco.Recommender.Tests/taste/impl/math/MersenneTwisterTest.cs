@@ -304,13 +304,13 @@ namespace NReco.Math3.Random
 
             for (int i = 0; i < refInt.Length; ++i)
             {
-                int r = mt.nextInt();
+                int r = mt.NextInt();
                 Assert.AreEqual(refInt[i], (r & 0x7fffffffL) | ((r < 0) ? 0x80000000L : 0x0L));
             }
 
             for (int i = 0; i < refDouble.Length; ++i)
             {
-                int r = mt.nextInt();
+                int r = mt.NextInt();
                 Assert.AreEqual(refDouble[i],
                              ((r & 0x7fffffffL) | ((r < 0) ? 0x80000000L : 0x0L)) / 4294967296.0, 1.0e-8);
             }

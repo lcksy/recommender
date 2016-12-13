@@ -129,7 +129,7 @@ namespace NReco.CF.Taste.Impl.Recommender
             int gold = 99;
             foreach (GenericItemSimilarity.ItemItemSimilarity re in res)
             {
-                Assert.AreEqual(gold--, re.getItemID2()); //the second id should be equal to 99 to start
+                Assert.AreEqual(gold--, re.GetItemID2()); //the second id should be equal to 99 to start
             }
         }
 
@@ -146,7 +146,7 @@ namespace NReco.CF.Taste.Impl.Recommender
             int gold = 0;
             foreach (GenericItemSimilarity.ItemItemSimilarity re in res)
             {
-                Assert.AreEqual(gold++, re.getItemID1()); //the second id should be equal to 99 to start
+                Assert.AreEqual(gold++, re.GetItemID1()); //the second id should be equal to 99 to start
             }
         }
 

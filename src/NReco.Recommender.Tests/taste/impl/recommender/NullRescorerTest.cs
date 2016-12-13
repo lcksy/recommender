@@ -39,23 +39,23 @@ namespace NReco.CF.Taste.Impl.Recommender
         [Test]
         public void testItemRescorer()
         {
-            IDRescorer rescorer = NullRescorer.getItemInstance();
+            IDRescorer rescorer = NullRescorer.GetItemInstance();
             Assert.NotNull(rescorer);
-            Assert.AreEqual(1.0, rescorer.rescore(1L, 1.0), EPSILON);
-            Assert.AreEqual(1.0, rescorer.rescore(0L, 1.0), EPSILON);
-            Assert.AreEqual(0.0, rescorer.rescore(1L, 0.0), EPSILON);
-            Assert.True(Double.IsNaN(rescorer.rescore(1L, Double.NaN)));
+            Assert.AreEqual(1.0, rescorer.Rescore(1L, 1.0), EPSILON);
+            Assert.AreEqual(1.0, rescorer.Rescore(0L, 1.0), EPSILON);
+            Assert.AreEqual(0.0, rescorer.Rescore(1L, 0.0), EPSILON);
+            Assert.True(Double.IsNaN(rescorer.Rescore(1L, Double.NaN)));
         }
 
         [Test]
         public void testUserRescorer()
         {
-            IDRescorer rescorer = NullRescorer.getUserInstance();
+            IDRescorer rescorer = NullRescorer.GetUserInstance();
             Assert.NotNull(rescorer);
-            Assert.AreEqual(1.0, rescorer.rescore(1L, 1.0), EPSILON);
-            Assert.AreEqual(1.0, rescorer.rescore(0L, 1.0), EPSILON);
-            Assert.AreEqual(0.0, rescorer.rescore(1L, 0.0), EPSILON);
-            Assert.True(Double.IsNaN(rescorer.rescore(1L, Double.NaN)));
+            Assert.AreEqual(1.0, rescorer.Rescore(1L, 1.0), EPSILON);
+            Assert.AreEqual(1.0, rescorer.Rescore(0L, 1.0), EPSILON);
+            Assert.AreEqual(0.0, rescorer.Rescore(1L, 0.0), EPSILON);
+            Assert.True(Double.IsNaN(rescorer.Rescore(1L, Double.NaN)));
         }
     }
 }

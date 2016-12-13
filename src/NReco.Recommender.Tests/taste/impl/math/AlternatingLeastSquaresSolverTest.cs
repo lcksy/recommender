@@ -42,7 +42,7 @@ namespace NReco.Math3.Als
             double lambda = 0.2;
             var matrix = new double[5, 5];
 
-            AlternatingLeastSquaresSolver.addLambdaTimesNuiTimesE(matrix, lambda, nui);
+            AlternatingLeastSquaresSolver.AddLambdaTimesNuiTimesE(matrix, lambda, nui);
 
             for (int n = 0; n < 5; n++)
             {
@@ -56,7 +56,7 @@ namespace NReco.Math3.Als
             var f1 = new double[] { 1, 2, 3 };
             var f2 = new double[] { 4, 5, 6 };
 
-            var miIi = AlternatingLeastSquaresSolver.createMiIi(new[] { f1, f2 }, 3);
+            var miIi = AlternatingLeastSquaresSolver.CreateMiIi(new[] { f1, f2 }, 3);
 
             Assert.AreEqual(1.0, miIi[0, 0], EPSILON);
             Assert.AreEqual(2.0, miIi[1, 0], EPSILON);
@@ -75,7 +75,7 @@ namespace NReco.Math3.Als
             ratings.setQuick(3, 3.0);
             ratings.setQuick(5, 5.0);*/
 
-            var riIiMaybeTransposed = AlternatingLeastSquaresSolver.createRiIiMaybeTransposed(ratings);
+            var riIiMaybeTransposed = AlternatingLeastSquaresSolver.CreateRiIiMaybeTransposed(ratings);
             Assert.AreEqual(1, riIiMaybeTransposed.GetLength(1) /* .numCols()*/, 1);
             Assert.AreEqual(3, riIiMaybeTransposed.GetLength(0) /*.numRows()*/, 3);
 

@@ -64,7 +64,7 @@ namespace NReco.CF.Taste.Impl.Eval
         {
             public IDataModel BuildDataModel(FastByIDMap<IPreferenceArray> trainingData)
             {
-                return new GenericBooleanPrefDataModel(GenericBooleanPrefDataModel.toDataMap(trainingData));
+                return new GenericBooleanPrefDataModel(GenericBooleanPrefDataModel.ToDataMap(trainingData));
             }
         };
 

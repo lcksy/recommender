@@ -164,7 +164,7 @@ namespace NReco.Math3.Distribution
             {
                 Assert.AreEqual(
                         densityTestValues[i],
-                        distribution.probability(densityTestPoints[i]), getTolerance(),
+                        distribution.Probability(densityTestPoints[i]), getTolerance(),
                         "Incorrect density value returned for " + densityTestPoints[i]);
             }
         }
@@ -177,7 +177,7 @@ namespace NReco.Math3.Distribution
             {
                 // FIXME: when logProbability methods are added to IntegerDistribution in 4.0, remove cast below
                 Assert.AreEqual(logDensityTestValues[i],
-                        ((AbstractIntegerDistribution)distribution).logProbability(densityTestPoints[i]),
+                        ((AbstractIntegerDistribution)distribution).LogProbability(densityTestPoints[i]),
                         tolerance,
                         "Incorrect log density value returned for " + densityTestPoints[i]);
             }
@@ -191,7 +191,7 @@ namespace NReco.Math3.Distribution
             {
                 Assert.AreEqual(
                         cumulativeTestValues[i],
-                        distribution.cumulativeProbability(cumulativeTestPoints[i]), getTolerance(),
+                        distribution.CumulativeProbability(cumulativeTestPoints[i]), getTolerance(),
                         "Incorrect cumulative probability value returned for " + cumulativeTestPoints[i]);
             }
         }
@@ -204,7 +204,7 @@ namespace NReco.Math3.Distribution
             for (int i = 0; i < inverseCumulativeTestPoints.Length; i++)
             {
                 Assert.AreEqual(inverseCumulativeTestValues[i],
-                        distribution.inverseCumulativeProbability(inverseCumulativeTestPoints[i]),
+                        distribution.InverseCumulativeProbability(inverseCumulativeTestPoints[i]),
                         "Incorrect inverse cumulative probability value returned for "
                         + inverseCumulativeTestPoints[i]);
             }
@@ -247,24 +247,24 @@ namespace NReco.Math3.Distribution
         [Test]
         public void testConsistencyAtSupportBounds()
         {
-            int lower = distribution.getSupportLowerBound();
+            int lower = distribution.GetSupportLowerBound();
             Assert.AreEqual(
-                    0.0, distribution.cumulativeProbability(lower - 1), 0.0,
+                    0.0, distribution.CumulativeProbability(lower - 1), 0.0,
                     "Cumulative probability mmust be 0 below support lower bound.");
             Assert.AreEqual(
-                    distribution.probability(lower), distribution.cumulativeProbability(lower), getTolerance(),
+                    distribution.Probability(lower), distribution.CumulativeProbability(lower), getTolerance(),
                     "Cumulative probability of support lower bound must be equal to probability mass at this point.");
             Assert.AreEqual(
-                    lower, distribution.inverseCumulativeProbability(0.0),
+                    lower, distribution.InverseCumulativeProbability(0.0),
                     "Inverse cumulative probability of 0 must be equal to support lower bound.");
 
-            int upper = distribution.getSupportUpperBound();
+            int upper = distribution.GetSupportUpperBound();
             if (upper != Int32.MaxValue)
                 Assert.AreEqual(
-                        1.0, distribution.cumulativeProbability(upper), 0.0,
+                        1.0, distribution.CumulativeProbability(upper), 0.0,
                         "Cumulative probability of support upper bound must be equal to 1.");
             Assert.AreEqual(
-                    upper, distribution.inverseCumulativeProbability(1.0),
+                    upper, distribution.InverseCumulativeProbability(1.0),
                     "Inverse cumulative probability of 1 must be equal to support upper bound.");
         }
 
@@ -274,7 +274,7 @@ namespace NReco.Math3.Distribution
         {
             try
             {
-                distribution.cumulativeProbability(1, 0);
+                distribution.CumulativeProbability(1, 0);
                 Assert.Fail("Expecting MathIllegalArgumentException for bad cumulativeProbability interval");
             }
             catch (ArgumentException ex)
@@ -283,7 +283,7 @@ namespace NReco.Math3.Distribution
             }
             try
             {
-                distribution.inverseCumulativeProbability(-1);
+                distribution.InverseCumulativeProbability(-1);
                 Assert.Fail("Expecting MathIllegalArgumentException for p = -1");
             }
             catch (ArgumentException ex)
@@ -292,7 +292,7 @@ namespace NReco.Math3.Distribution
             }
             try
             {
-                distribution.inverseCumulativeProbability(2);
+                distribution.InverseCumulativeProbability(2);
                 Assert.Fail("Expecting MathIllegalArgumentException for p = 2");
             }
             catch (ArgumentException ex)
@@ -316,8 +316,8 @@ namespace NReco.Math3.Distribution
             {
                 expectedCounts[i] = sampleSize * densityValues[i];
             }
-            distribution.reseedRandomGenerator(1000); // Use fixed seed
-            int[] sample = distribution.sample(sampleSize);
+            distribution.ReseedRandomGenerator(1000); // Use fixed seed
+            int[] sample = distribution.Sample(sampleSize);
             for (int i = 0; i < sampleSize; i++)
             {
                 for (int j = 0; j < length; j++)

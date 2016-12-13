@@ -41,19 +41,19 @@ namespace NReco.Math3
         {
             var a = new double[60, 60];
             var rnd = RandomUtils.getRandom();
-            MatrixUtil.assign(a, (x) => { return rnd.nextDouble(); });
+            MatrixUtil.Assign(a, (x) => { return rnd.nextDouble(); });
 
             QRDecomposition qr = new QRDecomposition(a);
 
             // how close is Q to actually being orthornormal?
-            var tmp = MatrixUtil.times(MatrixUtil.transpose(qr.getQ()), qr.getQ());
-            var tmpDiag = MatrixUtil.viewDiagonal(tmp);
-            MatrixUtil.assign(tmpDiag, (x) => x - 1);
-            double maxIdent = MatrixUtil.norm1(tmpDiag);
+            var tmp = MatrixUtil.Times(MatrixUtil.Transpose(qr.GetQ()), qr.GetQ());
+            var tmpDiag = MatrixUtil.ViewDiagonal(tmp);
+            MatrixUtil.Assign(tmpDiag, (x) => x - 1);
+            double maxIdent = MatrixUtil.Norm1(tmpDiag);
             Assert.AreEqual(0, maxIdent, 1.0e-13);
 
             // how close is Q R to the original value of A?
-            var z = MatrixUtil.times(qr.getQ(), qr.getR());
+            var z = MatrixUtil.Times(qr.GetQ(), qr.GetR());
             var maxError = Double.MaxValue;
             for (int i = 0; i < z.GetLength(0); i++)
                 for (int j = 0; j < z.GetLength(1); j++)
@@ -76,12 +76,12 @@ namespace NReco.Math3
 	        };
 
             QRDecomposition qr = new QRDecomposition(x);
-            Assert.False(qr.hasFullRank());
+            Assert.False(qr.HasFullRank());
             var v = new double[] { 3.741657, 7.483315, 11.22497 };
             double t = 0;
             for (int i = 0; i < 3; i++)
             {
-                t += Math.Abs(v[i]) - Math.Abs(qr.getR()[0, i]);
+                t += Math.Abs(v[i]) - Math.Abs(qr.GetR()[0, i]);
             }
 
             Assert.AreEqual(0, t, 1.0e-5);  /*(new DenseVector().aggregate(qr.getR().viewRow(0), Functions.PLUS, new DoubleDoubleFunction() {
@@ -96,7 +96,7 @@ namespace NReco.Math3
         {
             var x = matrix();
             QRDecomposition qr = new QRDecomposition(x);
-            Assert.True(qr.hasFullRank());
+            Assert.True(qr.HasFullRank());
 
             var rRef = reshape(new double[]{
               -2.99129686445138, 0, 0, 0, 0,
@@ -104,7 +104,7 @@ namespace NReco.Math3
               0.733739310355871, 1.48042000631646, 2.29051263117895, 0, 0,
               -0.0394082168269326, 0.282829484207801, -0.00438521041803086, -2.90823198084203, 0,
               0.923669647838536, 1.76679276072492, 0.637690104222683, -0.225890909498753, -1.35732293800944}, 5, 5);
-            var r = qr.getR();
+            var r = qr.GetR();
 
             // check identity down to sign
             double deltaRSum = 0;
@@ -135,7 +135,7 @@ namespace NReco.Math3
 
             //printMatrix("qRef", qRef);
 
-            var q = qr.getQ();
+            var q = qr.GetQ();
             //printMatrix("q", q);
 
             double deltaQSum = 0;
@@ -148,7 +148,7 @@ namespace NReco.Math3
 
             Assert.AreEqual(0, deltaQSum, 1.0e-12);
 
-            var x1 = qr.solve(reshape(new double[]{
+            var x1 = qr.Solve(reshape(new double[]{
               -0.0178247686747641, 0.68631714634098, -0.335464858468858, 1.50249941751569,
               -0.669901640772149, -0.977025038942455, -1.18857546169856, -1.24792900492054
             }, 8, 1));
@@ -166,10 +166,10 @@ namespace NReco.Math3
         [Test]
         public void fullRankWide()
         {
-            var x = MatrixUtil.transpose(matrix());
+            var x = MatrixUtil.Transpose(matrix());
             QRDecomposition qr = new QRDecomposition(x);
-            Assert.True(qr.hasFullRank());
-            var rActual = qr.getR();
+            Assert.True(qr.HasFullRank());
+            var rActual = qr.GetR();
 
             var rRef = reshape(new double[]{
               -2.42812464965842, 0, 0, 0, 0,
@@ -203,7 +203,7 @@ namespace NReco.Math3
               0.89159476695423, -0.238213616975551, -0.376141107880836, -0.0794701657055114, 0.0227025098210165
             }, 5, 5);
 
-            var q = qr.getQ();
+            var q = qr.GetQ();
 
             //printMatrix("qRef", qRef);
             //printMatrix("q", q);
@@ -219,7 +219,7 @@ namespace NReco.Math3
             Assert.AreEqual(0, deltaQSum, 1.0e-12);
             //    assertEquals(qRef, q, 1.0e-8);
 
-            var x1 = qr.solve(b());
+            var x1 = qr.Solve(b());
             var xRef = reshape(new double[]{
               -0.182580239668147, -0.437233627652114, 0.138787653097464, 0.672934739896228, -0.131420217069083, 0, 0, 0
             }, 8, 1);
@@ -228,7 +228,7 @@ namespace NReco.Math3
             //printMatrix("x", x1);
             assertEquals(xRef, x1, 1.0e-8);
 
-            assertEquals(x, MatrixUtil.times(qr.getQ(), qr.getR()), 1.0e-15);
+            assertEquals(x, MatrixUtil.Times(qr.GetQ(), qr.GetR()), 1.0e-15);
         }
 
 

@@ -60,13 +60,13 @@ namespace NReco.Math3.Special
 
         private void testRegularizedBeta(double expected, double x, double a, double b)
         {
-            double actual = Beta.regularizedBeta(x, a, b);
+            double actual = Beta.RegularizedBeta(x, a, b);
             Assert.AreEqual(expected, actual, 10e-15);
         }
 
         private void testLogBeta(double expected, double a, double b)
         {
-            double actual = Beta.logBeta(a, b);
+            double actual = Beta.LogBeta(a, b);
             Assert.AreEqual(expected, actual, 10e-15);
         }
 
@@ -133,7 +133,7 @@ namespace NReco.Math3.Special
         [Test]
         public void testRegularizedBetaTinyArgument()
         {
-            double actual = Beta.regularizedBeta(1e-17, 1.0, 1e12);
+            double actual = Beta.RegularizedBeta(1e-17, 1.0, 1e12);
             // This value is from R: pbeta(1e-17,1,1e12)
             Assert.AreEqual(9.999950000166648e-6, actual, 1e-16);
         }
@@ -147,7 +147,7 @@ namespace NReco.Math3.Special
 
             try
             {
-                double r = Beta.regularizedBeta(x, a, b, 1e-14, 10000);
+                double r = Beta.RegularizedBeta(x, a, b, 1e-14, 10000);
             }
             catch (StackOverflowException error)
             {
@@ -984,7 +984,7 @@ namespace NReco.Math3.Special
                 double a = LOG_BETA_REF[i, 0];
                 double b = LOG_BETA_REF[i, 1];
                 double expected = LOG_BETA_REF[i, 2];
-                double actual = Beta.logBeta(a, b);
+                double actual = Beta.LogBeta(a, b);
                 double tol = ulps * BetaTest.ulp(expected);
                 var builder = new System.Text.StringBuilder();
                 builder.Append(a).Append(", ").Append(b);

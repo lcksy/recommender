@@ -40,15 +40,15 @@ namespace NReco.Math3.Special
     {
         private void testRegularizedGamma(double expected, double a, double x)
         {
-            double actualP = Gamma.regularizedGammaP(a, x);
-            double actualQ = Gamma.regularizedGammaQ(a, x);
+            double actualP = Gamma.RegularizedGammaP(a, x);
+            double actualQ = Gamma.RegularizedGammaQ(a, x);
             Assert.AreEqual(expected, actualP, 10e-15D);
             Assert.AreEqual(actualP, 1.0 - actualQ, 10e-15D);
         }
 
         private void testLogGamma(double expected, double x)
         {
-            double actual = Gamma.logGamma(x);
+            double actual = Gamma.LogGamma(x);
             Assert.AreEqual(expected, actual, 10e-15D);
         }
 
@@ -122,17 +122,17 @@ namespace NReco.Math3.Special
         public void testDigammaLargeArgs()
         {
             double eps = 1e-8;
-            Assert.AreEqual(4.6001618527380874002, Gamma.digamma(100), eps);
-            Assert.AreEqual(3.9019896734278921970, Gamma.digamma(50), eps);
-            Assert.AreEqual(2.9705239922421490509, Gamma.digamma(20), eps);
-            Assert.AreEqual(2.9958363947076465821, Gamma.digamma(20.5), eps);
-            Assert.AreEqual(2.2622143570941481605, Gamma.digamma(10.1), eps);
-            Assert.AreEqual(2.1168588189004379233, Gamma.digamma(8.8), eps);
-            Assert.AreEqual(1.8727843350984671394, Gamma.digamma(7), eps);
-            Assert.AreEqual(0.42278433509846713939, Gamma.digamma(2), eps);
-            Assert.AreEqual(-100.56088545786867450, Gamma.digamma(0.01), eps);
-            Assert.AreEqual(-4.0390398965921882955, Gamma.digamma(-0.8), eps);
-            Assert.AreEqual(4.2003210041401844726, Gamma.digamma(-6.3), eps);
+            Assert.AreEqual(4.6001618527380874002, Gamma.Digamma(100), eps);
+            Assert.AreEqual(3.9019896734278921970, Gamma.Digamma(50), eps);
+            Assert.AreEqual(2.9705239922421490509, Gamma.Digamma(20), eps);
+            Assert.AreEqual(2.9958363947076465821, Gamma.Digamma(20.5), eps);
+            Assert.AreEqual(2.2622143570941481605, Gamma.Digamma(10.1), eps);
+            Assert.AreEqual(2.1168588189004379233, Gamma.Digamma(8.8), eps);
+            Assert.AreEqual(1.8727843350984671394, Gamma.Digamma(7), eps);
+            Assert.AreEqual(0.42278433509846713939, Gamma.Digamma(2), eps);
+            Assert.AreEqual(-100.56088545786867450, Gamma.Digamma(0.01), eps);
+            Assert.AreEqual(-4.0390398965921882955, Gamma.Digamma(-0.8), eps);
+            Assert.AreEqual(4.2003210041401844726, Gamma.Digamma(-6.3), eps);
         }
 
         [Test]
@@ -148,7 +148,7 @@ namespace NReco.Math3.Special
                 -1e+27, -1e+28, -1e+29, -1e+30};
             for (double n = 1; n < 30; n++)
             {
-                checkRelativeError(String.Format("Test {0}: ", n), expected[(int)(n - 1)], Gamma.digamma(Math.Pow(10.0, -n)), 1e-8);
+                checkRelativeError(String.Format("Test {0}: ", n), expected[(int)(n - 1)], Gamma.Digamma(Math.Pow(10.0, -n)), 1e-8);
             }
         }
 
@@ -176,7 +176,7 @@ namespace NReco.Math3.Special
         };
             for (int i = data.Length - 2; i >= 0; i -= 2)
             {
-                Assert.AreEqual(data[i + 1], Gamma.trigamma(data[i]), eps, String.Format("trigamma {0}", data[i]));
+                Assert.AreEqual(data[i + 1], Gamma.Trigamma(data[i]), eps, String.Format("trigamma {0}", data[i]));
             }
         }
 
@@ -339,7 +339,7 @@ namespace NReco.Math3.Special
             {
                 double x = LOG_GAMMA_REF[i, 0];
                 double expected = LOG_GAMMA_REF[i, 1];
-                double actual = Gamma.logGamma(x);
+                double actual = Gamma.LogGamma(x);
                 double tol;
                 if (expected == 0.0)
                 {
@@ -356,13 +356,13 @@ namespace NReco.Math3.Special
         [Test]
         public void testLogGammaPrecondition1()
         {
-            Assert.True(Double.IsNaN(Gamma.logGamma(0.0)));
+            Assert.True(Double.IsNaN(Gamma.LogGamma(0.0)));
         }
 
         [Test]
         public void testLogGammaPrecondition2()
         {
-            Assert.True(Double.IsNaN(Gamma.logGamma(-1.0)));
+            Assert.True(Double.IsNaN(Gamma.LogGamma(-1.0)));
         }
 
         /// <p>
@@ -414,7 +414,7 @@ namespace NReco.Math3.Special
             {
                 double x = INV_GAMMA1P_M1_REF[i, 0];
                 double expected = INV_GAMMA1P_M1_REF[i, 1];
-                double actual = Gamma.invGamma1pm1(x);
+                double actual = Gamma.InvGamma1pm1(x);
                 double tol = ulps * BetaTest.ulp(expected);
                 Assert.AreEqual(expected, actual, tol, Convert.ToString(x));
             }
@@ -424,7 +424,7 @@ namespace NReco.Math3.Special
         //[ExpectedException(typeof(ArgumentException))]
         public void testInvGamma1pm1Precondition1()
         {
-            Gamma.invGamma1pm1(-0.51);
+            Gamma.InvGamma1pm1(-0.51);
         }
 
         [Test]
@@ -432,7 +432,7 @@ namespace NReco.Math3.Special
         public void testInvGamma1pm1Precondition2()
         {
 
-            Gamma.invGamma1pm1(1.51);
+            Gamma.InvGamma1pm1(1.51);
         }
 
         private static double[,] LOG_GAMMA1P_REF = new double[,] 
@@ -464,7 +464,7 @@ namespace NReco.Math3.Special
             {
                 double x = LOG_GAMMA1P_REF[i, 0];
                 double expected = LOG_GAMMA1P_REF[i, 1];
-                double actual = Gamma.logGamma1p(x);
+                double actual = Gamma.LogGamma1p(x);
                 double tol = ulps * BetaTest.ulp(expected);
                 Assert.AreEqual(expected, actual, tol, Convert.ToString(x));
             }
@@ -475,7 +475,7 @@ namespace NReco.Math3.Special
         public void testLogGamma1pPrecondition1()
         {
 
-            Gamma.logGamma1p(-0.51);
+            Gamma.LogGamma1p(-0.51);
         }
 
         [Test]
@@ -483,7 +483,7 @@ namespace NReco.Math3.Special
         public void testLogGamma1pPrecondition2()
         {
 
-            Gamma.logGamma1p(1.51);
+            Gamma.LogGamma1p(1.51);
         }
 
         /// Reference data for the {@link Gamma#gamma(double)} function. This

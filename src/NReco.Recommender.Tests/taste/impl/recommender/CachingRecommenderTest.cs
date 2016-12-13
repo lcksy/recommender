@@ -60,7 +60,7 @@ namespace NReco.CF.Taste.Impl.Recommender
             Assert.AreEqual(5, mockRecommender.recommendCount);
 
             // Results from this recommend() method can be cached...
-            IDRescorer rescorer = NullRescorer.getItemInstance();
+            IDRescorer rescorer = NullRescorer.GetItemInstance();
             cachingRecommender.Refresh(null);
             cachingRecommender.Recommend(1, 1, rescorer);
             Assert.AreEqual(6, mockRecommender.recommendCount);

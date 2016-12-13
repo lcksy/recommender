@@ -80,8 +80,8 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             var vector = new double[] { 0.5, 2.0, 1.5 };
             int index = 1;
 
-            features.setFeatureColumnInM(index, vector);
-            double[][] matrix = features.getM();
+            features.SetFeatureColumnInM(index, vector);
+            double[][] matrix = features.GetM();
 
             Assert.AreEqual(vector[0], matrix[index][0], EPSILON);
             Assert.AreEqual(vector[1], matrix[index][1], EPSILON);
@@ -93,7 +93,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
         {
             IPreferenceArray prefs = dataModel.GetPreferencesFromUser(1);
 
-            double[] ratingVector = ALSWRFactorizer.ratingVector(prefs);
+            double[] ratingVector = ALSWRFactorizer.RatingVector(prefs);
 
             Assert.AreEqual(prefs.Length(), ratingVector.Length);
             Assert.AreEqual(prefs.Get(0).GetValue(), ratingVector[0], EPSILON);
@@ -105,14 +105,14 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
         public void averageRating()
         {
             ALSWRFactorizer.Features features = new ALSWRFactorizer.Features(factorizer);
-            Assert.AreEqual(2.5, features.averateRating(3L), EPSILON);
+            Assert.AreEqual(2.5, features.AverateRating(3L), EPSILON);
         }
 
         [Test]
         public void initializeM()
         {
             ALSWRFactorizer.Features features = new ALSWRFactorizer.Features(factorizer);
-            double[][] M = features.getM();
+            double[][] M = features.GetM();
 
             Assert.AreEqual(3.333333333, M[0][0], EPSILON);
             Assert.AreEqual(5, M[1][0], EPSILON);
@@ -182,7 +182,7 @@ namespace NReco.CF.Taste.Impl.Recommender.SVD
             IRunningAverage avg = new FullRunningAverage();
             for (int sliceIdx = 0; sliceIdx < preferences.GetLength(0); sliceIdx++)
             {
-                var slice = MatrixUtil.viewRow(preferences, sliceIdx);
+                var slice = MatrixUtil.ViewRow(preferences, sliceIdx);
                 for (var eIndex = 0; eIndex < slice.Length; eIndex++)
                 {
                     var e = slice[eIndex];
