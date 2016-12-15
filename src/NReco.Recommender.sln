@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.Recommender.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.Recommender.Test.VS", "NReco.Recommender.Test.VS\NReco.Recommender.Test.VS.csproj", "{705753B2-37AB-4F38-8C1D-D456637AFACC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.Recommender.Extension", "NReco.Recommender.Extension\NReco.Recommender.Extension.csproj", "{7F988041-0C0D-40B6-B6B3-7B983D571955}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.Recommender.Extension.Test", "NReco.Recommender.Extension.Test\NReco.Recommender.Extension.Test.csproj", "{2C6D45C1-4E6B-4A4F-9430-01A2E6DF5C2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{705753B2-37AB-4F38-8C1D-D456637AFACC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{705753B2-37AB-4F38-8C1D-D456637AFACC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{705753B2-37AB-4F38-8C1D-D456637AFACC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F988041-0C0D-40B6-B6B3-7B983D571955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F988041-0C0D-40B6-B6B3-7B983D571955}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F988041-0C0D-40B6-B6B3-7B983D571955}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F988041-0C0D-40B6-B6B3-7B983D571955}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C6D45C1-4E6B-4A4F-9430-01A2E6DF5C2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C6D45C1-4E6B-4A4F-9430-01A2E6DF5C2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C6D45C1-4E6B-4A4F-9430-01A2E6DF5C2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C6D45C1-4E6B-4A4F-9430-01A2E6DF5C2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
