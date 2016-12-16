@@ -56,6 +56,7 @@
     <Compile Include="Objects\Configuration\RedisServerNodes.cs" />
     <Compile Include="Objects\Configuration\ServerNode.cs" />
     <Compile Include="Objects\Configuration\SqlServerNodes.cs" />
+    <Compile Include="Objects\RecommenderDataModel\Class1.cs" />
     <Compile Include="Objects\RecommenderDataModel\SqlServerDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
