@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7A15CCA6-E745-416C-B0AB-81DF68EF9302}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CQSS.Common</RootNamespace>
+    <AssemblyName>CQSS.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Extension\DecimalExtension.cs" />
+    <Compile Include="Extension\DictionaryExtension.cs" />
+    <Compile Include="Extension\EnumerableExtension.cs" />
+    <Compile Include="Extension\EnumExtension.cs" />
+    <Compile Include="Extension\ObjectExtension.cs" />
+    <Compile Include="Extension\StringExtension.cs" />
+    <Compile Include="Infrastructure\Atomic\Volatile.cs" />
+    <Compile Include="Infrastructure\Cluster\ClusterNodeFinderBase.cs" />
+    <Compile Include="Infrastructure\Cluster\DefaultCluster.cs" />
+    <Compile Include="Infrastructure\Cluster\ICluster.cs" />
+    <Compile Include="Infrastructure\Cluster\IClusterNode.cs" />
+    <Compile Include="Infrastructure\Cluster\IClusterNodeFinder.cs" />
+    <Compile Include="Infrastructure\Cluster\ClusterMessageFilter.cs" />
+    <Compile Include="Infrastructure\Cluster\ClusterMessageFilterTable.cs" />
+    <Compile Include="Infrastructure\Cluster\LoadBalance\LoadBalanceStrategyBase.cs" />
+    <Compile Include="Infrastructure\Cluster\LoadBalance\MutilcastStrategy.cs" />
+    <Compile Include="Infrastructure\Cluster\LoadBalance\RoundRobinStrategy.cs" />
+    <Compile Include="Infrastructure\Configuration\CQSSConfig.cs" />
+    <Compile Include="Infrastructure\Database\DefaultDbConnectionFactory.cs" />
+    <Compile Include="Infrastructure\Database\IDbConnectionFactory.cs" />
+    <Compile Include="Infrastructure\Dependency\IDependencyRegistrar.cs" />
+    <Compile Include="Infrastructure\Engine\DefaultEngine.cs" />
+    <Compile Include="Infrastructure\Engine\EngineContext.cs" />
+    <Compile Include="Infrastructure\Engine\IEngine.cs" />
+    <Compile Include="Infrastructure\EventPattern\Dispatcher\EventDispatcher.cs" />
+    <Compile Include="Infrastructure\EventPattern\Dispatcher\EventDispatchMode.cs" />
+    <Compile Include="Infrastructure\EventPattern\Handler\IEventHandler.cs" />
+    <Compile Include="Infrastructure\Ketama\ConsistentHash.cs" />
+    <Compile Include="Infrastructure\Ketama\IKetamaNode.cs" />
+    <Compile Include="Infrastructure\Ketama\IKetamaNodeFinder.cs" />
+    <Compile Include="Infrastructure\Ketama\KetamaLocator.cs" />
+    <Compile Include="Infrastructure\Logging\EmptyLogger.cs" />
+    <Compile Include="Infrastructure\Logging\EmptyLoggerFactory.cs" />
+    <Compile Include="Infrastructure\Logging\ILogger.cs" />
+    <Compile Include="Infrastructure\Logging\ILoggerFactory.cs" />
+    <Compile Include="Infrastructure\MemcacheProvider\IMemcacheProvider.cs" />
+    <Compile Include="Infrastructure\ObjectContainer\IObjectContainer.cs" />
+    <Compile Include="Infrastructure\Rpc\ServiceProxy.cs" />
+    <Compile Include="Infrastructure\Serializing\DefaultJsonSerializer.cs" />
+    <Compile Include="Infrastructure\Serializing\IJsonSerializer.cs" />
+    <Compile Include="Infrastructure\Singleton.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\AssemblyLocator.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using CQSS.Common.Infrastructure.Engine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Configuration;
-using System.Collections.Generic;
 using NReco.Recommender.Extension;
 using NReco.Recommender.Extension.Configuration;
 using NReco.Recommender.Extension.Objects.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 
 namespace NReco.Recommender.Extension.Test
 {
@@ -14,7 +15,9 @@ namespace NReco.Recommender.Extension.Test
         [TestMethod]
         public void TestMethod1()
         {
-            var configs = ConfigurationManager.GetSection("NRecoConfig") as NRecoConfig;
+            EngineContext.Initialize(true);
+
+            var configs = NRecoConfigResolver.Resolve<NRecoConfig>();
         }
     }
 }

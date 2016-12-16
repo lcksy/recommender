@@ -55,9 +55,41 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\CQSS.Common.Database.Dapper\CQSS.Common.Database.Dapper.csproj">
+      <Project>{41d0ae73-7a68-4f60-b309-923b837ac239}</Project>
+      <Name>CQSS.Common.Database.Dapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\CQSS.Common.Logging.Log4net\CQSS.Common.Logging.Log4net.csproj">
+      <Project>{065908a0-9fee-4530-b134-0d6fdac6c2d2}</Project>
+      <Name>CQSS.Common.Logging.Log4net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\CQSS.Common.MemcacheProvider.Enyim\CQSS.Common.MemcacheProvider.Enyim.csproj">
+      <Project>{66968f61-3d38-468f-bb24-30928a54d30b}</Project>
+      <Name>CQSS.Common.MemcacheProvider.Enyim</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\CQSS.Common.ObjectContainer.Autofac\CQSS.Common.ObjectContainer.Autofac.csproj">
+      <Project>{9a889485-f608-4195-b36e-e92538da0106}</Project>
+      <Name>CQSS.Common.ObjectContainer.Autofac</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\CQSS.Common.Serializing.JsonDotNet\CQSS.Common.Serializing.JsonDotNet.csproj">
+      <Project>{efc3d51f-20c6-4776-bf47-48997b2cc224}</Project>
+      <Name>CQSS.Common.Serializing.JsonDotNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\CQSS.Common\CQSS.Common.csproj">
+      <Project>{7a15cca6-e745-416c-b0ab-81df68ef9302}</Project>
+      <Name>CQSS.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NReco.Recommender.Engine\NReco.Recommender.Engine.csproj">
+      <Project>{75a5aa0f-6394-4c52-842c-1bef25ff3550}</Project>
+      <Name>NReco.Recommender.Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NReco.Recommender.Extension\NReco.Recommender.Extension.csproj">
       <Project>{7f988041-0c0d-40b6-b6b3-7b983d571955}</Project>
       <Name>NReco.Recommender.Extension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NReco.Recommender\NReco.Recommender.csproj">
+      <Project>{a5da1bf8-7601-45fc-a906-f61ac63d8ee7}</Project>
+      <Name>NReco.Recommender</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
