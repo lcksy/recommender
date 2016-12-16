@@ -59,7 +59,10 @@
     <Compile Include="Objects\RecommenderDataModel\SqlServerDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recommender\DataModelResolverBase.cs" />
+    <Compile Include="Recommender\DataReaderResolverBase.cs" />
     <Compile Include="Recommender\IDataModelResolver.cs" />
+    <Compile Include="Recommender\IDataReaderResolver.cs" />
+    <Compile Include="Recommender\SqlServerDataReaderResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\CQSS.Common\CQSS.Common.csproj">

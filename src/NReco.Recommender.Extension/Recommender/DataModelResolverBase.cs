@@ -3,13 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NReco.CF.Taste.Model;
 
 namespace NReco.Recommender.Extension.Recommender
 {
     public class DataModelResolverBase : IDataModelResolver
     {
-        public CF.Taste.Model.IDataModel DataModelResolver(DBType type)
+        public IDataModel DataModelResolver(DBType type)
         {
+            try
+            {
+                return this.DoDataModelResolver(type);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected virtual IDataModel DoDataModelResolver(DBType type)
+        {
+            
             throw new NotImplementedException();
         }
     }
