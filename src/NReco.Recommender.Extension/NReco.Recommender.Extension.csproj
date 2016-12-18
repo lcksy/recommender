@@ -63,13 +63,25 @@
     <Compile Include="Objects\RecommenderDataModel\SqlServerDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recommender\DataModelResolver\DataModelResolverBase.cs" />
-    <Compile Include="Recommender\DataReaderResolver\DataReaderResolverBase.cs" />
     <Compile Include="Recommender\DataModelResolver\IDataModelResolver.cs" />
-    <Compile Include="Recommender\DataReaderResolver\DataReaderResolverFactory.cs" />
-    <Compile Include="Recommender\DataReaderResolver\IDataReaderResolver.cs" />
-    <Compile Include="Recommender\DataReaderResolver\MongDbDataReaderResolver.cs" />
-    <Compile Include="Recommender\DataReaderResolver\RedisDataReaderResolver.cs" />
-    <Compile Include="Recommender\DataReaderResolver\SqlServerDataReaderResolver.cs" />
+    <Compile Include="Recommender\DataReaderResolver\DataReaderResolverBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Recommender\DataReaderResolver\DataReaderResolverFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Recommender\DataReaderResolver\IDataReaderResolver.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Recommender\DataReaderResolver\MongDbDataReaderResolver.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Recommender\DataReaderResolver\RedisDataReaderResolver.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Recommender\DataReaderResolver\SqlServerDataReaderResolver.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\CQSS.Common.Database.Dapper\CQSS.Common.Database.Dapper.csproj">
