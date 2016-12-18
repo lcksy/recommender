@@ -26,7 +26,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             return connection;
         }
         
-        public override IEnumerable<ProductFrequency> Read()
+        public override void Read(Action<ProductFrequency> action)
         {
             var sql = @"SELECT * FROM ProductFrequency";
 
@@ -35,7 +35,10 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             {
                 while (reader.Read())
                 {
-                    yield return reader.Map<ProductFrequency>();
+                    var frequency = reader.Map<ProductFrequency>();
+
+                    if(action != null)
+                        action.Invoke(frequency);
                 }
             }
         }
@@ -82,23 +85,19 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
                         WHERE CustomerSysNo = @CustomerSysNo
                             AND ProductSysNo = @ProductSysNo";
 
-            var data = new 
-            { 
+            var param = new 
+            {
+                CustomerSysNo = frequency.CustomerSysNo,
+                ProductSysNo = frequency.ProductSysNo,
                 BuyFrequency = frequency.BuyFrequency, 
                 ClickFrequency = frequency.ClickFrequency, 
                 CommentFrequency = frequency.CommentFrequency, 
                 TimeSpan = frequency.TimeSpan 
             };
 
-            var condition = new 
-            {
-                CustomerSysNo = frequency.CustomerSysNo, 
-                ProductSysNo = frequency.ProductSysNo 
-            };
-
             using (var connection = this.CreateConnection())
             {
-                var res = connection.Update(data, condition, "ProductFrequency");
+                var res = connection.ExecuteScalar<int>(sql, param);
 
                 return res > 0;
             }

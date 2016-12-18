@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 using NReco.Recommender.Extension.Objects.RecommenderDataModel;
 
@@ -6,7 +6,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 {
     public interface IDataReaderResolver
     {
-        IEnumerable<ProductFrequency> Read();
+        void Read(Action<ProductFrequency> action);
         bool Write(ProductFrequency frequency);
     }
 }

@@ -33,9 +33,29 @@
     <Reference Include="Dapper">
       <HintPath>..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
     </Reference>
+    <Reference Include="MongoDB.Bson, Version=2.4.0.70, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Bson.2.4.0\lib\net45\MongoDB.Bson.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver, Version=2.4.0.70, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.2.4.0\lib\net45\MongoDB.Driver.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver.Core, Version=2.4.0.70, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.Core.2.4.0\lib\net45\MongoDB.Driver.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver.Legacy, Version=0.0.6196.31704, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MongoDB.Driver.Legacy\lib\MongoDB.Driver.Legacy.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,6 +71,7 @@
     <Compile Include="Configuration\NRecoConfigResolverFactory.cs" />
     <Compile Include="Configuration\RedisConfigResolver.cs" />
     <Compile Include="Configuration\SqlServerConfigResolver.cs" />
+    <Compile Include="Extension\StringExtension.cs" />
     <Compile Include="Objects\Configuration\MongoDbServerNodes.cs" />
     <Compile Include="Objects\Configuration\NRecoConfigUseage.cs" />
     <Compile Include="Enum\DBType.cs" />
@@ -76,9 +97,6 @@
     <Compile Include="Recommender\DataReaderResolver\MongDbDataReaderResolver.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Recommender\DataReaderResolver\RedisDataReaderResolver.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Recommender\DataReaderResolver\SqlServerDataReaderResolver.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -92,12 +110,18 @@
       <Project>{7a15cca6-e745-416c-b0ab-81df68ef9302}</Project>
       <Name>CQSS.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CQSS.Mongo.Client\CQSS.Mongo.Client.csproj">
+      <Project>{a9cef79e-1807-483d-89e0-036821c8eb94}</Project>
+      <Name>CQSS.Mongo.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NReco.Recommender\NReco.Recommender.csproj">
       <Project>{a5da1bf8-7601-45fc-a906-f61ac63d8ee7}</Project>
       <Name>NReco.Recommender</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

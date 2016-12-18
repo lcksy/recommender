@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace NReco.Recommender.Extension.Objects.RecommenderDataModel
 {
+    [BsonIgnoreExtraElements]
     public class ProductFrequency
     {
         public int SysNo { get; set; }
