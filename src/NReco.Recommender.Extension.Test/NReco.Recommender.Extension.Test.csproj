@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="RecoConfigTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestDataReaderResolverFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\CQSS.Common.Database.Dapper\CQSS.Common.Database.Dapper.csproj">

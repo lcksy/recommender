@@ -12,6 +12,7 @@ namespace NReco.Recommender.Extension.Configuration
     public class NRecoConfig : IConfigurationSectionHandler
     {
         #region prop
+        public DBType DBType { get; set; }
         public IEnumerable<ServerNode> ServerNodes { get; set; }
         #endregion
 
@@ -27,6 +28,8 @@ namespace NReco.Recommender.Extension.Configuration
             var node = section.ChildNodes.Item(0);
 
             var dbType = node.GetAttributeValue("name").ToEnumByName<DBType>();
+
+            this.DBType = dbType;
 
             this.ServerNodes = NRecoConfigResolverFactory.Create(dbType).ResoveServerConfig<ServerNode>(node, dbType);
 

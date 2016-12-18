@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NReco.CF.Taste.Model;
+using NReco.Recommender.Extension.Recommender.DataModelResolver;
 
 namespace NReco.Recommender.Extension.Recommender
 {

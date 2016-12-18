@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dapper">
+      <HintPath>..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -56,15 +59,23 @@
     <Compile Include="Objects\Configuration\RedisServerNodes.cs" />
     <Compile Include="Objects\Configuration\ServerNode.cs" />
     <Compile Include="Objects\Configuration\SqlServerNodes.cs" />
+    <Compile Include="Objects\RecommenderDataModel\ProductFrequency.cs" />
     <Compile Include="Objects\RecommenderDataModel\SqlServerDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Recommender\DataModelResolverBase.cs" />
-    <Compile Include="Recommender\DataReaderResolverBase.cs" />
-    <Compile Include="Recommender\IDataModelResolver.cs" />
-    <Compile Include="Recommender\IDataReaderResolver.cs" />
-    <Compile Include="Recommender\SqlServerDataReaderResolver.cs" />
+    <Compile Include="Recommender\DataModelResolver\DataModelResolverBase.cs" />
+    <Compile Include="Recommender\DataReaderResolver\DataReaderResolverBase.cs" />
+    <Compile Include="Recommender\DataModelResolver\IDataModelResolver.cs" />
+    <Compile Include="Recommender\DataReaderResolver\DataReaderResolverFactory.cs" />
+    <Compile Include="Recommender\DataReaderResolver\IDataReaderResolver.cs" />
+    <Compile Include="Recommender\DataReaderResolver\MongDbDataReaderResolver.cs" />
+    <Compile Include="Recommender\DataReaderResolver\RedisDataReaderResolver.cs" />
+    <Compile Include="Recommender\DataReaderResolver\SqlServerDataReaderResolver.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\CQSS.Common.Database.Dapper\CQSS.Common.Database.Dapper.csproj">
+      <Project>{41d0ae73-7a68-4f60-b309-923b837ac239}</Project>
+      <Name>CQSS.Common.Database.Dapper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\CQSS.Common\CQSS.Common.csproj">
       <Project>{7a15cca6-e745-416c-b0ab-81df68ef9302}</Project>
       <Name>CQSS.Common</Name>
