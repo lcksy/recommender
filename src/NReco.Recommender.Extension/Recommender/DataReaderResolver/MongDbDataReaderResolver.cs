@@ -15,17 +15,17 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             throw new NotImplementedException();
         }
 
-        protected override bool RecordExist(ProductFrequency frequency)
+        protected override bool DoExist(ProductFrequency frequency)
         {
             throw new NotImplementedException();
         }
 
-        protected override bool RecordInsert(ProductFrequency frequency)
+        protected override bool DoInsert(ProductFrequency frequency)
         {
             throw new NotImplementedException();
         }
 
-        protected override bool RecordUpdate(ProductFrequency frequency)
+        protected override bool DoUpdate(ProductFrequency frequency)
         {
             throw new NotImplementedException();
         }

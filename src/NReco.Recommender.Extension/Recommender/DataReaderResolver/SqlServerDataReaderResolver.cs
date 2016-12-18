@@ -40,7 +40,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             }
         }
 
-        protected override bool RecordExist(ProductFrequency frequency)
+        protected override bool DoExist(ProductFrequency frequency)
         {
             var sql = "SELECT SysNo From ProductFrequency WHERE CustomerSysNo = @CustomerSysNo AND ProductSysNo = @ProductSysNo";
 
@@ -52,7 +52,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             }
         }
 
-        protected override bool RecordInsert(ProductFrequency frequency)
+        protected override bool DoInsert(ProductFrequency frequency)
         {
             using (var connection = this.CreateConnection())
             {
@@ -72,7 +72,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             }
         }
 
-        protected override bool RecordUpdate(ProductFrequency frequency)
+        protected override bool DoUpdate(ProductFrequency frequency)
         {
             var sql = @"UPDATE ProductFrequency
                         SET BuyFrequency = BuyFrequency + @BuyFrequency

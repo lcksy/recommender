@@ -10,14 +10,14 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         public abstract IEnumerable<ProductFrequency> Read();
         public bool Write(ProductFrequency frequency)
         {
-            if (this.RecordExist(frequency))
-                return this.RecordUpdate(frequency);
+            if (this.DoExist(frequency))
+                return this.DoUpdate(frequency);
             else
-                return this.RecordInsert(frequency);
+                return this.DoInsert(frequency);
         }
-        protected abstract bool RecordExist(ProductFrequency frequency);
-        protected abstract bool RecordInsert(ProductFrequency frequency);
-        protected abstract bool RecordUpdate(ProductFrequency frequency);
+        protected abstract bool DoExist(ProductFrequency frequency);
+        protected abstract bool DoInsert(ProductFrequency frequency);
+        protected abstract bool DoUpdate(ProductFrequency frequency);
         protected NRecoConfig GetNrecoConfig()
         {
             return NRecoConfigResolver.Resolve<NRecoConfig>();   
