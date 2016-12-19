@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-using NReco.CF.Taste.Model;
 using NReco.Recommender.Extension.Objects.RecommenderDataModel;
 
 namespace NReco.Recommender.Extension.Recommender.DataReaderResolver

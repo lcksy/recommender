@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using CQSS.Common.Extension;
 using CQSS.Mongo.Client;
 using NReco.Recommender.Extension.Extension;
 using NReco.Recommender.Extension.Objects.RecommenderDataModel;
-using NReco.CF.Taste.Model;
-using MongoDB.Bson.Serialization;
 
 namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 {
