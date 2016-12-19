@@ -69,7 +69,6 @@
     <Compile Include="Configuration\NRecoConfigResolver.cs" />
     <Compile Include="Configuration\NRecoConfigResolverBase.cs" />
     <Compile Include="Configuration\NRecoConfigResolverFactory.cs" />
-    <Compile Include="Configuration\RedisConfigResolver.cs" />
     <Compile Include="Configuration\SqlServerConfigResolver.cs" />
     <Compile Include="Extension\StringExtension.cs" />
     <Compile Include="Objects\Configuration\MongoDbServerNodes.cs" />
