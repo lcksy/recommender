@@ -54,11 +54,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="MongoDbDataReaderResolverTest.cs" />
     <Compile Include="RecoConfigTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataReaderResolverFactoryTest.cs" />
-    <Compile Include="SqlServerDataReaderResolverTest.cs" />
+    <Compile Include="DataReaderResolverTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\CQSS.Common.Database.Dapper\CQSS.Common.Database.Dapper.csproj">

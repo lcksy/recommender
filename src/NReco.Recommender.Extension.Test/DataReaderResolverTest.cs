@@ -1,27 +1,27 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using CQSS.Common.Infrastructure.Engine;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NReco.Recommender.Extension.Objects.RecommenderDataModel;
+using NReco.Recommender.Extension.Recommender.DataReaderResolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NReco.Recommender.Extension.Recommender.DataReaderResolver;
-using CQSS.Common.Infrastructure.Engine;
-using NReco.Recommender.Extension.Objects.RecommenderDataModel;
 
 namespace NReco.Recommender.Extension.Test
 {
     [TestClass]
-    public class MongoDbDataReaderResolverTest
+    public class DataReaderResolverTest
     {
-        public MongoDbDataReaderResolverTest()
+        public DataReaderResolverTest()
         {
             EngineContext.Initialize(true);
         }
 
         [TestMethod]
-        public void TestResolveNRecoConfig()
+        public void TestSqlServerDataReaderResolver_Read()
         {
-            Action<ProductFrequency> action = p => 
+            Action<ProductFrequency> action = p =>
             {
                 Console.WriteLine(p.SysNo);
             };
