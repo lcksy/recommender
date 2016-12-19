@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-using NReco.Recommender.Extension.Configuration;
-using NReco.Recommender.Extension.Objects.RecommenderDataModel;
-using CQSS.Mongo.Client;
 using CQSS.Common.Extension;
+using CQSS.Mongo.Client;
 using NReco.Recommender.Extension.Extension;
+using NReco.Recommender.Extension.Objects.RecommenderDataModel;
 
 namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 {

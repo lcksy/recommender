@@ -11,6 +11,6 @@ namespace NReco.Recommender.Extension.Objects.RecommenderDataModel
         public decimal BuyFrequency { get; set; }
         public decimal ClickFrequency { get; set; }
         public decimal CommentFrequency { get; set; }
-        public int TimeSpan { get; set; }
+        public double TimeSpan { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -78,10 +77,10 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         protected override bool DoUpdate(ProductFrequency frequency)
         {
             var sql = @"UPDATE ProductFrequency
-                        SET BuyFrequency = BuyFrequency + @BuyFrequency
-                            ClickFrequency = ClickFrequency + @ClickFrequency
-                            CommentFrequency = CommentFrequency + @CommentFrequency
-                            TimeSpan = DATEDIFF(SECOND,GETDATE(),'1970-01-01')
+                        SET BuyFrequency = BuyFrequency + @BuyFrequency,
+                            ClickFrequency = ClickFrequency + @ClickFrequency,
+                            CommentFrequency = CommentFrequency + @CommentFrequency,
+                            TimeSpan = @TimeSpan
                         WHERE CustomerSysNo = @CustomerSysNo
                             AND ProductSysNo = @ProductSysNo";
 
@@ -91,15 +90,15 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
                 ProductSysNo = frequency.ProductSysNo,
                 BuyFrequency = frequency.BuyFrequency, 
                 ClickFrequency = frequency.ClickFrequency, 
-                CommentFrequency = frequency.CommentFrequency, 
-                TimeSpan = frequency.TimeSpan 
+                CommentFrequency = frequency.CommentFrequency,
+                TimeSpan = frequency.TimeSpan
             };
 
             using (var connection = this.CreateConnection())
             {
                 var res = connection.ExecuteScalar<int>(sql, param);
 
-                return res > 0;
+                return res >= 0;
             }
         }
     }
