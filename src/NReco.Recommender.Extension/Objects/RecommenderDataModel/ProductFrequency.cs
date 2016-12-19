@@ -6,11 +6,11 @@ namespace NReco.Recommender.Extension.Objects.RecommenderDataModel
     public class ProductFrequency
     {
         public int SysNo { get; set; }
-        public int CustomerSysNo { get; set; }
-        public int ProductSysNo { get; set; }
-        public decimal BuyFrequency { get; set; }
-        public decimal ClickFrequency { get; set; }
-        public decimal CommentFrequency { get; set; }
-        public double TimeSpan { get; set; }
+        public long CustomerSysNo { get; set; }
+        public long ProductSysNo { get; set; }
+        public float BuyFrequency { get; set; }
+        public float ClickFrequency { get; set; }
+        public float CommentFrequency { get; set; }
+        public long TimeStamp { get; set; }
     }
 }

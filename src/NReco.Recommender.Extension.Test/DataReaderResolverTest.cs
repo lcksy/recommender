@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using CQSS.Common.Infrastructure.Engine;
@@ -20,14 +18,7 @@ namespace NReco.Recommender.Extension.Test
         [TestMethod]
         public void TestDataReaderResolver_Read()
         {
-            var frequency = new List<ProductFrequency>();
-
-            Action<ProductFrequency> action = p =>
-            {
-                frequency.Add(p);
-            };
-
-            DataReaderResolverFactory.Create().Read(action);
+            var frequency = DataReaderResolverFactory.Create().Read();
 
             var actualLength = frequency.Count(f => f.SysNo > 0);
 
@@ -42,10 +33,10 @@ namespace NReco.Recommender.Extension.Test
                 SysNo = 4,
                 ProductSysNo = 46668,
                 CustomerSysNo = 1099559,
-                BuyFrequency = 0.19530000000000M,
-                ClickFrequency = 0.25000000000000M,
-                CommentFrequency = 0.53640000000000M,
-                TimeSpan = 1395859665
+                BuyFrequency = 0.1953F,
+                ClickFrequency = 0.25F,
+                CommentFrequency = 0.5364F,
+                TimeStamp = 1395859665
             };
 
             var actual = DataReaderResolverFactory.Create().Write(frequency);
@@ -61,10 +52,10 @@ namespace NReco.Recommender.Extension.Test
                 SysNo = 4,
                 ProductSysNo = 46668,
                 CustomerSysNo = 1099559,
-                BuyFrequency = 0.19531230000000M,
-                ClickFrequency = 0.25123000000000M,
-                CommentFrequency = 0.53641230000000M,
-                TimeSpan = 1395859789
+                BuyFrequency = 0.1953123F,
+                ClickFrequency = 0.25123F,
+                CommentFrequency = 0.5364123F,
+                TimeStamp = 1395859789
             };
 
             var actual = DataReaderResolverFactory.Create().Write(frequency);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using NReco.Recommender.Extension.Configuration;
 using NReco.Recommender.Extension.Objects.RecommenderDataModel;
@@ -7,10 +8,9 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 {
     public abstract class DataReaderResolverBase : IDataReaderResolver
     {
-        public virtual void Read(Action<ProductFrequency> action)
-        {
-
-        }
+        public abstract IEnumerable<ProductFrequency> Read();
+        public abstract IEnumerable<ProductFrequency> ReadByCustomerSysNo(int customerSysNo);
+        public abstract IEnumerable<ProductFrequency> ReadGreaterThanTimeStamp(long timeStamp);
         public bool Write(ProductFrequency frequency)
         {
             try

@@ -83,7 +83,9 @@
     <Compile Include="Objects\RecommenderDataModel\SqlServerDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recommender\DataModelResolver\DataModelResolverBase.cs" />
-    <Compile Include="Recommender\DataModelResolver\IDataModelResolver.cs" />
+    <Compile Include="Recommender\DataModelResolver\DataModelResolverFactory.cs" />
+    <Compile Include="Recommender\DataModelResolver\MongoDbDataModelResolver.cs" />
+    <Compile Include="Recommender\DataModelResolver\SqlServerDataModelResolver.cs" />
     <Compile Include="Recommender\DataReaderResolver\DataReaderResolverBase.cs">
       <SubType>Code</SubType>
     </Compile>

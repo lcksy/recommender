@@ -168,20 +168,13 @@ namespace CQSS.Mongo.Client
 
         public override IAsyncCursor<TDocument> FindSync<TDocument>(string collectionName, Expression<Func<TDocument, bool>> filter, int batchSize = 100)
         {
-            try
-            {
-                var collection = base.GetCollection<TDocument>(collectionName);
+            var collection = base.GetCollection<TDocument>(collectionName);
 
-                var options = new FindOptions<TDocument>() { BatchSize = batchSize };
+            var options = new FindOptions<TDocument>() { BatchSize = batchSize };
 
-                var cursor = collection.FindSync<TDocument>(filter, options);
+            var cursor = collection.FindSync<TDocument>(filter, options);
 
-                return cursor;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return cursor;
         }
     }
 }

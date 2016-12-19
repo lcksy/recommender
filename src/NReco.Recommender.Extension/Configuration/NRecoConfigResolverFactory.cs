@@ -13,8 +13,6 @@ namespace NReco.Recommender.Extension.Configuration
             {
                 case DBType.SqlServer:
                     return EngineContext.Current.Resolve<INRecoConfigResolver>("sqlResolver");//new SqlServerConfigResolver();
-                case DBType.RedisServer:
-                    return EngineContext.Current.Resolve<INRecoConfigResolver>("redisResolver");//new RedisConfigResolver();
                 case DBType.MongoServer:
                     return EngineContext.Current.Resolve<INRecoConfigResolver>("mongoResolver");//new MongoDbConfigResolver();
                 default:

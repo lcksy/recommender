@@ -5,7 +5,6 @@ using CQSS.Common.Infrastructure.Engine;
 using NReco.Recommender.Extension.Configuration;
 using NReco.Recommender.Extension.Objects.RecommenderDataModel;
 using NReco.Recommender.Extension.Recommender.DataReaderResolver;
-using System;
 
 namespace NReco.Recommender.Extension.Test
 {
@@ -30,12 +29,7 @@ namespace NReco.Recommender.Extension.Test
         {
             var reader = EngineContext.Current.Resolve<IDataReaderResolver>("sqlDataReader");
 
-            Action<ProductFrequency> action = p => 
-            {
-                Console.WriteLine(p.SysNo);
-            };
-
-            reader.Read(action);
+            var frequencies = reader.Read();
         }
 
         [TestMethod]
@@ -48,10 +42,10 @@ namespace NReco.Recommender.Extension.Test
                 SysNo = 1,
                 CustomerSysNo = 1,
                 ProductSysNo = 1,
-                BuyFrequency = 1.2M,
-                ClickFrequency = 2.1M,
-                CommentFrequency = 3.2M,
-                TimeSpan = 1234567
+                BuyFrequency = 1.2F,
+                ClickFrequency = 2.1F,
+                CommentFrequency = 3.2F,
+                TimeStamp = 1234567
             };
 
             var res = reader.Write(frequency);
@@ -69,10 +63,10 @@ namespace NReco.Recommender.Extension.Test
                 SysNo = 1,
                 CustomerSysNo = 2,
                 ProductSysNo = 2,
-                BuyFrequency = 1.2M,
-                ClickFrequency = 2.1M,
-                CommentFrequency = 3.2M,
-                TimeSpan = 1234567
+                BuyFrequency = 1.2F,
+                ClickFrequency = 2.1F,
+                CommentFrequency = 3.2F,
+                TimeStamp = 1234567
             };
 
             var res = reader.Write(frequency);

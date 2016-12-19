@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -25,20 +26,33 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             return connection;
         }
         
-        public override void Read(Action<ProductFrequency> action)
+        public override IEnumerable<ProductFrequency> Read()
         {
             var sql = @"SELECT * FROM ProductFrequency";
 
             using (var connection = this.CreateConnection())
-            using (var reader = connection.ExecuteReader(sql))
             {
-                while (reader.Read())
-                {
-                    var frequency = reader.Map<ProductFrequency>();
+                return connection.Query<ProductFrequency>(sql);
+            }
+        }
 
-                    if(action != null)
-                        action.Invoke(frequency);
-                }
+        public override IEnumerable<ProductFrequency> ReadByCustomerSysNo(int customerSysNo)
+        {
+            var sql = @"SELECT * FROM ProductFrequency WHERE CustomerSysNo = @CustomerSysNo";
+
+            using (var connection = this.CreateConnection())
+            {
+                return connection.Query<ProductFrequency>(sql, new { CustomerSysNo = customerSysNo });
+            }
+        }
+
+        public override IEnumerable<ProductFrequency> ReadGreaterThanTimeStamp(long timestamp)
+        {
+            var sql = @"SELECT * FROM ProductFrequency WHERE TimeStamp >= @TimeStamp";
+
+            using (var connection = this.CreateConnection())
+            {
+                return connection.Query<ProductFrequency>(sql, new { TimeStamp = timestamp });
             }
         }
 
@@ -64,8 +78,8 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
                     ProductSysNo = frequency.ProductSysNo, 
                     BuyFrequency = frequency.BuyFrequency, 
                     ClickFrequency = frequency.ClickFrequency, 
-                    CommentFrequency = frequency.CommentFrequency, 
-                    TimeSpan = frequency.TimeSpan 
+                    CommentFrequency = frequency.CommentFrequency,
+                    TimeStamp = frequency.TimeStamp 
                 };
 
                 var res = connection.Insert(data, "ProductFrequency");
@@ -80,7 +94,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
                         SET BuyFrequency = BuyFrequency + @BuyFrequency,
                             ClickFrequency = ClickFrequency + @ClickFrequency,
                             CommentFrequency = CommentFrequency + @CommentFrequency,
-                            TimeSpan = @TimeSpan
+                            TimeStamp = @TimeStamp
                         WHERE CustomerSysNo = @CustomerSysNo
                             AND ProductSysNo = @ProductSysNo";
 
@@ -91,7 +105,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
                 BuyFrequency = frequency.BuyFrequency, 
                 ClickFrequency = frequency.ClickFrequency, 
                 CommentFrequency = frequency.CommentFrequency,
-                TimeSpan = frequency.TimeSpan
+                TimeStamp = frequency.TimeStamp
             };
 
             using (var connection = this.CreateConnection())
@@ -115,7 +129,10 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             {
                 var value = reader[prop.Name];
 
-                prop.SetValue(instance, value);
+                if(prop.PropertyType == typeof(float))
+                    prop.SetValue(instance, float.Parse(value.ToString()));
+                else
+                    prop.SetValue(instance, value);
             }
 
             return instance;

@@ -16,7 +16,6 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
                     return new SqlServerDataReaderResolver();
                 case DBType.MongoServer :
                     return new MongDbDataReaderResolver();
-                case DBType.RedisServer :
                 default :
                     throw new NotSupportedException("not supported:" + config.DBType.Name());
             }

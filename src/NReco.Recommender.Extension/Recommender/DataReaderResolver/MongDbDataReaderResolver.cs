@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using CQSS.Common.Extension;
 using CQSS.Mongo.Client;
 using NReco.Recommender.Extension.Extension;
 using NReco.Recommender.Extension.Objects.RecommenderDataModel;
+using NReco.CF.Taste.Model;
+using MongoDB.Bson.Serialization;
 
 namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 {
@@ -35,20 +38,36 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 
             var database = endpoint.ElementAt(2).Default(t => "recommender");
 
-            this.Client = new CQSSMongoClient(endpoint.ElementAt(0), 27017, "cqss");
+            this.Client = new CQSSMongoClient(server, port, database);
         }
 
-        public override void Read(Action<ProductFrequency> action)
+        public override IEnumerable<ProductFrequency> Read()
         {
             var cursor = this.Client.FindSync<ProductFrequency>("ProductFrequency", p => p.CustomerSysNo >= -1);
-
             while (cursor.MoveNextAsync().Result)
             {
                 foreach (var product in cursor.Current)
-                {
-                    if (action != null)
-                        action.Invoke(product);
-                }
+                    yield return product;
+            }
+        }
+
+        public override IEnumerable<ProductFrequency> ReadByCustomerSysNo(int customerSysNo)
+        {
+            var cursor = this.Client.FindSync<ProductFrequency>("ProductFrequency", p => p.CustomerSysNo == customerSysNo);
+            while (cursor.MoveNextAsync().Result)
+            {
+                foreach (var product in cursor.Current)
+                    yield return product;
+            }
+        }
+
+        public override IEnumerable<ProductFrequency> ReadGreaterThanTimeStamp(long timestamp)
+        {
+            var cursor = this.Client.FindSync<ProductFrequency>("ProductFrequency", p => p.TimeStamp == timestamp);
+            while (cursor.MoveNextAsync().Result)
+            {
+                foreach (var product in cursor.Current)
+                    yield return product;
             }
         }
 
