@@ -1,1 +1,0 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="NReco.Recommender.Service.RecommenderService" CodeBehind="RecommenderService.svc.cs" %>
