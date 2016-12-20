@@ -15,11 +15,13 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
         #region private fields
         private static DateTime unixTimestampEpochStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
         private IDataModel DataModel;
-        private bool uniqueUserItemCheck;
+        private bool uniqueUserItemCheck = true;
+        private IEnumerable<ProductFrequency> _frequencies = new List<ProductFrequency>();
+
         #endregion
 
         #region process frequency model
-        public IDataModel BuilderModel()
+        public IDataModel BuilderModel() 
         {
             var timestamps = new FastByIDMap<FastByIDMap<DateTime?>>();
             var data = new FastByIDMap<IList<IPreference>>();
@@ -32,7 +34,7 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
 
             this.DataModel = this.DoGenericDataModel(data, timestamps);
 
-            return DoGenericDataModel(data, timestamps);
+            return this.DataModel;
         }
 
         public IDataModel BuilderModel(int customerSysNo)
@@ -78,7 +80,7 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
         {
             if (freqency == null) return;
 
-            var maybePrefs = data.Get(freqency.SysNo);
+            var maybePrefs = data.Get(freqency.CustomerSysNo);
             var prefs = ((IEnumerable<IPreference>)maybePrefs);
             var preferenceValue = this.CalculateFrequency(freqency);
 
@@ -113,8 +115,8 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
 
         private float CalculateFrequency(ProductFrequency freqency)
         {
-            var value = this.DoCalculateFrequency(freqency.BuyFrequency) * 0.45F
-                      + this.DoCalculateFrequency(freqency.CommentFrequency) * 0.45F
+            var value = this.DoCalculateFrequency(freqency.BuyFrequency) * 0.495F
+                      + this.DoCalculateFrequency(freqency.CommentFrequency) * 0.495F
                       + this.DoCalculateFrequency(freqency.ClickFrequency) * 0.01F;
 
             return value;

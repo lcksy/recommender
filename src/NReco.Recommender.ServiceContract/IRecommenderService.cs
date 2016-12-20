@@ -9,7 +9,7 @@ namespace NReco.Recommender.ServiceContract
     public interface IRecommenderService
     {
         [OperationContract]
-        List<RecommenderResponse> Recommender(int customerSysNo, int[] productSysNos);
+        List<RecommenderResponse> Recommender(long customerSysNo, int[] productSysNos);
 
         [OperationContract]
         bool RefreshByCustomerSysNo(int customerSysNo);
