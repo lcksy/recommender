@@ -45,8 +45,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.Recommender.ServiceCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.Recommender.DataContract", "NReco.Recommender.DataContract\NReco.Recommender.DataContract.csproj", "{2CE5D5B4-A796-469A-B161-6F71B5553CD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReco.Recommender.Service", "NReco.Recommender.Service\NReco.Recommender.Service.csproj", "{54B47316-907A-402E-8862-BCABD8036BCC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,10 +111,6 @@ Global
 		{2CE5D5B4-A796-469A-B161-6F71B5553CD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CE5D5B4-A796-469A-B161-6F71B5553CD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CE5D5B4-A796-469A-B161-6F71B5553CD1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54B47316-907A-402E-8862-BCABD8036BCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54B47316-907A-402E-8862-BCABD8036BCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54B47316-907A-402E-8862-BCABD8036BCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54B47316-907A-402E-8862-BCABD8036BCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,6 +131,5 @@ Global
 		{A9CEF79E-1807-483D-89E0-036821C8EB94} = {C26EC733-039B-4295-8F03-61430DC7D535}
 		{77687B96-F26D-4F77-A5A5-A4CF9B8EDB8D} = {B851D104-80B4-4D42-8F3C-8CF7A4832AE2}
 		{2CE5D5B4-A796-469A-B161-6F71B5553CD1} = {B851D104-80B4-4D42-8F3C-8CF7A4832AE2}
-		{54B47316-907A-402E-8862-BCABD8036BCC} = {B851D104-80B4-4D42-8F3C-8CF7A4832AE2}
 	EndGlobalSection
 EndGlobal
