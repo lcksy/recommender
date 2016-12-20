@@ -12,9 +12,9 @@ namespace NReco.Recommender.Extension.Configuration
             switch (type)
             {
                 case DBType.SqlServer:
-                    return EngineContext.Current.Resolve<INRecoConfigResolver>("sqlResolver");//new SqlServerConfigResolver();
+                    return EngineContext.Current.Resolve<INRecoConfigResolver>("sqlConfigResolver");
                 case DBType.MongoServer:
-                    return EngineContext.Current.Resolve<INRecoConfigResolver>("mongoResolver");//new MongoDbConfigResolver();
+                    return EngineContext.Current.Resolve<INRecoConfigResolver>("mongoConfigResolver");
                 default:
                     throw new NotSupportedException("not supported db type" + type.ToString());
             }

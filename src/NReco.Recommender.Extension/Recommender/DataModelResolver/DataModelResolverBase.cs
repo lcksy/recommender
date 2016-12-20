@@ -16,12 +16,10 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
         private static DateTime unixTimestampEpochStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
         private IDataModel DataModel;
         private bool uniqueUserItemCheck = true;
-        private IEnumerable<ProductFrequency> _frequencies = new List<ProductFrequency>();
-
         #endregion
 
         #region process frequency model
-        public IDataModel BuilderModel() 
+        public IDataModel BuilderModel()
         {
             var timestamps = new FastByIDMap<FastByIDMap<DateTime?>>();
             var data = new FastByIDMap<IList<IPreference>>();
@@ -39,7 +37,7 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
 
         public IDataModel BuilderModel(int customerSysNo)
         {
-            FastByIDMap<IPreferenceArray> rawData = ((GenericDataModel)this.DataModel).GetRawUserData();
+            var rawData = ((GenericDataModel)this.DataModel).GetRawUserData();
 
             var timestamps = new FastByIDMap<FastByIDMap<DateTime?>>();
 

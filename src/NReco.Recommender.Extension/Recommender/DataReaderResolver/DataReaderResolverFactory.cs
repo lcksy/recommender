@@ -1,5 +1,7 @@
 ﻿using System;
 
+using CQSS.Common.Extension;
+using CQSS.Common.Infrastructure.Engine;
 using NReco.Recommender.Extension.Configuration;
 
 namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
@@ -13,9 +15,9 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             switch (config.DBType)
             { 
                 case DBType.SqlServer :
-                    return new SqlServerDataReaderResolver();
+                    return EngineContext.Current.Resolve<IDataReaderResolver>("sqlDataReader");
                 case DBType.MongoServer :
-                    return new MongDbDataReaderResolver();
+                    return EngineContext.Current.Resolve<IDataReaderResolver>("mongoDataReader");
                 default :
                     throw new NotSupportedException("not supported:" + config.DBType.Name());
             }

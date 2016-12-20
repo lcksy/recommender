@@ -10,6 +10,7 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
         public static DataModelResolverBase Create()
         {
             var config = NRecoConfigResolver.Resolve<NRecoConfig>();
+
             switch (config.DBType)
             {
                 case DBType.SqlServer:

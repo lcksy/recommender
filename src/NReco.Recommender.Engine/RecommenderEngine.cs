@@ -22,13 +22,15 @@ namespace NReco.Recommender.Engine
         {
             base.RegisterCommonComponents(config);
 
-            var sqlResolver = new SqlServerConfigResolver();
-            var mongoResolver = new MongoDbConfigResolver();
+            var sqlConfigResolver = new SqlServerConfigResolver();
+            var mongoConfigResolver = new MongoDbConfigResolver();
             var sqlDataReader = new SqlServerDataReaderResolver();
+            var mongoDataReader = new MongDbDataReaderResolver();
 
-            base.Container.RegisterInstance<INRecoConfigResolver, SqlServerConfigResolver>(sqlResolver, "sqlResolver");
-            base.Container.RegisterInstance<INRecoConfigResolver, MongoDbConfigResolver>(mongoResolver, "mongoResolver");
+            base.Container.RegisterInstance<INRecoConfigResolver, SqlServerConfigResolver>(sqlConfigResolver, "sqlConfigResolver");
+            base.Container.RegisterInstance<INRecoConfigResolver, MongoDbConfigResolver>(mongoConfigResolver, "mongoConfigResolver");
             base.Container.RegisterInstance<IDataReaderResolver, SqlServerDataReaderResolver>(sqlDataReader, "sqlDataReader");
+            base.Container.RegisterInstance<IDataReaderResolver, MongDbDataReaderResolver>(mongoDataReader, "mongoDataReader");
         }
     }
 }
