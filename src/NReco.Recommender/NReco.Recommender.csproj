@@ -92,7 +92,6 @@
     <Compile Include="taste\impl\model\file\FileDataModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="taste\impl\model\SqlServer\SqlServerDataModel.cs" />
     <Compile Include="taste\impl\recommender\svd\ALSWRFactorizer.cs" />
     <Compile Include="taste\impl\recommender\svd\FilePersistenceStrategy.cs" />
     <Compile Include="taste\eval\IRStatistics.cs">
