@@ -29,7 +29,7 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
                 var frequencies = DataReaderResolverFactory.Create().Read();
                 foreach (var freq in frequencies)
                 {
-                    this.ProccessFrequency(freq, data, timestamps);
+                    this.ProccessFrequency(freq, data, timestamps, false);
                 }
 
                 this.dataModel = this.DoGenericDataModel(data, timestamps); 
@@ -38,7 +38,7 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
             return this.dataModel;
         }
 
-        public IDataModel BuilderModel(int customerSysNo)
+        public IDataModel BuilderModelFromCustomerSysNo(long customerSysNo)
         {
             var rawData = ((GenericDataModel)this.dataModel).GetRawUserData();
 
@@ -48,15 +48,15 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
 
             foreach (var freq in frequencies)
             {
-                this.ProccessFrequency(freq, rawData, timestamps);
+                this.ProccessFrequency(freq, rawData, timestamps, true);
             }
 
             return new GenericDataModel(rawData, timestamps);
         }
 
-        public IDataModel BuilderModel(long timeStamp)
+        public IDataModel BuilderModelFromTimeStamp(long timeStamp)
         {
-            FastByIDMap<IPreferenceArray> rawData = ((GenericDataModel)this.dataModel).GetRawUserData();
+            var rawData = ((GenericDataModel)this.dataModel).GetRawUserData();
 
             var timestamps = new FastByIDMap<FastByIDMap<DateTime?>>();
 
@@ -64,7 +64,7 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
 
             foreach (var freq in frequencies)
             {
-                this.ProccessFrequency(freq, rawData, timestamps);
+                this.ProccessFrequency(freq, rawData, timestamps, true);
             }
 
             return new GenericDataModel(rawData, timestamps);
@@ -77,41 +77,87 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
 
         private void ProccessFrequency<T>(ProductFrequency freqency,
                                        FastByIDMap<T> data,
-                                       FastByIDMap<FastByIDMap<DateTime?>> timestamps)
+                                       FastByIDMap<FastByIDMap<DateTime?>> timestamps,
+                                       bool fromPriorData = false)
         {
             if (freqency == null) return;
 
             var maybePrefs = data.Get(freqency.CustomerSysNo);
-            var prefs = ((IEnumerable<IPreference>)maybePrefs);
-            var preferenceValue = this.CalculateFrequency(freqency);
 
-            bool exists = false;
-            if (uniqueUserItemCheck && prefs != null)
+            if (fromPriorData)
             {
-                foreach (IPreference pref in prefs)
+                IPreferenceArray prefs = (IPreferenceArray)maybePrefs;
+                float preferenceValue = this.CalculateFrequency(freqency);
+
+                bool exists = false;
+                if (uniqueUserItemCheck && prefs != null)
                 {
-                    if (pref.GetItemID() == freqency.ProductSysNo)
+                    for (int i = 0; i < prefs.Length(); i++)
                     {
-                        exists = true;
-                        pref.SetValue(preferenceValue);
-                        break;
+                        if (prefs.GetItemID(i) == freqency.ProductSysNo)
+                        {
+                            exists = true;
+                            prefs.SetValue(i, preferenceValue);
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (!exists)
-            {
-                if (prefs == null)
+                if (!exists)
                 {
-                    prefs = new List<IPreference>(5);
+                    if (prefs == null)
+                    {
+                        prefs = new GenericUserPreferenceArray(1);
+                    }
+                    else
+                    {
+                        IPreferenceArray newPrefs = new GenericUserPreferenceArray(prefs.Length() + 1);
+                        for (int i = 0, j = 1; i < prefs.Length(); i++, j++)
+                        {
+                            newPrefs.Set(j, prefs.Get(i));
+                        }
+                        prefs = newPrefs;
+                    }
+                    prefs.SetUserID(0, freqency.CustomerSysNo);
+                    prefs.SetItemID(0, freqency.ProductSysNo);
+                    prefs.SetValue(0, preferenceValue);
                     data.Put(freqency.CustomerSysNo, (T)prefs);
                 }
 
-                if (prefs is IList<IPreference>)
-                    ((IList<IPreference>)prefs).Add(new GenericPreference(freqency.CustomerSysNo, freqency.ProductSysNo, preferenceValue));
+                AddTimestamp(freqency.CustomerSysNo, freqency.ProductSysNo, freqency.TimeStamp, timestamps);
             }
+            else
+            {
+                var prefs = ((IEnumerable<IPreference>)maybePrefs);
+                var preferenceValue = this.CalculateFrequency(freqency);
+                bool exists = false;
+                if (uniqueUserItemCheck && prefs != null)
+                {
+                    foreach (IPreference pref in prefs)
+                    {
+                        if (pref.GetItemID() == freqency.ProductSysNo)
+                        {
+                            exists = true;
+                            pref.SetValue(preferenceValue);
+                            break;
+                        }
+                    }
+                }
 
-            AddTimestamp(freqency.CustomerSysNo, freqency.ProductSysNo, freqency.TimeStamp, timestamps);
+                if (!exists)
+                {
+                    if (prefs == null)
+                    {
+                        prefs = new List<IPreference>(5);
+                        data.Put(freqency.CustomerSysNo, (T)prefs);
+                    }
+
+                    if (prefs is IList<IPreference>)
+                        ((IList<IPreference>)prefs).Add(new GenericPreference(freqency.CustomerSysNo, freqency.ProductSysNo, preferenceValue));
+                }
+
+                AddTimestamp(freqency.CustomerSysNo, freqency.ProductSysNo, freqency.TimeStamp, timestamps);
+            }
         }
 
         private float CalculateFrequency(ProductFrequency freqency)

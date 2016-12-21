@@ -15,9 +15,9 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             switch (config.DBType)
             { 
                 case DBType.SqlServer :
-                    return EngineContext.Current.Resolve<IDataReaderResolver>("sqlDataReader");
+                    return EngineContext.Current.Resolve<IDataReaderResolver>("sqlDataReaderResolver");
                 case DBType.MongoServer :
-                    return EngineContext.Current.Resolve<IDataReaderResolver>("mongoDataReader");
+                    return EngineContext.Current.Resolve<IDataReaderResolver>("mongoDataReaderResolver");
                 default :
                     throw new NotSupportedException("not supported:" + config.DBType.Name());
             }

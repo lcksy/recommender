@@ -11,7 +11,7 @@ namespace NReco.Recommender.Service
         {
             EngineContext.Initialize(true);
 
-            var dataModel = DataModelResolverFactory.Create().BuilderModel();
+            DataModelResolverFactory.Create().BuilderModel();
         }
     }
 }

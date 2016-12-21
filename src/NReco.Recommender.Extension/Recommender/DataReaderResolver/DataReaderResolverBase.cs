@@ -9,7 +9,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
     public abstract class DataReaderResolverBase : IDataReaderResolver
     {
         public abstract IEnumerable<ProductFrequency> Read();
-        public abstract IEnumerable<ProductFrequency> ReadByCustomerSysNo(int customerSysNo);
+        public abstract IEnumerable<ProductFrequency> ReadByCustomerSysNo(long customerSysNo);
         public abstract IEnumerable<ProductFrequency> ReadGreaterThanTimeStamp(long timeStamp);
         public bool Write(ProductFrequency frequency)
         {

@@ -4,11 +4,6 @@ using CQSS.Common.Infrastructure.ObjectContainer;
 using NReco.Recommender.Extension.Configuration;
 using NReco.Recommender.Extension.Recommender.DataModelResolver;
 using NReco.Recommender.Extension.Recommender.DataReaderResolver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NReco.Recommender.Engine
 {
@@ -32,8 +27,8 @@ namespace NReco.Recommender.Engine
 
             base.Container.RegisterInstance<INRecoConfigResolver, SqlServerConfigResolver>(sqlConfigResolver, "sqlConfigResolver");
             base.Container.RegisterInstance<INRecoConfigResolver, MongoDbConfigResolver>(mongoConfigResolver, "mongoConfigResolver");
-            base.Container.RegisterInstance<IDataReaderResolver, SqlServerDataReaderResolver>(sqlDataReader, "sqlDataReader");
-            base.Container.RegisterInstance<IDataReaderResolver, MongDbDataReaderResolver>(mongoDataReader, "mongoDataReader");
+            base.Container.RegisterInstance<IDataReaderResolver, SqlServerDataReaderResolver>(sqlDataReader, "sqlDataReaderResolver");
+            base.Container.RegisterInstance<IDataReaderResolver, MongDbDataReaderResolver>(mongoDataReader, "mongoDataReaderResolver");
             base.Container.RegisterInstance<DataModelResolverBase, SqlServerDataModelResolver>(sqlDataModelResolver, "sqlDataModelResolver");
             base.Container.RegisterInstance<DataModelResolverBase, MongoDbDataModelResolver>(mongoDataModelResolver, "mongoDataModelResolver");
         }

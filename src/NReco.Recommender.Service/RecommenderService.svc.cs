@@ -53,7 +53,7 @@ namespace NReco.Recommender.Service
         {
             try
             {
-                DataModelResolverFactory.Create().BuilderModel(customerSysNo);
+                DataModelResolverFactory.Create().BuilderModelFromCustomerSysNo(customerSysNo);
 
                 return true;
             }
@@ -67,7 +67,7 @@ namespace NReco.Recommender.Service
         {
             try
             {
-                DataModelResolverFactory.Create().BuilderModel(timeStamp);
+                DataModelResolverFactory.Create().BuilderModelFromTimeStamp(timeStamp);
 
                 return true;
             }

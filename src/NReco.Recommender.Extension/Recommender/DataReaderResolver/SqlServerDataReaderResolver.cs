@@ -36,7 +36,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
             }
         }
 
-        public override IEnumerable<ProductFrequency> ReadByCustomerSysNo(int customerSysNo)
+        public override IEnumerable<ProductFrequency> ReadByCustomerSysNo(long customerSysNo)
         {
             var sql = @"SELECT * FROM ProductFrequency WHERE CustomerSysNo = @CustomerSysNo";
 
