@@ -12,7 +12,7 @@ namespace NReco.Recommender.ServiceContract
         List<RecommenderResponse> Recommender(long customerSysNo, int[] productSysNos);
 
         [OperationContract]
-        bool RefreshByCustomerSysNo(int customerSysNo);
+        bool RefreshByCustomerSysNo(long customerSysNo);
 
         [OperationContract]
         bool RefreshByTimeStamp(long timeStamp);

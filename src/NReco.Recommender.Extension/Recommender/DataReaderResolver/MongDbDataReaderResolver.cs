@@ -14,32 +14,30 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         public CQSSMongoClient Client { get; set; }
         #endregion
 
-        #region actor
-        public MongDbDataReaderResolver()
-        {
-            this.CreateConnection();
-        }
-        #endregion
-
         private void CreateConnection()
         {
-            var config = base.GetNrecoConfig();
+            if (this.Client == null)
+            {
+                var config = base.GetNrecoConfig();
 
-            var connectionString = config.ServerNodes.First().ConnectionString;
+                var connectionString = config.ServerNodes.First().ConnectionString;
 
-            var endpoint = connectionString.Split(true, ':');
+                var endpoint = connectionString.Split(true, ':');
 
-            var server = endpoint.ElementAt(0).Default(s => "localhost");
+                var server = endpoint.ElementAt(0).Default(s => "localhost");
 
-            var port = endpoint.ElementAt(1).ToInt().Default(p => 27017);
+                var port = endpoint.ElementAt(1).ToInt().Default(p => 27017);
 
-            var database = endpoint.ElementAt(2).Default(t => "recommender");
+                var database = endpoint.ElementAt(2).Default(t => "recommender");
 
-            this.Client = new CQSSMongoClient(server, port, database);
+                this.Client = new CQSSMongoClient(server, port, database); 
+            }
         }
 
         public override IEnumerable<ProductFrequency> Read()
         {
+            this.CreateConnection();
+
             var cursor = this.Client.FindSync<ProductFrequency>("ProductFrequency", p => p.CustomerSysNo >= -1);
             while (cursor.MoveNextAsync().Result)
             {
@@ -50,6 +48,8 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 
         public override IEnumerable<ProductFrequency> ReadByCustomerSysNo(int customerSysNo)
         {
+            this.CreateConnection();
+
             var cursor = this.Client.FindSync<ProductFrequency>("ProductFrequency", p => p.CustomerSysNo == customerSysNo);
             while (cursor.MoveNextAsync().Result)
             {
@@ -60,6 +60,8 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 
         public override IEnumerable<ProductFrequency> ReadGreaterThanTimeStamp(long timestamp)
         {
+            this.CreateConnection();
+
             var cursor = this.Client.FindSync<ProductFrequency>("ProductFrequency", p => p.TimeStamp == timestamp);
             while (cursor.MoveNextAsync().Result)
             {
@@ -70,6 +72,8 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 
         protected override bool DoExist(ProductFrequency frequency)
         {
+            this.CreateConnection();
+
             var result = this.Client.Find<ProductFrequency, int>("ProductFrequency", p => p.CustomerSysNo == frequency.CustomerSysNo && p.ProductSysNo == frequency.ProductSysNo, p => p.SysNo);
 
             return result.Documents.Count() > 0;
@@ -77,6 +81,8 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 
         protected override bool DoInsert(ProductFrequency frequency)
         {
+            this.CreateConnection();
+
             var result = this.Client.InsertOne<ProductFrequency>("ProductFrequency", frequency);
 
             return result.AffectCount > 0;
@@ -84,6 +90,8 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 
         protected override bool DoUpdate(ProductFrequency frequency)
         {
+            this.CreateConnection();
+
             var result = this.Client.Update<ProductFrequency>("ProductFrequency", p => p.SysNo == frequency.SysNo, frequency);
 
             return result.AffectCount > 0;

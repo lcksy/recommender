@@ -49,7 +49,7 @@ namespace NReco.Recommender.Service
             }).ToList();
         }
 
-        public bool RefreshByCustomerSysNo(int customerSysNo)
+        public bool RefreshByCustomerSysNo(long customerSysNo)
         {
             try
             {
