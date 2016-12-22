@@ -21,7 +21,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 
             SqlConnection connection = null;
 
-            if (drectionType == DBDrectionType.Read)
+            if (drectionType == DBDrectionType.Read)  //todo
                 connection = new SqlConnection(base.NRecoConfig.ServerNodes.First().ConnectionString);
             else
                 connection = new SqlConnection(base.NRecoConfig.ServerNodes.Last().ConnectionString);
