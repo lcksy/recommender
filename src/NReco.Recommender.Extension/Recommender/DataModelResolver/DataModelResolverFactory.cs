@@ -15,7 +15,9 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
             switch (config.DBType)
             {
                 case DBType.SqlServer:
-                    return EngineContext.Current.Resolve<DataModelResolverBase>("sqlDataModelResolver");
+                    var resolver = EngineContext.Current.Resolve<DataModelResolverBase>("sqlDataModelResolver");
+                    var hash = resolver.GetHashCode();
+                    return resolver;
                 case DBType.MongoServer:
                     return EngineContext.Current.Resolve<DataModelResolverBase>("mongoDataModelResolver");
                 default:

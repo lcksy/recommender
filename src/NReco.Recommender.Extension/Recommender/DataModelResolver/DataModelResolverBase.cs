@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 using NReco.CF.Taste.Common;
 using NReco.CF.Taste.Impl.Common;
@@ -13,15 +14,15 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
     public abstract class DataModelResolverBase : AbstractDataModel
     {
         #region private fields
-        private static DateTime unixTimestampEpochStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
-        private IDataModel dataModel;
-        private bool uniqueUserItemCheck = true;
+        private static DateTime _unixTimestampEpochStart = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
+        private IDataModel _dataModel;
+        private bool _uniqueUserItemCheck = true;
         #endregion
 
         #region process frequency model
         public IDataModel BuilderModel()
         {
-            if (this.dataModel == null)
+            if (this._dataModel == null)
             {
                 var timestamps = new FastByIDMap<FastByIDMap<DateTime?>>();
                 var data = new FastByIDMap<IList<IPreference>>();
@@ -32,31 +33,30 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
                     this.ProccessFrequency(freq, data, timestamps, false);
                 }
 
-                this.dataModel = this.DoGenericDataModel(data, timestamps); 
+                this._dataModel = this.DoGenericDataModel(data, timestamps); 
             }
 
-            return this.dataModel;
+            return this._dataModel;
         }
 
         public IDataModel BuilderModelFromCustomerSysNo(long customerSysNo)
         {
-            var rawData = ((GenericDataModel)this.dataModel).GetRawUserData();
-
+            var userData = ((GenericDataModel)this._dataModel).GetRawUserData();
             var timestamps = new FastByIDMap<FastByIDMap<DateTime?>>();
-
             var frequencies = DataReaderResolverFactory.Create().ReadByCustomerSysNo(customerSysNo);
-
             foreach (var freq in frequencies)
             {
-                this.ProccessFrequency(freq, rawData, timestamps, true);
+                this.ProccessFrequency(freq, userData, timestamps, true);
             }
 
-            return new GenericDataModel(rawData, timestamps);
+            this._dataModel = new GenericDataModel(userData, timestamps);
+
+            return this._dataModel;
         }
 
         public IDataModel BuilderModelFromTimeStamp(long timeStamp)
         {
-            var rawData = ((GenericDataModel)this.dataModel).GetRawUserData();
+            var rawData = ((GenericDataModel)this._dataModel).GetRawUserData();
 
             var timestamps = new FastByIDMap<FastByIDMap<DateTime?>>();
 
@@ -90,7 +90,7 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
                 float preferenceValue = this.CalculateFrequency(freqency);
 
                 bool exists = false;
-                if (uniqueUserItemCheck && prefs != null)
+                if (_uniqueUserItemCheck && prefs != null)
                 {
                     for (int i = 0; i < prefs.Length(); i++)
                     {
@@ -131,7 +131,7 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
                 var prefs = ((IEnumerable<IPreference>)maybePrefs);
                 var preferenceValue = this.CalculateFrequency(freqency);
                 bool exists = false;
-                if (uniqueUserItemCheck && prefs != null)
+                if (_uniqueUserItemCheck && prefs != null)
                 {
                     foreach (IPreference pref in prefs)
                     {
@@ -196,74 +196,74 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
 
         private DateTime ReadTimestamp(long value)
         {
-            return unixTimestampEpochStart.AddMilliseconds(value);
+            return _unixTimestampEpochStart.AddMilliseconds(value);
         } 
         #endregion
 
         #region common methods
         public override IEnumerator<long> GetUserIDs()
         {
-            return dataModel.GetUserIDs();
+            return _dataModel.GetUserIDs();
         }
 
         public override IPreferenceArray GetPreferencesFromUser(long userSysNo)
         {
-            return dataModel.GetPreferencesFromUser(userSysNo);
+            return _dataModel.GetPreferencesFromUser(userSysNo);
         }
 
         public override FastIDSet GetItemIDsFromUser(long userSysNo)
         {
-            return dataModel.GetItemIDsFromUser(userSysNo);
+            return _dataModel.GetItemIDsFromUser(userSysNo);
         }
 
         public override IEnumerator<long> GetItemIDs()
         {
-            return dataModel.GetItemIDs();
+            return _dataModel.GetItemIDs();
         }
 
         public override IPreferenceArray GetPreferencesForItem(long itemSysNo)
         {
-            return dataModel.GetPreferencesForItem(itemSysNo);
+            return _dataModel.GetPreferencesForItem(itemSysNo);
         }
 
         public override float? GetPreferenceValue(long userSysNo, long itemSysNo)
         {
-            return dataModel.GetPreferenceValue(userSysNo, itemSysNo);
+            return _dataModel.GetPreferenceValue(userSysNo, itemSysNo);
         }
 
         public override DateTime? GetPreferenceTime(long userSysNo, long itemSysNo)
         {
-            return dataModel.GetPreferenceTime(userSysNo, itemSysNo);
+            return _dataModel.GetPreferenceTime(userSysNo, itemSysNo);
         }
 
         public override int GetNumItems()
         {
-            return dataModel.GetNumItems();
+            return _dataModel.GetNumItems();
         }
 
         public override int GetNumUsers()
         {
-            return dataModel.GetNumUsers();
+            return _dataModel.GetNumUsers();
         }
 
         public override int GetNumUsersWithPreferenceFor(long itemSysNo)
         {
-            return dataModel.GetNumUsersWithPreferenceFor(itemSysNo);
+            return _dataModel.GetNumUsersWithPreferenceFor(itemSysNo);
         }
 
         public override int GetNumUsersWithPreferenceFor(long itemSysNo1, long itemSysNo2)
         {
-            return dataModel.GetNumUsersWithPreferenceFor(itemSysNo1, itemSysNo2);
+            return _dataModel.GetNumUsersWithPreferenceFor(itemSysNo1, itemSysNo2);
         }
 
         public override void SetPreference(long userSysNo, long itemSysNo, float value)
         {
-            dataModel.SetPreference(userSysNo, itemSysNo, value);
+            _dataModel.SetPreference(userSysNo, itemSysNo, value);
         }
 
         public override void RemovePreference(long userSysNo, long itemSysNo)
         {
-            dataModel.RemovePreference(userSysNo, itemSysNo);
+            _dataModel.RemovePreference(userSysNo, itemSysNo);
         }
 
         public override void Refresh(IList<IRefreshable> alreadyRefreshed)
@@ -273,17 +273,17 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
 
         public override bool HasPreferenceValues()
         {
-            return dataModel.HasPreferenceValues();
+            return _dataModel.HasPreferenceValues();
         }
 
         public override float GetMaxPreference()
         {
-            return dataModel.GetMaxPreference();
+            return _dataModel.GetMaxPreference();
         }
 
         public override float GetMinPreference()
         {
-            return dataModel.GetMinPreference();
+            return _dataModel.GetMinPreference();
         } 
         #endregion
     }
