@@ -83,6 +83,7 @@
     <Compile Include="Configuration\NRecoConfigResolverBase.cs" />
     <Compile Include="Configuration\NRecoConfigResolverFactory.cs" />
     <Compile Include="Configuration\SqlServerConfigResolver.cs" />
+    <Compile Include="Enum\DBDrectionType.cs" />
     <Compile Include="Extension\StringExtension.cs" />
     <Compile Include="Objects\Configuration\MongoDbServerNodes.cs" />
     <Compile Include="Objects\Configuration\NRecoConfigUseage.cs" />

@@ -8,20 +8,25 @@ using System.Reflection;
 using CQSS.Common.Database.Dapper;
 using Dapper;
 using NReco.Recommender.Extension.Objects.RecommenderDataModel;
+using NReco.Recommender.Extension;
 
 namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 {
     public class SqlServerDataReaderResolver : DataReaderResolverBase
     {
-        public IDbConnection CreateConnection()
+        public IDbConnection CreateConnection(DBDrectionType drectionType)
         {
-            var config = base.GetNrecoConfig();
-
-            if(config.ServerNodes == null || config.ServerNodes.Count()==0)
+            if (base.NRecoConfig.ServerNodes == null || base.NRecoConfig.ServerNodes.Count() == 0)
                 throw new Exception("获取 ConnectionString 失败，无法在配置文件的 NRecoConfig 中找到 sql server节点");
 
-            var connection = new SqlConnection(config.ServerNodes.First().ConnectionString);
-            connection.Open();
+            SqlConnection connection = null;
+
+            if (drectionType == DBDrectionType.Read)
+                connection = new SqlConnection(base.NRecoConfig.ServerNodes.First().ConnectionString);
+            else
+                connection = new SqlConnection(base.NRecoConfig.ServerNodes.Last().ConnectionString);
+
+            connection.Open(); 
 
             return connection;
         }
@@ -30,7 +35,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         {
             var sql = @"SELECT * FROM ProductFrequency";
 
-            using (var connection = this.CreateConnection())
+            using (var connection = this.CreateConnection(DBDrectionType.Read))
             {
                 return connection.Query<ProductFrequency>(sql);
             }
@@ -40,7 +45,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         {
             var sql = @"SELECT * FROM ProductFrequency WHERE CustomerSysNo = @CustomerSysNo";
 
-            using (var connection = this.CreateConnection())
+            using (var connection = this.CreateConnection(DBDrectionType.Read))
             {
                 return connection.Query<ProductFrequency>(sql, new { CustomerSysNo = customerSysNo });
             }
@@ -50,7 +55,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         {
             var sql = @"SELECT * FROM ProductFrequency WHERE TimeStamp >= @TimeStamp";
 
-            using (var connection = this.CreateConnection())
+            using (var connection = this.CreateConnection(DBDrectionType.Read))
             {
                 return connection.Query<ProductFrequency>(sql, new { TimeStamp = timestamp });
             }
@@ -60,7 +65,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         {
             var sql = "SELECT SysNo From ProductFrequency WHERE CustomerSysNo = @CustomerSysNo AND ProductSysNo = @ProductSysNo";
 
-            using (var connection = this.CreateConnection())
+            using (var connection = this.CreateConnection(DBDrectionType.Read))
             {
                 var sysno = connection.ExecuteScalar<int>(sql, new { CustomerSysNo = frequency.CustomerSysNo, ProductSysNo = frequency.ProductSysNo });
 
@@ -70,7 +75,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 
         protected override bool DoInsert(ProductFrequency frequency)
         {
-            using (var connection = this.CreateConnection())
+            using (var connection = this.CreateConnection(DBDrectionType.Write))
             {
                 var data = new 
                 { 
@@ -108,7 +113,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
                 TimeStamp = frequency.TimeStamp
             };
 
-            using (var connection = this.CreateConnection())
+            using (var connection = this.CreateConnection(DBDrectionType.Write))
             {
                 var res = connection.ExecuteScalar<int>(sql, param);
 

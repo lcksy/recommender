@@ -8,6 +8,17 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
 {
     public abstract class DataReaderResolverBase : IDataReaderResolver
     {
+        #region prop
+        protected NRecoConfig NRecoConfig { get; set; }
+        #endregion
+
+        #region actor
+        public DataReaderResolverBase()
+        {
+            this.NRecoConfig = NRecoConfigResolver.Resolve<NRecoConfig>();
+        } 
+        #endregion
+
         public abstract IEnumerable<ProductFrequency> Read();
         public abstract IEnumerable<ProductFrequency> ReadByCustomerSysNo(long customerSysNo);
         public abstract IEnumerable<ProductFrequency> ReadGreaterThanTimeStamp(long timeStamp);
@@ -28,9 +39,5 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         protected abstract bool DoExist(ProductFrequency frequency);
         protected abstract bool DoInsert(ProductFrequency frequency);
         protected abstract bool DoUpdate(ProductFrequency frequency);
-        protected NRecoConfig GetNrecoConfig()
-        {
-            return NRecoConfigResolver.Resolve<NRecoConfig>();   
-        }
     }
 }

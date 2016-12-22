@@ -18,9 +18,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         {
             if (this.Client == null)
             {
-                var config = base.GetNrecoConfig();
-
-                var connectionString = config.ServerNodes.First().ConnectionString;
+                var connectionString = base.NRecoConfig.ServerNodes.First().ConnectionString;
 
                 var endpoint = connectionString.Split(true, ':');
 
