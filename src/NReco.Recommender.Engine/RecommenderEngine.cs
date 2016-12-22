@@ -20,15 +20,16 @@ namespace NReco.Recommender.Engine
 
             var sqlConfigResolver = new SqlServerConfigResolver();
             var mongoConfigResolver = new MongoDbConfigResolver();
-            var sqlDataReader = new SqlServerDataReaderResolver();
-            var mongoDataReader = new MongDbDataReaderResolver();
-            var sqlDataModelResolver = new SqlServerDataModelResolver();
-            var mongoDataModelResolver = new MongoDbDataModelResolver();
-
             base.Container.RegisterInstance<INRecoConfigResolver, SqlServerConfigResolver>(sqlConfigResolver, "sqlConfigResolver");
             base.Container.RegisterInstance<INRecoConfigResolver, MongoDbConfigResolver>(mongoConfigResolver, "mongoConfigResolver");
+
+            var sqlDataReader = new SqlServerDataReaderResolver();
+            var mongoDataReader = new MongDbDataReaderResolver();
             base.Container.RegisterInstance<IDataReaderResolver, SqlServerDataReaderResolver>(sqlDataReader, "sqlDataReaderResolver");
             base.Container.RegisterInstance<IDataReaderResolver, MongDbDataReaderResolver>(mongoDataReader, "mongoDataReaderResolver");
+
+            var sqlDataModelResolver = new SqlServerDataModelResolver();
+            var mongoDataModelResolver = new MongoDbDataModelResolver();
             base.Container.RegisterInstance<DataModelResolverBase, SqlServerDataModelResolver>(sqlDataModelResolver, "sqlDataModelResolver");
             base.Container.RegisterInstance<DataModelResolverBase, MongoDbDataModelResolver>(mongoDataModelResolver, "mongoDataModelResolver");
         }
