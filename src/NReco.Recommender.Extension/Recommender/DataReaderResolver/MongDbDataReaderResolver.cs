@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 using CQSS.Common.Extension;
 using CQSS.Mongo.Client;
@@ -90,7 +92,11 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         {
             this.CreateConnection();
 
-            var result = this.Client.Update<ProductFrequency>("ProductFrequency", p => p.SysNo == frequency.SysNo, frequency);
+            Expression<Func<ProductFrequency, bool>> filter = p => p.CustomerSysNo == frequency.CustomerSysNo && p.ProductSysNo == frequency.ProductSysNo;
+
+            var value = "{$inc:{BuyFrequency:" + frequency.BuyFrequency + ",ClickFrequency:" + frequency.ClickFrequency + ",CommentFrequency:" + frequency.CommentFrequency + "}}";
+
+            var result = this.Client.UpdatePartial<ProductFrequency>("ProductFrequency", filter, value);
 
             return result.AffectCount > 0;
         }

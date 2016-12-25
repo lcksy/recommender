@@ -16,5 +16,8 @@ namespace NReco.Recommender.ServiceContract
 
         [OperationContract]
         bool RefreshByTimeStamp(long timeStamp);
+
+        [OperationContract]
+        bool TrainingRecommender(List<Frequency> frequency);
     }
 }

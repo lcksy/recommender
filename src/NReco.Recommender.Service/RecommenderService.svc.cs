@@ -7,7 +7,9 @@ using NReco.CF.Taste.Impl.Neighborhood;
 using NReco.CF.Taste.Impl.Recommender;
 using NReco.CF.Taste.Impl.Similarity;
 using NReco.Recommender.DataContract;
+using NReco.Recommender.Extension.Objects.RecommenderDataModel;
 using NReco.Recommender.Extension.Recommender.DataModelResolver;
+using NReco.Recommender.Extension.Recommender.DataReaderResolver;
 using NReco.Recommender.ServiceContract;
 
 namespace NReco.Recommender.Service
@@ -75,6 +77,27 @@ namespace NReco.Recommender.Service
             {
                 return false;
             }
+        }
+
+        public bool TrainingRecommender(List<Frequency> frequencies)
+        {
+            foreach (var freq in frequencies)
+            {
+                var frequency = new ProductFrequency()
+                {
+                    SysNo = freq.SysNo,
+                    CustomerSysNo = freq.CustomerSysNo,
+                    ProductSysNo = freq.ProductSysNo,
+                    ClickFrequency = freq.ClickFrequency,
+                    BuyFrequency = freq.BuyFrequency,
+                    CommentFrequency = freq.CommentFrequency,
+                    TimeStamp = freq.TimeStamp
+                };
+
+                DataReaderResolverFactory.Create().Write(frequency);
+            }
+
+            return true;
         }
     }
 }
