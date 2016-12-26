@@ -38,7 +38,7 @@ namespace NReco.Recommender.Extension.Recommender.DataReaderResolver
         {
             this.CreateConnection();
 
-            var cursor = this.Client.FindSync<ProductFrequency>("ProductFrequency", p => p.CustomerSysNo >= -1);
+            var cursor = this.Client.FindSync<ProductFrequency>("ProductFrequency", p => p.SysNo >= -1);
             while (cursor.MoveNextAsync().Result)
             {
                 foreach (var product in cursor.Current)

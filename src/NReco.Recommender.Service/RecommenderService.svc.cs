@@ -95,6 +95,8 @@ namespace NReco.Recommender.Service
                 };
 
                 DataReaderResolverFactory.Create().Write(frequency);
+
+                this.RefreshByCustomerSysNo(freq.CustomerSysNo);
             }
 
             return true;

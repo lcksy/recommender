@@ -22,7 +22,7 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
         #region process frequency model
         public IDataModel BuilderModel()
         {
-            if (this._dataModel == null)
+            if (this._dataModel == null || this._dataModel.GetNumItems() == 0)
             {
                 var timestamps = new FastByIDMap<FastByIDMap<DateTime?>>();
                 var data = new FastByIDMap<IList<IPreference>>();
@@ -41,6 +41,9 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
 
         public IDataModel BuilderModelFromCustomerSysNo(long customerSysNo)
         {
+            if (this._dataModel.GetNumItems() == 0)
+                return this.BuilderModel();
+
             var userData = ((GenericDataModel)this._dataModel).GetRawUserData();
             var timestamps = new FastByIDMap<FastByIDMap<DateTime?>>();
             var frequencies = DataReaderResolverFactory.Create().ReadByCustomerSysNo(customerSysNo);
@@ -56,12 +59,12 @@ namespace NReco.Recommender.Extension.Recommender.DataModelResolver
 
         public IDataModel BuilderModelFromTimeStamp(long timeStamp)
         {
+            if (this._dataModel.GetNumItems() == 0)
+                return this.BuilderModel();
+
             var rawData = ((GenericDataModel)this._dataModel).GetRawUserData();
-
             var timestamps = new FastByIDMap<FastByIDMap<DateTime?>>();
-
             var frequencies = DataReaderResolverFactory.Create().ReadGreaterThanTimeStamp(timeStamp);
-
             foreach (var freq in frequencies)
             {
                 this.ProccessFrequency(freq, rawData, timestamps, true);
