@@ -9,5 +9,10 @@ namespace NReco.Recommender.Extension.Configuration
         {
             return base.DoResoveServerConfig<TOut>(node, type);
         }
+
+        protected override IEnumerable<TOut> ResolveNodes<TOut>(XmlNode node)
+        {
+            return base.ResolveNodes<TOut>(node);
+        }
     }
 }
