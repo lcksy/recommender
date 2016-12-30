@@ -7,7 +7,7 @@ namespace NReco.Recommender.Extension.Configuration
 {
     public abstract class NRecoConfigResolverBase : INRecoConfigResolver
     {
-        public IEnumerable<TOut> ResoveServerConfig<TOut>(XmlNode node, DBType type)
+        public IEnumerable<TOut> ResolveServerConfig<TOut>(XmlNode node, DBType type)
         {
             try
             {

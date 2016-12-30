@@ -31,7 +31,7 @@ namespace NReco.Recommender.Extension.Configuration
 
             this.DBType = dbType;
 
-            this.ServerNodes = NRecoConfigResolverFactory.Create(dbType).ResoveServerConfig<ServerNode>(node, dbType);
+            this.ServerNodes = NRecoConfigResolverFactory.Create(dbType).ResolveServerConfig<ServerNode>(node, dbType);
 
             return this;
         }

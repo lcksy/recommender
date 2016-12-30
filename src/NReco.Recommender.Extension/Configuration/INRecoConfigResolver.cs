@@ -5,6 +5,6 @@ namespace NReco.Recommender.Extension.Configuration
 {
     public interface INRecoConfigResolver
     {
-        IEnumerable<TOut> ResoveServerConfig<TOut>(XmlNode node, DBType type);
+        IEnumerable<TOut> ResolveServerConfig<TOut>(XmlNode node, DBType type);
     }
 }
